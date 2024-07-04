@@ -3,7 +3,7 @@ import { Title } from "@solidjs/meta";
 import { Show } from "solid-js";
 import { A } from "~/components/LocaleContext";
 
-import storefront from "~/hydrogen/storefront";
+import storefront from "~/shopify/storefront";
 
 const getShopQuery = `#graphql
   query GetShop($language: LanguageCode!, $country: CountryCode!) @inContext(language: $language, country: $country){

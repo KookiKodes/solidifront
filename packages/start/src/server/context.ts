@@ -2,12 +2,12 @@
 import { getRequestEvent } from "solid-js/web";
 import { getCookie } from "vinxi/http";
 
-export function getHydrogenContext() {
+export function getShopifyContext() {
   const event = getRequestEvent();
   if (!event) {
     throw new Error("No request event");
   }
-  return event.locals.hydrogen;
+  return event.locals.shopify;
 }
 
 export function getLocale() {

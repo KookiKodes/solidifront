@@ -1,12 +1,12 @@
-import type { StorefrontQueries } from "@shopify/storefront-api-client";
+import type { StorefrontOperations } from "@shopify/storefront-api-client";
 
 import { cache } from "@solidjs/router";
-import { getHydrogenContext, getLocale } from "~/server/context";
+import { getShopifyContext, getLocale } from "~/server/context";
 
-function withLocaleVariables<Query extends keyof StorefrontQueries>(
+function withLocaleVariables<Query extends keyof StorefrontOperations>(
   locale: I18nLocale,
   variables?: Omit<
-    StorefrontQueries[Query]["variables"],
+    StorefrontOperations[Query]["variables"],
     "language" | "country"
   >
 ) {
@@ -18,10 +18,10 @@ function withLocaleVariables<Query extends keyof StorefrontQueries>(
 }
 
 const storefront = {
-  query: <Query extends keyof StorefrontQueries>(
+  query: <Query extends keyof StorefrontOperations>(
     queryString: Query,
     variables?: Omit<
-      StorefrontQueries[Query]["variables"],
+      StorefrontOperations[Query]["variables"],
       "language" | "country"
     >
   ) => {
@@ -29,15 +29,15 @@ const storefront = {
       async (
         queryString: Query,
         variables?: Omit<
-          StorefrontQueries[Query]["variables"],
+          StorefrontOperations[Query]["variables"],
           "language" | "country"
         >
       ) => {
         "use server";
-        const hydrogen = getHydrogenContext();
+        const shopify = getShopifyContext();
         const locale = getLocale();
         // @ts-expect-error
-        return hydrogen.storefront.request(queryString, {
+        return shopify.storefront.request(queryString, {
           variables: withLocaleVariables(locale, variables),
         });
       },

@@ -1,5 +1,6 @@
 // @refresh reload
 import { createHandler, StartServer } from "@solidjs/start/server";
+import tailwindCss from "./app.css?url";
 
 export default createHandler((context) => {
   return (
@@ -13,6 +14,7 @@ export default createHandler((context) => {
               content="width=device-width, initial-scale=1"
             />
             <link rel="icon" href="/favicon.ico" />
+            <link rel="stylesheet" href={tailwindCss} />
             {assets}
           </head>
           <body>

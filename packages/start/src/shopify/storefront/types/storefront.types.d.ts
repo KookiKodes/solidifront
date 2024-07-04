@@ -689,7 +689,6 @@ export type CartBuyerIdentity = {
    * A set of wallet preferences tied to the buyer that is interacting with the cart.
    * Preferences can be used to populate relevant payment fields in the checkout flow.
    *
-   * @deprecated Use `preferences` instead.
    */
   walletPreferences: Array<Scalars['String']['output']>;
 };
@@ -726,6 +725,14 @@ export type CartBuyerIdentityInput = {
    *
    */
   preferences?: InputMaybe<CartPreferencesInput>;
+  /**
+   * A set of wallet preferences tied to the buyer that is interacting with the cart.
+   * Preferences can be used to populate relevant payment fields in the checkout flow.
+   *   Accepted value: `["shop_pay"]`.
+   *
+   * The input must not contain more than `250` values.
+   */
+  walletPreferences?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 /** Return type for `cartBuyerIdentityUpdate` mutation. */

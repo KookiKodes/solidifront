@@ -1,8 +1,8 @@
 import type { FetchEvent } from "@solidjs/start/server";
 import { createStorefrontApiClient } from "@shopify/storefront-api-client";
 
-export const createHydrogenContext = async (event: FetchEvent) => {
-  if (event.locals.hydrogen) return;
+export const createShopifyContext = async (event: FetchEvent) => {
+  if (event.locals.shopify) return;
   const env = event.locals.env;
 
   const storefront = createStorefrontApiClient({
@@ -12,14 +12,14 @@ export const createHydrogenContext = async (event: FetchEvent) => {
     // privateAccessToken: env.SHOPIFY_PRIVATE_STOREFRONT_ACCESS_TOKEN,
   });
 
-  event.locals.hydrogen = {
+  event.locals.shopify = {
     storefront,
   };
 };
 
 declare module "@solidjs/start/server" {
   interface RequestEventLocals {
-    hydrogen: {
+    shopify: {
       storefront: ReturnType<typeof createStorefrontApiClient>;
     };
   }

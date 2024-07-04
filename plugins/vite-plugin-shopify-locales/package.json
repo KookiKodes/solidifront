@@ -1,12 +1,13 @@
 {
   "name": "@solidifront/vite-plugin-shopify-locales",
   "version": "1.0.0",
+  "private": false,
   "description": "Zero-config vite plugin that fetches and generates you're Storefront's shop locales",
   "license": "MIT",
   "author": "Kooki-Kodes",
   "repository": {
     "type": "git",
-    "url": "https://github.com/KookiKodes/solidify/plugins/vite-plugin-shopify-locales.git"
+    "url": "https://github.com/KookiKodes/solidifront.git"
   },
   "keywords": [
     "shopify",
@@ -51,12 +52,6 @@
     "vite": "^5.3.1"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.3",
-    "@semantic-release/release-notes-generator": "^12.1.0",
     "@shopify/hydrogen": "^2024.4.7",
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
