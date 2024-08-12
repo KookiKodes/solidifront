@@ -1,0 +1,40 @@
+{
+  "copyFiles": [
+    {
+      "from": {
+        "default": {
+          "src": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/storefront.schema.json",
+          "latest": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/storefront.schema.json"
+        }
+      },
+      "to": "storefront.schema.json"
+    },
+    {
+      "from": {
+        "default": {
+          "src": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/customer-account.schema.json",
+          "latest": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/customer-account.schema.json"
+        }
+      },
+      "to": "customer-account.schema.json"
+    },
+    {
+      "from": {
+        "default": {
+          "src": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/src/storefront-api-types.d.ts",
+          "latest": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/src/storefront-api-types.d.ts"
+        }
+      },
+      "to": "types/storefront-api-types.d.ts"
+    },
+    {
+      "from": {
+        "default": {
+          "src": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/src/customer-account-api-types.d.ts",
+          "latest": "https://raw.githubusercontent.com/Shopify/hydrogen/main/packages/hydrogen-react/src/customer-account-api-types.d.ts"
+        }
+      },
+      "to": "types/customer-account-api-types.d.ts"
+    }
+  ]
+}
