@@ -1,3 +1,3 @@
-import { defineConfig } from "@solidjs/start/config";
+import { defineConfig } from "@solidifront/start";
 
 export default defineConfig({});

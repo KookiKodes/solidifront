@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "tests"],
+  "include": ["src"],
   "exclude": ["dist", "node_modules", ".turbo"],
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "rootDir": ".",
     "outDir": "dist",
     "types": ["node"]

@@ -1,0 +1,54 @@
+{
+  "name": "@solidifront/start",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup --clean",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "Solidifront",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "types": "./dist/production/index.d.ts",
+      "module": {
+        "development": "./dist/development/index.js",
+        "default": "./dist/production/index.js"
+      },
+      "require": "./dist/index.cjs",
+      "import": {
+        "development": "./dist/development/index.js",
+        "default": "./dist/production/index.js"
+      },
+      "default": {
+        "development": "./dist/development/index.js",
+        "default": "./dist/production/index.js"
+      }
+    },
+    "./package.json": "./package.json",
+    "./storefront.schema.json": "./dist/storefront.schema.json",
+    "./customer-account.schema.json": "./dist/customer-account.schema.json",
+    "./storefront-api-types": "./dist/storefront-api-types.d.ts",
+    "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KookiKodes/solidifront.git",
+    "directory": "packages/start"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.14.3",
+    "@solidjs/start": "^1.0.6",
+    "solid-js": "^1.8.21",
+    "vinxi": "^0.4.1",
+    "@solidifront/codegen": "workspace:*",
+    "@solidifront/vite-generate-shopify-locales": "workspace:*"
+  }
+}

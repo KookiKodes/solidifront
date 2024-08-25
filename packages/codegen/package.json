@@ -19,6 +19,16 @@
     "./storefront-api-types": "./dist/storefront-api-types.d.ts",
     "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
   },
+  "typesVersions": {
+    "*": {
+      "storefront-api-types": [
+        "./dist/storefront-api-types.d.ts"
+      ],
+      "customer-account-api-types": [
+        "./dist/customer-account-api-types.d.ts"
+      ]
+    }
+  },
   "keywords": [],
   "author": "Solidifront",
   "license": "ISC",

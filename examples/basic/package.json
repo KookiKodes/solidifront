@@ -16,7 +16,9 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
-    "@solidifront/codegen": "workspace:*"
+    "@solidifront/codegen": "workspace:*",
+    "@solidifront/vite-generate-shopify-locales": "workspace:*",
+    "@solidifront/start": "workspace:*"
   },
   "engines": {
     "node": ">=18"
