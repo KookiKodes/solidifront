@@ -29,6 +29,14 @@
         "default": "./dist/production/index.js"
       }
     },
+    "./config": {
+      "import": "./dist/config/index.js",
+      "types": "./dist/config/index.d.ts"
+    },
+    "./locales": {
+      "import": "./dist/locales.js",
+      "types": "./dist/locales.d.ts"
+    },
     "./package.json": "./package.json",
     "./storefront.schema.json": "./dist/storefront.schema.json",
     "./customer-account.schema.json": "./dist/customer-account.schema.json",
@@ -44,11 +52,13 @@
     "tsup": "^8.2.4"
   },
   "dependencies": {
+    "@solidifront/codegen": "workspace:*",
+    "@solidifront/vite-generate-shopify-locales": "workspace:*",
     "@solidjs/router": "^0.14.3",
     "@solidjs/start": "^1.0.6",
+    "defu": "^6.1.4",
+    "dts-bundle-generator": "^9.5.1",
     "solid-js": "^1.8.21",
-    "vinxi": "^0.4.1",
-    "@solidifront/codegen": "workspace:*",
-    "@solidifront/vite-generate-shopify-locales": "workspace:*"
+    "vinxi": "^0.4.1"
   }
 }

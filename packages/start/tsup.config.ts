@@ -2,6 +2,8 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { defineConfig } from "tsup";
 
+// import { generateDtsBundle } from "dts-bundle-generator";
+
 const outDir = "dist";
 const cjsEntryContent = `module.exports = process.env.NODE_ENV === 'development' ? require('./development/index.cjs') : require('./production/index.cjs');`;
 const cjsEntryFile = path.resolve(process.cwd(), outDir, "index.cjs");
@@ -58,7 +60,25 @@ export default defineConfig([
         "Customer API types copied from @solidifront/codegen",
         "\n"
       );
+
+      await fs.copyFile(
+        path.resolve(
+          "..",
+          "plugins/vite-generate-shopify-locales/dist/locales",
+          "index.d.ts"
+        ),
+        path.resolve(outDir, "locales.d.ts")
+      );
     },
+  },
+  {
+    entry: ["src/config/**/*.ts"],
+    format: ["esm"],
+    sourcemap: false,
+    dts: { resolve: ["@solidifront/codegen"] },
+    outDir: path.resolve(outDir, "config"),
+    bundle: false,
+    minify: false,
   },
   //   {
   //     entry: [

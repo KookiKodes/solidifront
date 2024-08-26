@@ -23,6 +23,9 @@ importers:
 
   examples/basic:
     dependencies:
+      '@solidifront/start':
+        specifier: workspace:*
+        version: link:../../packages/start
       '@solidjs/meta':
         specifier: ^0.29.4
         version: 0.29.4(solid-js@1.8.20)
@@ -42,15 +45,6 @@ importers:
       '@graphql-codegen/cli':
         specifier: ^5.0.2
         version: 5.0.2(@parcel/watcher@2.4.1)(@types/node@22.2.0)(graphql@16.9.0)(typescript@5.4.5)
-      '@solidifront/codegen':
-        specifier: workspace:*
-        version: link:../../packages/codegen
-      '@solidifront/start':
-        specifier: workspace:*
-        version: link:../../packages/start
-      '@solidifront/vite-generate-shopify-locales':
-        specifier: workspace:*
-        version: link:../../packages/plugins/vite-generate-shopify-locales
 
   packages/codegen:
     dependencies:
@@ -131,6 +125,12 @@ importers:
       '@solidjs/start':
         specifier: ^1.0.6
         version: 1.0.6(rollup@4.20.0)(solid-js@1.8.21)(vinxi@0.4.1(@types/node@22.2.0)(ioredis@5.4.1)(terser@5.31.5))(vite@5.4.0(@types/node@22.2.0)(terser@5.31.5))
+      defu:
+        specifier: ^6.1.4
+        version: 6.1.4
+      dts-bundle-generator:
+        specifier: ^9.5.1
+        version: 9.5.1
       solid-js:
         specifier: ^1.8.21
         version: 1.8.21

@@ -3,10 +3,10 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import "./app.css";
-import { countries } from "@solidifront/vite-generate-shopify-locales/locales";
+
+import { countries } from "@solidifront/start/locales";
 
 export default function App() {
-  console.log(countries);
   return (
     <Router
       root={(props) => (
