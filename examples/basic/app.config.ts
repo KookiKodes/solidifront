@@ -6,7 +6,6 @@ export default defineConfig({
       defaultLocale: "en-US",
     },
   },
-  middleware: "./src/middleware.ts",
   vite: {
     plugins: [{ name: "test", buildStart: () => console.log("buildStart") }],
   },

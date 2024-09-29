@@ -1,4 +1,6 @@
 import type { ViteCustomizableConfig } from "@solidjs/start/config";
+import type { SolidifrontConfig } from "../types";
+
 import fs from "fs";
 import path from "path";
 import {
@@ -10,15 +12,15 @@ import {
 
 export function solidifrontMiddlewareSetup(
   project: Project,
-  middlewares: {
-    locale: boolean;
-    storefront: boolean;
-    customer: boolean;
-  }
+  config: SolidifrontConfig["solidifront"]
 ): NonNullable<ViteCustomizableConfig["plugins"]>[0] {
   const virtualModuleId = "@solidifront/start/middleware:internal";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
   const middlewarePath = path.resolve(".solidifront/middleware/virtual.ts");
+
+  const middlewares = {
+    locale: config && Reflect.has(config, "localization"),
+  };
 
   project.createSourceFile(middlewarePath, {}, { overwrite: true });
 
@@ -58,7 +60,7 @@ export function solidifrontMiddlewareSetup(
         .write("return [")
         .conditionalWrite(
           middlewares.locale,
-          `createLocaleMiddleware({ countries, redirectRoute: "/" })`
+          `createLocaleMiddleware({ countries, redirectRoute: ${JSON.stringify((config && config.localization && config.localization.redirectRoute) || "/")} }),`
         )
         .write("];");
     });

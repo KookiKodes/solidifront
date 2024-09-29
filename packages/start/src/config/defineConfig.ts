@@ -1,3 +1,5 @@
+import type { SolidifrontConfig } from "./types";
+
 import defu from "defu";
 import path from "path";
 import {
@@ -9,14 +11,10 @@ import { Project } from "ts-morph";
 
 import generateShopifyLocalesPlugin from "@solidifront/vite-generate-shopify-locales";
 import { handleMiddleware } from "./utils.js";
-import { solidifrontMiddlewareSetup } from "./plugins";
+import { solidifrontMiddlewareSetup } from "./plugins/index.js";
 
 export namespace defineConfig {
-  export type Config = SolidStartInlineConfig & {
-    solidifront?: {
-      localization?: Omit<generateShopifyLocalesPlugin.Options, "debug"> & {};
-    };
-  };
+  export type Config = SolidifrontConfig;
 }
 
 export function defineConfig(baseConfig: defineConfig.Config = {}) {
@@ -47,24 +45,18 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     handleMiddleware(project, config.middleware!);
   }
 
-  const middleware = {
-    locale: needsLocalization,
-    storefront: false,
-    customer: false,
-  };
-
   if (typeof vite === "function") {
     const defaultVite = vite;
 
     vite = (options) => {
       const viteConfig = defaultVite(options);
       return defu(viteConfig, {
-        plugins: [solidifrontMiddlewareSetup(project, middleware)],
+        plugins: [solidifrontMiddlewareSetup(project, config.solidifront)],
       });
     };
   } else if (typeof vite === "object") {
     vite.plugins = (vite.plugins || []).concat([
-      solidifrontMiddlewareSetup(project, middleware),
+      solidifrontMiddlewareSetup(project, config.solidifront),
     ]);
   }
 

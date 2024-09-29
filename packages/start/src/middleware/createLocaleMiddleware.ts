@@ -16,11 +16,12 @@ export type I18nLocale = Locale & {
 
 export type CreateLocaleMiddlewareOptions = {
   countries: Localizations;
-  redirectRoute: any;
+  redirectRoute: string;
 };
 
 export function createLocaleMiddleware({
   countries,
+  redirectRoute,
 }: CreateLocaleMiddlewareOptions) {
   return async (event: FetchEvent) => {
     const locale = getLocaleFromRequest(countries);
