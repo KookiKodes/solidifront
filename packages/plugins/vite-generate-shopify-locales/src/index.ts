@@ -1,9 +1,4 @@
 import type { Plugin } from 'vite';
-import {} from 'vite';
-
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { createRequire } from 'module';
 import { getStorefrontEnv } from './utils/env.js';
 import {
   getShopLocalization,
@@ -22,7 +17,7 @@ function buildShopLocales(
     (localizations: Localizations, localization) => {
       localization.availableLanguages.forEach((language) => {
         const isoCode =
-          `${language.isoCode.toLowerCase()}-${localization.isoCode.toLowerCase()}` as IsoCode;
+          `${language.isoCode.toLowerCase()}-${localization.isoCode}` as IsoCode;
         const data: Locale = {
           country: localization.isoCode,
           currency: localization.currency.isoCode,
@@ -36,7 +31,9 @@ function buildShopLocales(
           },
         };
         if (isoCode === defaultLocale) localizations.default = data;
-        else localizations[`/${isoCode}`] = data;
+        else
+          localizations[`/${isoCode.toLowerCase() as Lowercase<IsoCode>}`] =
+            data;
       });
       return localizations;
     },
@@ -44,7 +41,7 @@ function buildShopLocales(
   );
 }
 
-const DEFAULT_LOCALE: IsoCode = 'en-us',
+const DEFAULT_LOCALE: IsoCode = 'en-US',
   DEFAULT_NAMESPACE = '@solidifront/vite-generate-shopify-locales/locales';
 
 export namespace generateShopifyShopLocales {
@@ -96,6 +93,7 @@ function generateShopifyShopLocales(
 
   return {
     name: 'vite-generate-shopify-locales',
+    enforce: 'pre',
     async buildStart(options) {
       log('Validating correct environment variables...');
       const env = getStorefrontEnv.call(this);

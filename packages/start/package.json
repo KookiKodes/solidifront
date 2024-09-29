@@ -30,8 +30,16 @@
       }
     },
     "./config": {
+      "types": "./dist/config/index.d.ts",
+      "module": "./dist/config/index.js",
       "import": "./dist/config/index.js",
-      "types": "./dist/config/index.d.ts"
+      "default": "./dist/config/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "module": "./dist/middleware/index.js",
+      "import": "./dist/middleware/index.js",
+      "default": "./dist/middleware/index.js"
     },
     "./locales": {
       "import": "./dist/locales.js",
@@ -54,11 +62,14 @@
   "dependencies": {
     "@solidifront/codegen": "workspace:*",
     "@solidifront/vite-generate-shopify-locales": "workspace:*",
-    "@solidjs/router": "^0.14.3",
-    "@solidjs/start": "^1.0.6",
+    "@solidjs/router": "^0.14.7",
+    "@solidjs/start": "^1.0.8",
     "defu": "^6.1.4",
     "dts-bundle-generator": "^9.5.1",
-    "solid-js": "^1.8.21",
-    "vinxi": "^0.4.1"
+    "nitropack": "^2.9.7",
+    "resolve-accept-language": "^3.1.5",
+    "solid-js": "^1.9.1",
+    "ts-morph": "^23.0.0",
+    "vinxi": "^0.4.3"
   }
 }

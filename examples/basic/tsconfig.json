@@ -10,7 +10,7 @@
     "allowJs": true,
     "strict": true,
     "noEmit": true,
-    "types": ["vinxi/types/client"],
+    "types": ["vinxi/types/client", "./.solidifront/types/middleware.d.ts"],
     "isolatedModules": true,
     "paths": {
       "~/*": ["./src/*"]

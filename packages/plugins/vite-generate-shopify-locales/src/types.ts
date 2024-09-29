@@ -4,7 +4,7 @@ import type {
   LanguageCode,
 } from '@solidifront/codegen/storefront-api-types';
 
-export type IsoCode = `${Lowercase<LanguageCode>}-${Lowercase<CountryCode>}`;
+export type IsoCode = `${Lowercase<LanguageCode>}-${CountryCode}`;
 
 export type Locale = {
   country: CountryCode;
@@ -18,4 +18,7 @@ export type Locale = {
   market: { id: string; handle: string };
 };
 
-export type Localizations = Record<`/${string}` | 'default', Locale>;
+export type Localizations = Record<
+  `/${Lowercase<IsoCode>}` | 'default',
+  Locale
+>;

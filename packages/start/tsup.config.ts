@@ -24,7 +24,6 @@ export default defineConfig([
   {
     ...commonConfig,
     env: { NODE_ENV: "production" },
-    dts: { resolve: ["@solidifront/codegen"] },
     outDir: path.join(outDir, "production"),
     minify: true,
     onSuccess: async () => {
@@ -75,8 +74,23 @@ export default defineConfig([
     entry: ["src/config/**/*.ts"],
     format: ["esm"],
     sourcemap: false,
-    dts: { resolve: ["@solidifront/codegen"] },
+    dts: {
+      resolve: ["@solidifront/codegen", "@solidjs/start/config"],
+      entry: "src/config/index.ts",
+    },
     outDir: path.resolve(outDir, "config"),
+    bundle: false,
+    minify: false,
+  },
+  {
+    entry: ["src/middleware/**/*.ts"],
+    format: ["esm"],
+    sourcemap: false,
+    dts: {
+      resolve: ["@solidifront/codegen", "@solidjs/start/middleware"],
+      entry: "src/middleware/index.ts",
+    },
+    outDir: path.resolve(outDir, "middleware"),
     bundle: false,
     minify: false,
   },

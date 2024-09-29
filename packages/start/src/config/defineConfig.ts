@@ -1,11 +1,15 @@
 import defu from "defu";
 import {
   type SolidStartInlineConfig,
-  // type ViteCustomizableConfig,
+  ViteCustomizableConfig,
   defineConfig as defineSolidConfig,
 } from "@solidjs/start/config";
 
 import generateShopifyLocalesPlugin from "@solidifront/vite-generate-shopify-locales";
+import {
+  handleMiddleware,
+  createVirtualSolidifrontMiddlewareConfig,
+} from "./utils.js";
 
 export namespace defineConfig {
   export type Config = SolidStartInlineConfig & {
@@ -15,7 +19,7 @@ export namespace defineConfig {
   };
 }
 
-export async function defineConfig(baseConfig: defineConfig.Config = {}) {
+export function defineConfig(baseConfig: defineConfig.Config = {}) {
   let { vite = {}, ...config } = baseConfig;
 
   const needsLocalization = Reflect.has(
@@ -28,6 +32,31 @@ export async function defineConfig(baseConfig: defineConfig.Config = {}) {
   config = defu(config, {
     middleware: needsMiddleware ? "./src/middleware.ts" : undefined,
   } as Omit<SolidStartInlineConfig, "vite">);
+
+  if (needsMiddleware) {
+    handleMiddleware(config.middleware!);
+  }
+
+  const middleware = {
+    locale: needsLocalization,
+    storefront: false,
+    customer: false,
+  };
+
+  if (typeof vite === "function") {
+    const defaultVite = vite;
+
+    vite = (options) => {
+      const viteConfig = defaultVite(options);
+      return defu(viteConfig, {
+        plugins: [createVirtualSolidifrontMiddlewareConfig(middleware)],
+      });
+    };
+  } else if (typeof vite === "object") {
+    vite.plugins = (vite.plugins || []).concat([
+      createVirtualSolidifrontMiddlewareConfig(middleware),
+    ]);
+  }
 
   if (needsLocalization) {
     if (typeof vite === "function") {
