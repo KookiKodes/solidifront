@@ -1,7 +1,12 @@
 import type { ViteCustomizableConfig } from "@solidjs/start/config";
 import fs from "fs";
 import path from "path";
-import { Project, ModuleDeclarationKind, StructureKind } from "ts-morph";
+import {
+  Project,
+  ModuleDeclarationKind,
+  StructureKind,
+  StatementStructures,
+} from "ts-morph";
 
 export function handleMiddleware(project: Project, middlewarePath: string) {
   const absMiddlewarePath = path.resolve(middlewarePath);
@@ -58,10 +63,10 @@ export function createVirtualSolidifrontMiddlewareConfig(
 
   project.createSourceFile(middlewarePath, {}, { overwrite: true });
 
-  const middlewareFile = project.getSourceFile(middlewarePath);
+  const virtualMiddlewareFile = project.getSourceFile(middlewarePath);
 
-  if (middlewares.locale && middlewareFile) {
-    middlewareFile.addImportDeclarations([
+  if (middlewares.locale && virtualMiddlewareFile) {
+    virtualMiddlewareFile.addImportDeclarations([
       {
         moduleSpecifier: "@solidifront/start/middleware",
         namedImports: [
@@ -81,25 +86,27 @@ export function createVirtualSolidifrontMiddlewareConfig(
     ]);
   }
 
-  middlewareFile?.addFunction({
+  virtualMiddlewareFile?.addFunction({
     name: "createSolidifrontMiddleware",
     isExported: true,
     kind: StructureKind.Function,
   });
 
-  const funcDef = middlewareFile?.getFunction("createSolidifrontMiddleware");
+  virtualMiddlewareFile
+    ?.getFunction("createSolidifrontMiddleware")
+    ?.setBodyText((writer) => {
+      writer
+        .write("return [")
+        .conditionalWrite(
+          middlewares.locale,
+          `createLocaleMiddleware({ countries, redirectRoute: "/" })`
+        )
+        .write("];");
+    });
 
-  funcDef?.setBodyText((writer) => {
-    writer
-      .write("return [")
-      .conditionalWrite(
-        middlewares.locale,
-        `createLocaleMiddleware({ countries, redirectRoute: "/" })`
-      )
-      .write("];");
-  });
+  virtualMiddlewareFile?.formatText({ indentSize: 2 });
 
-  middlewareFile?.formatText({ indentSize: 2 });
+  const middlewarePluginFileText = virtualMiddlewareFile?.getText();
 
   return {
     name: "vite-plugin-solidifront-middleware-setup",
@@ -109,7 +116,8 @@ export function createVirtualSolidifrontMiddlewareConfig(
         middlewareDeclarationFilePath = path.resolve(
           middlewareTypesPath,
           "middleware.d.ts"
-        );
+        ),
+        modules: StatementStructures[] = [];
 
       if (!fs.existsSync(middlewareDeclarationFilePath))
         fs.mkdirSync(middlewareTypesPath, { recursive: true });
@@ -135,25 +143,25 @@ export function createVirtualSolidifrontMiddlewareConfig(
           ],
         });
 
-        middlewareDeclarationFile.addModule({
-          name: '"@solidjs/start/server"',
-          declarationKind: ModuleDeclarationKind.Module,
-          hasDeclareKeyword: true,
-          statements: [
+        modules.push({
+          kind: StructureKind.Interface,
+          name: "RequestEventLocals",
+          isExported: true,
+          properties: [
             {
-              kind: StructureKind.Interface,
-              name: "RequestEventLocals",
-              isExported: true,
-              properties: [
-                {
-                  name: "locale",
-                  type: "I18nLocale",
-                },
-              ],
+              name: "locale",
+              type: "I18nLocale",
             },
           ],
         });
       }
+
+      middlewareDeclarationFile?.addModule({
+        name: '"@solidjs/start/server"',
+        declarationKind: ModuleDeclarationKind.Module,
+        hasDeclareKeyword: true,
+        statements: modules,
+      });
 
       middlewareDeclarationFile?.formatText({ indentSize: 2 });
       fs.writeFileSync(
@@ -167,7 +175,7 @@ export function createVirtualSolidifrontMiddlewareConfig(
     },
     load(id) {
       if (id === resolvedVirtualModuleId) {
-        return middlewareFile?.getText();
+        return middlewarePluginFileText;
       }
     },
   };
