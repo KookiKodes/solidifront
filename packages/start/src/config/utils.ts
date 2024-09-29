@@ -3,37 +3,57 @@ import fs from "fs";
 import path from "path";
 import { Project, ModuleDeclarationKind, StructureKind } from "ts-morph";
 
-export function handleMiddleware(middlewarePath: string) {
+export function handleMiddleware(project: Project, middlewarePath: string) {
   const absMiddlewarePath = path.resolve(middlewarePath);
   if (fs.existsSync(absMiddlewarePath)) return;
-  const middleware = `
-    import { createMiddleware } from "@solidifront/start/middleware";
+  project
+    .createSourceFile(
+      absMiddlewarePath,
+      {
+        statements: [
+          {
+            kind: StructureKind.ImportDeclaration,
+            moduleSpecifier: "@solidifront/start/middleware",
+            namedImports: [
+              {
+                name: "createMiddleware",
+              },
+            ],
+          },
+          {
+            kind: StructureKind.ExportAssignment,
+            expression: (writer) => {
+              writer
+                .writeLine("createMiddleware({")
+                .indent(2)
+                .write("onRequest: []")
+                .newLine()
+                .write("})");
+            },
+            isExportEquals: false,
+          },
+        ],
+      },
+      { overwrite: true }
+    )
+    .formatText({ indentSize: 2 });
 
-    export default createMiddleware({
-        onRequest: []
-    });
-   `;
-  fs.writeFileSync(absMiddlewarePath, middleware);
+  fs.writeFileSync(
+    absMiddlewarePath,
+    project.getSourceFile(absMiddlewarePath)?.getText() || ""
+  );
 }
 
-export function createVirtualSolidifrontMiddlewareConfig(middlewares: {
-  locale: boolean;
-  storefront: boolean;
-  customer: boolean;
-}): NonNullable<ViteCustomizableConfig["plugins"]>[0] {
+export function createVirtualSolidifrontMiddlewareConfig(
+  project: Project,
+  middlewares: {
+    locale: boolean;
+    storefront: boolean;
+    customer: boolean;
+  }
+): NonNullable<ViteCustomizableConfig["plugins"]>[0] {
   const virtualModuleId = "@solidifront/start/middleware:internal";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
-
-  const project = new Project({
-    tsConfigFilePath: path.resolve("tsconfig.json"),
-    skipAddingFilesFromTsConfig: true,
-    skipFileDependencyResolution: true,
-    skipLoadingLibFiles: true,
-    compilerOptions: {
-      types: ["./.solidifront/types/middleware.d.ts"],
-    },
-  });
-
   const middlewarePath = path.resolve(".solidifront/middleware/virtual.ts");
 
   project.createSourceFile(middlewarePath, {}, { overwrite: true });
