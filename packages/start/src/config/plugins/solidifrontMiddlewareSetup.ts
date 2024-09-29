@@ -60,7 +60,7 @@ export function solidifrontMiddlewareSetup(
         .write("return [")
         .conditionalWrite(
           middlewares.locale,
-          `createLocaleMiddleware({ countries, redirectRoute: ${JSON.stringify((config && config.localization && config.localization.redirectRoute) || "/")} }),`
+          `createLocaleMiddleware({ countries }),`
         )
         .write("];");
     });

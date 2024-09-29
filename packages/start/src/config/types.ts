@@ -6,8 +6,6 @@ export type SolidifrontConfig = SolidStartInlineConfig & {
     localization?: Omit<
       generateShopifyLocalesPlugin.Options,
       "debug" | "namespace"
-    > & {
-      redirectRoute?: string;
-    };
+    > & {};
   };
 };

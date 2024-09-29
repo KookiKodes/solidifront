@@ -5,7 +5,7 @@ import type {
   IsoCode,
 } from "@solidifront/vite-generate-shopify-locales/locales";
 
-import { getCookie, getHeader, setCookie } from "vinxi/http";
+import { getCookie, getHeader, getRouterParams, setCookie } from "vinxi/http";
 import { resolveAcceptLanguage } from "resolve-accept-language";
 
 export type I18nLocale = Locale & {
@@ -16,12 +16,10 @@ export type I18nLocale = Locale & {
 
 export type CreateLocaleMiddlewareOptions = {
   countries: Localizations;
-  redirectRoute: string;
 };
 
 export function createLocaleMiddleware({
   countries,
-  redirectRoute,
 }: CreateLocaleMiddlewareOptions) {
   return async (event: FetchEvent) => {
     const locale = getLocaleFromRequest(countries);
