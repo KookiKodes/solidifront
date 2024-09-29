@@ -8,10 +8,8 @@ import {
 import { Project } from "ts-morph";
 
 import generateShopifyLocalesPlugin from "@solidifront/vite-generate-shopify-locales";
-import {
-  handleMiddleware,
-  createVirtualSolidifrontMiddlewareConfig,
-} from "./utils.js";
+import { handleMiddleware } from "./utils.js";
+import { solidifrontMiddlewareSetup } from "./plugins";
 
 export namespace defineConfig {
   export type Config = SolidStartInlineConfig & {
@@ -61,14 +59,12 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     vite = (options) => {
       const viteConfig = defaultVite(options);
       return defu(viteConfig, {
-        plugins: [
-          createVirtualSolidifrontMiddlewareConfig(project, middleware),
-        ],
+        plugins: [solidifrontMiddlewareSetup(project, middleware)],
       });
     };
   } else if (typeof vite === "object") {
     vite.plugins = (vite.plugins || []).concat([
-      createVirtualSolidifrontMiddlewareConfig(project, middleware),
+      solidifrontMiddlewareSetup(project, middleware),
     ]);
   }
 
