@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.7
+
+### Patch Changes
+
+- Fix package json
+
 ## 0.1.6
 
 ### Patch Changes

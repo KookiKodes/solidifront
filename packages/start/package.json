@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/start",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "",
   "main": "./main/index.js",
   "type": "module",
@@ -31,7 +31,8 @@
       "default": "./dist/middleware/index.js"
     },
     "./middleware:internal": {
-      "types": "./dist/virtual.d.ts"
+      "types": "./dist/virtual.d.ts",
+      "import": "./dist/virtual.js"
     },
     "./locales": {
       "import": "./dist/locales.js",
