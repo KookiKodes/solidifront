@@ -7,7 +7,7 @@ import {
 import {
   createLocaleMiddleware,
   type I18nLocale,
-} from "./createLocaleMiddleware";
+} from "./createLocaleMiddleware.js";
 
 import { createSolidifrontMiddleware } from "@solidifront/start/middleware:internal";
 
