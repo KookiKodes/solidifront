@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "private": false,
   "scripts": {
     "build": "tsup --clean",
     "dev": "tsup --watch",
