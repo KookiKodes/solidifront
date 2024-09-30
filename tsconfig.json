@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "packages/start/src/index.tsx"],
   "exclude": ["dist", "node_modules", ".turbo", ".cache"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ESNext"],

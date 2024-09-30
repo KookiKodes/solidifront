@@ -1,19 +1,13 @@
+import { useLocale } from "@solidifront/start";
 import { Title } from "@solidjs/meta";
-import { cache, createAsync } from "@solidjs/router";
 import { createEffect } from "solid-js";
-import { getRequestEvent } from "solid-js/web";
 import Counter from "~/components/Counter";
 
-const getData = cache(async () => {
-  "use server";
-  return getRequestEvent()?.locals.locale;
-}, "test");
-
 export default function Home() {
-  const data = createAsync(() => getData());
+  const locale = useLocale();
 
   createEffect(() => {
-    console.log(data());
+    console.log(locale());
   });
 
   return (

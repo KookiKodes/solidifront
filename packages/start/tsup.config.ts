@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import { defineConfig } from "tsup";
+import { solidPlugin } from "esbuild-plugin-solid";
 
 // import { generateDtsBundle } from "dts-bundle-generator";
 
@@ -9,23 +10,26 @@ const cjsEntryContent = `module.exports = process.env.NODE_ENV === 'development'
 const cjsEntryFile = path.resolve(process.cwd(), outDir, "index.cjs");
 
 const commonConfig = defineConfig({
-  entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
+  entry: ["src/index.tsx"],
+  format: ["esm"],
   treeshake: true,
   sourcemap: true,
 });
 
 export default defineConfig([
+  // {
+  //   ...commonConfig,
+  //   outDir: path.join(outDir, "main", "server"),
+  //   minify: true,
+  //   dts: true,
+  //   esbuildPlugins: [solidPlugin({ solid: { generate: "ssr" } })],
+  // },
   {
     ...commonConfig,
-    env: { NODE_ENV: "development" },
-    outDir: path.resolve(outDir, "development"),
-  },
-  {
-    ...commonConfig,
-    env: { NODE_ENV: "production" },
-    outDir: path.join(outDir, "production"),
+    outDir: path.join(outDir, "main"),
     minify: true,
+    dts: true,
+    esbuildPlugins: [solidPlugin()],
     onSuccess: async () => {
       await fs.writeFile(cjsEntryFile, cjsEntryContent, "utf-8");
       const solidifrontCodegen = path.resolve("..", "codegen");
