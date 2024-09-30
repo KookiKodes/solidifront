@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.0
+
+### Minor Changes
+
+- Introduce locale middleware and components for easily managing a user's preferred localiztion
+
 ## 0.0.2
 
 ### Patch Changes
