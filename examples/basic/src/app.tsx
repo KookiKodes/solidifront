@@ -5,8 +5,6 @@ import { Suspense } from "solid-js";
 import { A } from "@solidifront/start";
 import "./app.css";
 
-import { countries } from "@solidifront/start/locales";
-
 export default function App() {
   return (
     <Router

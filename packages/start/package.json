@@ -1,12 +1,17 @@
 {
   "name": "@solidifront/start",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
-  "main": "./main/index.js",
+  "main": "./dist/server.js",
+  "module": "./dist/server.js",
+  "types": "./dist/index.d.ts",
+  "browser": {
+    "./dist/server.js": "./dist/index.js"
+  },
   "type": "module",
   "private": false,
   "scripts": {
-    "build": "tsup --clean",
+    "build": "tsup --clean && tsx scripts/afterBuild.ts",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
@@ -15,8 +20,57 @@
   "license": "ISC",
   "exports": {
     ".": {
-      "types": "./dist/production/index.d.ts",
-      "default": "./dist/main/index.js"
+      "worker": {
+        "solid": "./dist/server.jsx",
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/server.js"
+        }
+      },
+      "browser": {
+        "solid": {
+          "development": "./dist/dev.jsx",
+          "import": "./dist/index.jsx"
+        },
+        "development": {
+          "import": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/dev.js"
+          }
+        },
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "deno": {
+        "solid": "./dist/server.jsx",
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/server.js"
+        }
+      },
+      "node": {
+        "solid": "./dist/server.jsx",
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/server.js"
+        }
+      },
+      "solid": {
+        "development": "./dist/dev.jsx",
+        "import": "./dist/index.jsx"
+      },
+      "development": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/dev.js"
+        }
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
     "./config": {
       "types": "./dist/config/index.d.ts",
@@ -53,13 +107,14 @@
     "directory": "packages/start"
   },
   "peerDependencies": {
-    "@solidjs/start": "^1.0.8",
     "@solidjs/router": "^0.14.7",
-    "vinxi": "^0.4.3",
-    "solid-js": "^1.9.1"
+    "@solidjs/start": "^1.0.8",
+    "solid-js": "^1.9.1",
+    "vinxi": "^0.4.3"
   },
   "devDependencies": {
-    "tsup": "^8.2.4"
+    "tsup": "^8.2.4",
+    "tsx": "^4.19.1"
   },
   "dependencies": {
     "@solidifront/codegen": "workspace:*",
@@ -73,6 +128,7 @@
     "resolve-accept-language": "^3.1.5",
     "solid-js": "^1.9.1",
     "ts-morph": "^23.0.0",
+    "tsup-preset-solid": "^2.2.0",
     "vinxi": "^0.4.3"
   }
 }

@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.8
+
+### Patch Changes
+
+- Attempt at fixing production issues
+
 ## 0.1.7
 
 ### Patch Changes
