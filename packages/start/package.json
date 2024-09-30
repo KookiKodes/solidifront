@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@solidifront/codegen": "workspace:*",
-    "@solidifront/vite-generate-shopify-locales": "workspace:*",
+    "@solidifront/vite-plugin-generate-shopify-locales": "workspace:*",
     "@solidjs/router": "^0.14.7",
     "@solidjs/start": "^1.0.8",
     "defu": "^6.1.4",

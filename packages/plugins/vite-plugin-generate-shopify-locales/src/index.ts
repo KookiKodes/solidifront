@@ -6,7 +6,7 @@ import {
 } from './utils/getShopLocalization.js';
 import { debugLog } from './utils/debugLog.js';
 
-import { Localizations, IsoCode, Locale } from './types';
+import { Localizations, IsoCode, Locale } from './types.js';
 
 function buildShopLocales(
   defaultLocale: IsoCode,
@@ -42,7 +42,8 @@ function buildShopLocales(
 }
 
 const DEFAULT_LOCALE: IsoCode = 'en-US',
-  DEFAULT_NAMESPACE = '@solidifront/vite-generate-shopify-locales/locales';
+  DEFAULT_NAMESPACE =
+    '@solidifront/vite-plugin-generate-shopify-locales/locales';
 
 export namespace generateShopifyShopLocales {
   export type Options = {
@@ -61,7 +62,7 @@ export namespace generateShopifyShopLocales {
 
     /**
      * The namespace to use for the virtual module.
-     * @defaultValue `@solidifront/vite-generate-shopify-locales/locales`
+     * @defaultValue `@solidifront/vite-plugin-generate-shopify-locales/locales`
      */
     namespace?: string;
   };
@@ -92,7 +93,7 @@ function generateShopifyShopLocales(
   let countries: Localizations;
 
   return {
-    name: 'vite-generate-shopify-locales',
+    name: 'vite-plugin-generate-shopify-locales',
     enforce: 'pre',
     async buildStart(options) {
       log('Validating correct environment variables...');

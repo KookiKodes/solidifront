@@ -9,7 +9,7 @@ import {
 
 import { Project } from "ts-morph";
 
-import generateShopifyLocalesPlugin from "@solidifront/vite-generate-shopify-locales";
+import generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import { handleMiddleware } from "./utils.js";
 import { solidifrontMiddlewareSetup } from "./plugins/index.js";
 

@@ -3,7 +3,7 @@ import type {
   Localizations,
   Locale,
   IsoCode,
-} from "@solidifront/vite-generate-shopify-locales/locales";
+} from "@solidifront/vite-plugin-generate-shopify-locales/locales";
 
 import { getCookie, getHeader, setCookie } from "vinxi/http";
 import { resolveAcceptLanguage } from "resolve-accept-language";

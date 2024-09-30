@@ -67,7 +67,7 @@ export default defineConfig([
       await fs.copyFile(
         path.resolve(
           "..",
-          "plugins/vite-generate-shopify-locales/dist/locales",
+          "plugins/vite-plugin-generate-shopify-locales/dist/locales",
           "index.d.ts"
         ),
         path.resolve(outDir, "locales.d.ts")

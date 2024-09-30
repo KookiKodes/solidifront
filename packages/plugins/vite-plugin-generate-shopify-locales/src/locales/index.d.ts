@@ -4,7 +4,7 @@ import type {
   LanguageCode,
 } from '@solidifront/codegen/storefront-api-types';
 
-declare module '@solidifront/vite-generate-shopify-locales/locales' {
+declare module '@solidifront/vite-plugin-generate-shopify-locales/locales' {
   export type IsoCode = `${Lowercase<LanguageCode>}-${CountryCode}`;
 
   export type Locale = {
