@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.10
+
+### Patch Changes
+
+- Better error messaging for LocalProvider if not setup properly
+
 ## 0.1.9
 
 ### Patch Changes

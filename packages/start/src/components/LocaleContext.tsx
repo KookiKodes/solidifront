@@ -11,6 +11,7 @@ import {
 } from "@solidjs/router";
 import {
   createContext,
+  createEffect,
   createMemo,
   ErrorBoundary,
   JSX,
@@ -19,7 +20,6 @@ import {
   useContext,
   type Accessor,
 } from "solid-js";
-import { HttpStatusCode } from "@solidjs/start";
 
 import { notFound } from "../lib/notFound.js";
 import { getRequestLocale } from "../lib/getRequestLocale.js";
@@ -50,7 +50,7 @@ const fetchLocale = cache(
 
     if (!locale) {
       console.warn(
-        "No locale provided in request headers. To use this component, make sure to setup the localization within your app config!"
+        "To use 'LocaleProvider', make sure to setup the localization within your app config!"
       );
       return null;
     }
@@ -102,26 +102,10 @@ export const LocaleProvider = (props: {
     fetchLocale(location.pathname, params.locale, props.notFoundRoute)
   );
   return (
-    <ErrorBoundary
-      fallback={(e) => (
-        <Show
-          when={
-            e instanceof Error &&
-            e.message === "Localization not enabled through app config!"
-          }
-        >
-          <h1>
-            <HttpStatusCode code={400} />
-            Localization not enabled through app config!
-          </h1>
-        </Show>
-      )}
-    >
-      {/* @ts-expect-error */}
-      <LocaleContext.Provider value={locale}>
-        <InternalLocaleProvider>{props.children}</InternalLocaleProvider>
-      </LocaleContext.Provider>
-    </ErrorBoundary>
+    // @ts-expect-error
+    <LocaleContext.Provider value={locale}>
+      <InternalLocaleProvider>{props.children}</InternalLocaleProvider>
+    </LocaleContext.Provider>
   );
 };
 
@@ -149,6 +133,9 @@ export const useLocale = () => {
  */
 export function InternalLocaleProvider(props: { children?: JSX.Element }) {
   const locale = useLocale();
+
+  if (locale() === null)
+    throw new Error("Localization not enabled through app config!");
 
   return <Show when={locale()}>{props.children}</Show>;
 }
