@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.3
+
+### Patch Changes
+
+- Force update package versions
+
 ## 1.0.1
 
 ### Patch Changes
