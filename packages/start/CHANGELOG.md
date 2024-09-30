@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.6
+
+### Patch Changes
+
+- Define types for internal virtual module
+
 ## 0.1.5
 
 ### Patch Changes

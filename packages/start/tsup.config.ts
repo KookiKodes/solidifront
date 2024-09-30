@@ -6,8 +6,6 @@ import { solidPlugin } from "esbuild-plugin-solid";
 // import { generateDtsBundle } from "dts-bundle-generator";
 
 const outDir = "dist";
-const cjsEntryContent = `module.exports = process.env.NODE_ENV === 'development' ? require('./development/index.cjs') : require('./production/index.cjs');`;
-const cjsEntryFile = path.resolve(process.cwd(), outDir, "index.cjs");
 
 const commonConfig = defineConfig({
   entry: ["src/index.tsx"],
@@ -31,7 +29,6 @@ export default defineConfig([
     dts: true,
     esbuildPlugins: [solidPlugin()],
     onSuccess: async () => {
-      await fs.writeFile(cjsEntryFile, cjsEntryContent, "utf-8");
       const solidifrontCodegen = path.resolve("..", "codegen");
       const sfSchemaFile = "storefront.schema.json";
       const sfTypeFile = "storefront-api-types.d.ts";
@@ -95,6 +92,12 @@ export default defineConfig([
     outDir: path.resolve(outDir, "middleware"),
     bundle: false,
     minify: false,
+    async onSuccess() {
+      const virtualTypesFile = "virtual.d.ts",
+        virtualTypes = path.resolve(virtualTypesFile);
+      await fs.copyFile(virtualTypes, path.resolve(outDir, virtualTypesFile));
+      console.log("\n", "Virtual File types copied from virtual.d.ts", "\n");
+    },
   },
   //   {
   //     entry: [
