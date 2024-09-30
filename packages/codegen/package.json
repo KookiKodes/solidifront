@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/codegen",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "type": "module",
   "main": "dist/cjs/index.cjs",
