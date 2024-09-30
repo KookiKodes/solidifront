@@ -1,5 +1,14 @@
 # @solidifront/start
 
+## 0.1.1
+
+### Patch Changes
+
+- Removed private packages
+- Updated dependencies
+  - @solidifront/codegen@1.0.1
+  - @solidifront/vite-plugin-generate-shopify-locales@1.0.1
+
 ## 0.1.0
 
 ### Minor Changes
