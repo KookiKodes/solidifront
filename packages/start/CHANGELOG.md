@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.1.9
+
+### Patch Changes
+
+- Add warning message if localization component is used but not enabled
+
 ## 0.1.8
 
 ### Patch Changes
