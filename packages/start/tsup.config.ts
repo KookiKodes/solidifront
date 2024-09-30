@@ -80,7 +80,6 @@ export default defineConfig([
     sourcemap: false,
     dts: {
       resolve: ["@solidifront/codegen", "@solidjs/start/config"],
-      entry: "src/config/index.ts",
     },
     outDir: path.resolve(outDir, "config"),
     bundle: false,
@@ -92,7 +91,6 @@ export default defineConfig([
     sourcemap: false,
     dts: {
       resolve: ["@solidifront/codegen", "@solidjs/start/middleware"],
-      entry: "src/middleware/index.ts",
     },
     outDir: path.resolve(outDir, "middleware"),
     bundle: false,
