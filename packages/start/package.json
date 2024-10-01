@@ -113,6 +113,7 @@
     "vinxi": "^0.4.3"
   },
   "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.39",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1"
   },
@@ -124,6 +125,8 @@
     "defu": "^6.1.4",
     "dts-bundle-generator": "^9.5.1",
     "esbuild-plugin-solid": "^0.6.0",
+    "isomorphic-fetch": "^3.0.0",
+    "ky": "^1.7.2",
     "nitropack": "^2.9.7",
     "resolve-accept-language": "^3.1.5",
     "solid-js": "^1.9.1",
