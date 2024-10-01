@@ -1,4 +1,4 @@
-import ky, { KyResponse } from "ky";
+import ky, { KyResponse, KyRequest } from "ky";
 import isomorphicFetch from "isomorphic-fetch";
 
 export interface LogContent {
@@ -39,22 +39,28 @@ function generateClientLogger(logger?: Logger): Logger {
 }
 
 export namespace createGraphqlClient {
-  type HeadersObject = Record<string, string | string[]>;
-  export type Options = {
-    headers: HeadersObject;
+  export type Config = {
+    headers: KyRequest["headers"];
     url: string;
     retries?: number;
     logger?: Logger;
   };
 }
 
-export const createGraphqlClient = (options: createGraphqlClient.Options) => {
-  const clientLogger = generateClientLogger(options.logger);
+export const createGraphqlClient = (config: createGraphqlClient.Config) => {
+  const clientLogger = generateClientLogger(config.logger);
   const client = ky.create({
-    prefixUrl: options.url,
-    retry: options.retries,
+    prefixUrl: config.url,
+    retry: config.retries,
     fetch: isomorphicFetch,
     hooks: {
+      beforeRequest: [
+        (request) => {
+          Object.entries(config.headers).forEach(([key, value]) => {
+            request.headers.set(key, value);
+          });
+        },
+      ],
       afterResponse: [
         (input, _options, response) => {
           clientLogger({
@@ -74,11 +80,23 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
               requestParams: [request.url, request],
               error,
               retryAttempt: retryCount,
-              maxRetries: options.retries || 1,
+              maxRetries: config.retries || 1,
             },
           });
         },
       ],
     },
   });
+
+  return {
+    async query<QueryString extends string, R extends any>(
+      query: QueryString,
+      options: {}
+    ) {
+      const response = await client.post<R>("", {
+        headers: config.headers,
+        json: { query },
+      });
+    },
+  };
 };
