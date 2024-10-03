@@ -1,34 +1,25 @@
-import ky, { KyResponse, KyRequest } from "ky";
+import ky, { KyResponse, KyRequest, KyInstance, ResponsePromise } from "ky";
 import isomorphicFetch from "isomorphic-fetch";
-
-export interface LogContent {
-  type: string;
-  content: any;
-}
-
-export interface HTTPResponseLog extends LogContent {
-  type: "HTTP-Response";
-  content: {
-    requestParams: Parameters<typeof isomorphicFetch>;
-    response: KyResponse;
-  };
-}
-
-export interface HTTPRetryLog extends LogContent {
-  type: "HTTP-Retry";
-  content: {
-    requestParams: Parameters<typeof isomorphicFetch>;
-    error?: Error;
-    retryAttempt: number;
-    maxRetries: number;
-  };
-}
-
-export type LogContentTypes = HTTPResponseLog | HTTPRetryLog;
-
-export type Logger<TLogContentTypes = LogContentTypes> = (
-  logContent: TLogContentTypes
-) => void;
+import {
+  CLIENT,
+  CONTENT_TYPES,
+  DEFAULT_CLIENT_VERSION,
+  DEFAULT_SDK_VARIANT,
+  DEFER_OPERATION_REGEX,
+  GQL_API_ERROR,
+  MAX_RETRIES,
+  NO_DATA_OR_ERRORS_ERROR,
+  SDK_VARIANT_HEADER,
+  SDK_VERSION_HEADER,
+  UNEXPECTED_CONTENT_TYPE_ERROR,
+} from "./constants";
+import { LogContentTypes, Logger, RequestOptions } from "./types";
+import {
+  formatErrorMessage,
+  getErrorMessage,
+  getKeyValueIfValid,
+  validateRetries,
+} from "./utils";
 
 function generateClientLogger(logger?: Logger): Logger {
   return (logContent: LogContentTypes) => {
@@ -39,24 +30,68 @@ function generateClientLogger(logger?: Logger): Logger {
 }
 
 export namespace createGraphqlClient {
-  export type Config = {
+  export type Options = {
     headers: KyRequest["headers"];
     url: string;
     retries?: number;
     logger?: Logger;
   };
+
+  export type Config = {
+    readonly headers: Options["headers"];
+    readonly retries: Options["retries"];
+  };
+
+  type FetchResponseBody<TData = any> = {
+    data?: TData;
+    extensions: Record<string, any>;
+    headers?: KyResponse["headers"];
+  };
+
+  type ResponseErrors = {
+    networkStatusCode?: number;
+    message?: string;
+    graphQLErrors?: any[];
+    response?: KyResponse;
+  };
+
+  export type Response<TData = any> = {
+    errors?: ResponseErrors;
+  } & FetchResponseBody<TData>;
 }
 
-export const createGraphqlClient = (config: createGraphqlClient.Config) => {
-  const clientLogger = generateClientLogger(config.logger);
+export const createGraphqlClient = (options: createGraphqlClient.Options) => {
+  const clientLogger = generateClientLogger(options.logger);
+
+  const config: createGraphqlClient.Config = {
+    headers: options.headers,
+    retries: options.retries || MAX_RETRIES,
+  };
+
   const client = ky.create({
-    prefixUrl: config.url,
-    retry: config.retries,
+    prefixUrl: options.url,
+    retry: options.retries,
     fetch: isomorphicFetch,
     hooks: {
+      beforeError: [
+        (error) => {
+          const { response, request, ...rest } = error;
+
+          clientLogger({
+            type: "HTTP-Error",
+            content: {
+              requestParams: [response.url, request],
+              error: rest,
+              response,
+            },
+          });
+
+          return error;
+        },
+      ],
       beforeRequest: [
         (request) => {
-          Object.entries(config.headers).forEach(([key, value]) => {
+          Object.entries(options.headers).forEach(([key, value]) => {
             request.headers.set(key, value);
           });
         },
@@ -80,7 +115,7 @@ export const createGraphqlClient = (config: createGraphqlClient.Config) => {
               requestParams: [request.url, request],
               error,
               retryAttempt: retryCount,
-              maxRetries: config.retries || 1,
+              maxRetries: config.retries!,
             },
           });
         },
@@ -88,15 +123,138 @@ export const createGraphqlClient = (config: createGraphqlClient.Config) => {
     },
   });
 
+  const fetcher = generateFetch(client, config);
+  const request = generateRequest(fetcher);
+
   return {
-    async query<QueryString extends string, R extends any>(
-      query: QueryString,
-      options: {}
-    ) {
-      const response = await client.post<R>("", {
-        headers: config.headers,
-        json: { query },
-      });
-    },
+    request,
   };
 };
+
+namespace generateFetch {
+  export type Parameters = [operation: string, options: RequestOptions];
+  export type ReturnFn = (...props: Parameters) => Promise<KyResponse<unknown>>;
+}
+
+function generateFetch(
+  client: KyInstance,
+  { headers, retries }: createGraphqlClient.Config
+): generateFetch.ReturnFn {
+  return async (
+    operation: generateFetch.Parameters[0],
+    options: generateFetch.Parameters[1] = {}
+  ): Promise<KyResponse<unknown>> => {
+    const {
+      variables,
+      headers: overrideHeaders,
+      retries: overrideRetries,
+      signal,
+    } = options;
+
+    validateRetries({ client: CLIENT, retries: overrideRetries });
+
+    const flatHeaders = Object.entries({
+      ...headers,
+      ...overrideHeaders,
+    }).reduce((headers: Record<string, string>, [key, value]) => {
+      headers[key] = Array.isArray(value) ? value.join(", ") : value.toString();
+      return headers;
+    }, {});
+
+    if (!flatHeaders[SDK_VARIANT_HEADER] && !flatHeaders[SDK_VERSION_HEADER]) {
+      flatHeaders[SDK_VARIANT_HEADER] = DEFAULT_SDK_VARIANT;
+      flatHeaders[SDK_VERSION_HEADER] = DEFAULT_CLIENT_VERSION;
+    }
+
+    return client.post("", {
+      headers: flatHeaders,
+      signal,
+      retry: retries || overrideRetries,
+      json: {
+        query: operation,
+        variables,
+      },
+    });
+  };
+}
+
+async function processJSONResponse<TData = any>(
+  response: KyResponse<any>
+): Promise<createGraphqlClient.Response<TData>> {
+  const { errors, data, extensions } = await response.json<any>();
+
+  return {
+    ...getKeyValueIfValid("data", data),
+    ...getKeyValueIfValid("extensions", extensions),
+    headers: response.headers,
+
+    ...(errors || !data
+      ? {
+          errors: {
+            networkStatusCode: response.status,
+            message: formatErrorMessage(
+              errors ? GQL_API_ERROR : NO_DATA_OR_ERRORS_ERROR
+            ),
+            ...getKeyValueIfValid("graphQLErrors", errors),
+            response,
+          },
+        }
+      : {}),
+  } as createGraphqlClient.Response<TData>;
+}
+
+namespace generateRequest {
+  export type Parameters = ReturnType<typeof generateFetch>;
+  export type ReturnFn = <TData = any>(
+    ...props: generateFetch.Parameters
+  ) => Promise<createGraphqlClient.Response<TData>>;
+}
+
+function generateRequest(
+  fetcher: generateFetch.ReturnFn
+): generateRequest.ReturnFn {
+  //@ts-ignore
+  return async (...props) => {
+    if (DEFER_OPERATION_REGEX.test(props[0])) {
+      throw new Error(
+        "This operation will result in a streamable response - use requestStream() instead."
+      );
+    }
+
+    try {
+      const response = await fetcher(...props);
+      const { status, statusText } = response;
+      const contentType = response.headers.get("content-type");
+
+      if (!response.ok) {
+        return {
+          errors: {
+            networkStatusCode: status,
+            message: formatErrorMessage(statusText),
+            response,
+          },
+        };
+      }
+
+      if (!contentType?.includes(CONTENT_TYPES.json)) {
+        return {
+          errors: {
+            networkStatusCode: status,
+            message: formatErrorMessage(
+              `${UNEXPECTED_CONTENT_TYPE_ERROR} ${contentType}`
+            ),
+            response,
+          },
+        };
+      }
+
+      return processJSONResponse(response);
+    } catch (error) {
+      return {
+        errors: {
+          message: getErrorMessage(error),
+        },
+      };
+    }
+  };
+}
