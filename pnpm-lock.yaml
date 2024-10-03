@@ -29,6 +29,9 @@ importers:
 
   examples/basic:
     dependencies:
+      '@solidifront/codegen':
+        specifier: workspace:*
+        version: link:../../packages/codegen
       '@solidifront/start':
         specifier: workspace:*
         version: link:../../packages/start
