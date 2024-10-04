@@ -35,6 +35,10 @@ export interface HTTPErrorLog extends LogContent {
   };
 }
 
+export type ClientHeaders =
+  | NonNullable<RequestInit["headers"]>
+  | Record<string, string | undefined>;
+
 export type LogContentTypes = HTTPResponseLog | HTTPRetryLog | HTTPErrorLog;
 
 export type Logger<TLogContentTypes = LogContentTypes> = (
@@ -43,7 +47,7 @@ export type Logger<TLogContentTypes = LogContentTypes> = (
 
 export type RequestOptions = {
   variables?: OperationVariables;
-  headers?: KyRequest["headers"];
+  headers?: ClientHeaders;
   retries?: number;
   signal?: AbortSignal;
 };

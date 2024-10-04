@@ -1,4 +1,11 @@
-import ky, { KyResponse, KyRequest, KyInstance, ResponsePromise } from "ky";
+import type {
+  LogContentTypes,
+  Logger,
+  RequestOptions,
+  ClientHeaders,
+} from "./types";
+
+import ky, { KyResponse, KyRequest, KyInstance } from "ky";
 import isomorphicFetch from "isomorphic-fetch";
 import {
   CLIENT,
@@ -12,14 +19,14 @@ import {
   SDK_VARIANT_HEADER,
   SDK_VERSION_HEADER,
   UNEXPECTED_CONTENT_TYPE_ERROR,
-} from "./constants";
-import { LogContentTypes, Logger, RequestOptions } from "./types";
+} from "./constants.js";
+
 import {
   formatErrorMessage,
   getErrorMessage,
   getKeyValueIfValid,
   validateRetries,
-} from "./utils";
+} from "./utils.js";
 
 function generateClientLogger(logger?: Logger): Logger {
   return (logContent: LogContentTypes) => {
@@ -31,7 +38,7 @@ function generateClientLogger(logger?: Logger): Logger {
 
 export namespace createGraphqlClient {
   export type Options = {
-    headers: KyRequest["headers"];
+    headers: ClientHeaders;
     url: string;
     retries?: number;
     logger?: Logger;

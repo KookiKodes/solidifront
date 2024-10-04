@@ -8,10 +8,11 @@ import {
   createLocaleMiddleware,
   type I18nLocale,
 } from "./createLocaleMiddleware.js";
+import { createStorefrontMiddleware } from "./createStorefrontMiddleware.js";
 
 import { createSolidifrontMiddleware } from "@solidifront/start/middleware:internal";
 
-export { type I18nLocale, createLocaleMiddleware };
+export { type I18nLocale, createLocaleMiddleware, createStorefrontMiddleware };
 
 export function createMiddleware({
   onRequest,
