@@ -1,8 +1,8 @@
-import type { ViteCustomizableConfig } from "@solidjs/start/config";
-import type { SolidifrontConfig } from "../types";
+import type { SolidifrontConfig, VitePlugin } from "../types";
 
 import fs from "fs";
 import path from "path";
+
 import {
   Project,
   ModuleDeclarationKind,
@@ -13,7 +13,7 @@ import {
 export function solidifrontMiddlewareSetup(
   project: Project,
   config: SolidifrontConfig["solidifront"]
-): NonNullable<ViteCustomizableConfig["plugins"]>[0] {
+): VitePlugin {
   const virtualModuleId = "@solidifront/start/middleware:internal";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
   const middlewarePath = path.resolve(".solidifront/middleware/virtual.ts");

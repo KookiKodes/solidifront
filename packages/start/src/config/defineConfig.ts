@@ -2,7 +2,9 @@ import type { SolidifrontConfig } from "./types";
 
 import defu from "defu";
 import path from "path";
+
 import generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
+import codegen from "vite-plugin-graphql-codegen";
 
 import {
   type SolidStartInlineConfig,
@@ -11,8 +13,11 @@ import {
 import { Project } from "ts-morph";
 
 import { handleMiddleware } from "./utils.js";
-import { solidifrontMiddlewareSetup } from "./plugins/index.js";
-import { attachPlugins } from "./viteHelpers";
+import {
+  solidifrontMiddlewareSetup,
+  solidifrontCodegenSetup,
+} from "./plugins/index.js";
+import { attachPlugins } from "./viteHelpers/index.js";
 
 export namespace defineConfig {
   export type Config = SolidifrontConfig;
@@ -36,7 +41,11 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     "localization"
   );
 
-  const needsMiddleware = needsLocalization;
+  const needsStorefront = Reflect.has(config.solidifront || {}, "storefront");
+  const needsCustomer = Reflect.has(config.solidifront || {}, "customer");
+
+  const needsMiddleware = needsLocalization || needsStorefront;
+  const needsCodegen = needsStorefront || needsCustomer;
 
   config = defu(config, {
     middleware: needsMiddleware ? "./src/middleware.ts" : undefined,
@@ -47,6 +56,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
   }
 
   vite = attachPlugins(vite, [
+    solidifrontCodegenSetup(project, config.solidifront),
     solidifrontMiddlewareSetup(project, config.solidifront),
   ]);
 
@@ -57,6 +67,16 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
           config.solidifront?.localization?.defaultLocale ?? undefined,
         debug: process.env.NODE_ENV === "development",
         namespace: "@solidifront/start/locales",
+      }),
+    ]);
+  }
+
+  if (needsCodegen) {
+    vite = attachPlugins(vite, [
+      codegen({
+        configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
+        throwOnBuild: true,
+        throwOnStart: false,
       }),
     ]);
   }
