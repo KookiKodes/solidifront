@@ -16,6 +16,7 @@ import { handleMiddleware } from "./utils.js";
 import {
   solidifrontMiddlewareSetup,
   solidifrontCodegenSetup,
+  solidifrontEnvSetup,
 } from "./plugins/index.js";
 import { attachPlugins } from "./viteHelpers/index.js";
 
@@ -56,6 +57,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
   }
 
   vite = attachPlugins(vite, [
+    solidifrontEnvSetup(project, config.solidifront),
     solidifrontCodegenSetup(project, config.solidifront),
     solidifrontMiddlewareSetup(project, config.solidifront),
   ]);
@@ -75,7 +77,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     vite = attachPlugins(vite, [
       codegen({
         configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
-        throwOnBuild: true,
+        runOnStart: false,
         throwOnStart: false,
       }),
     ]);

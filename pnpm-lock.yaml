@@ -164,6 +164,12 @@ importers:
       vite-plugin-graphql-codegen:
         specifier: ^3.3.8
         version: 3.3.8(@graphql-codegen/cli@5.0.2(@parcel/watcher@2.4.1)(@types/node@22.7.4)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.2))(graphql@16.9.0)(vite@5.4.8(@types/node@22.7.4)(terser@5.34.1))
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
+      zod-error:
+        specifier: ^1.5.0
+        version: 1.5.0
     devDependencies:
       '@types/isomorphic-fetch':
         specifier: ^0.0.39
@@ -4728,6 +4734,9 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
+
+  zod-error@1.5.0:
+    resolution: {integrity: sha512-zzopKZ/skI9iXpqCEPj+iLCKl9b88E43ehcU+sbRoHuwGd9F1IDVGQ70TyO6kmfiRL1g4IXkjsXK+g1gLYl4WQ==}
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -9827,5 +9836,9 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.5.2
+
+  zod-error@1.5.0:
+    dependencies:
+      zod: 3.23.8
 
   zod@3.23.8: {}
