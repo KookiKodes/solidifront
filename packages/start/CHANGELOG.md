@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.2.1
+
+### Patch Changes
+
+- Fixed minor typo
+
 ## 0.2.0
 
 ### Minor Changes
