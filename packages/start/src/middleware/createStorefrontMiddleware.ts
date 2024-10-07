@@ -55,7 +55,7 @@ export function createStorefrontMiddleware() {
   const client = createStorefrontApiClient({
     storeDomain: import.meta.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
     apiVersion: import.meta.env.SHOPIFY_STOREFRONT_API_VERSION,
-    privateAccessToken: import.meta.env.SHOPIFY_PRIVATE_STORFRONT_TOKEN,
+    privateAccessToken: import.meta.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN,
     customFetchApi: isomorphicFetch,
   });
 
