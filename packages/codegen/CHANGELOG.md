@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.4
+
+### Patch Changes
+
+- Minor type fixed to codegen and fully integrated storefront client from shopify
+
 ## 1.0.3
 
 ### Patch Changes

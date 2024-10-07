@@ -1,5 +1,17 @@
 # @solidifront/start
 
+## 0.2.0
+
+### Minor Changes
+
+- Minor type fixed to codegen and fully integrated storefront client from shopify
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/codegen@1.0.4
+  - @solidifront/vite-plugin-generate-shopify-locales@1.0.5
+
 ## 0.1.10
 
 ### Patch Changes
