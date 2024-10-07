@@ -30,11 +30,14 @@ const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
       ".myshopify.com",
       "env 'SHOPIFY_PUBLIC_STORE_DOMAIN' should end with'.myshopify.com'"
     ),
-  SHOPIFY_STOREFRONT_API_VERSION: z.enum(VALID_VERSIONS, {
-    message:
-      "env 'SHOPIFY_STOREFRONT_API_VERSION' should be one of: " +
-      VALID_VERSIONS.join(", "),
-  }),
+  SHOPIFY_STOREFRONT_API_VERSION: z
+    .enum(VALID_VERSIONS, {
+      message:
+        "env 'SHOPIFY_STOREFRONT_API_VERSION' should be one of: " +
+        VALID_VERSIONS.join(", "),
+    })
+    .optional()
+    .default("2024-10"),
   SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN: z.string({
     message: "env 'SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN' is required",
   }),
@@ -65,7 +68,7 @@ export function solidifrontEnvSetup(
   const needsLocalization = Reflect.has(config || {}, "localization"),
     needsStorefront = Reflect.has(config || {}, "storefront"),
     // needsCustomer = Reflect.has(config || {}, "customer"),
-    absGlobalsPath = path.resolve("global.d.ts");
+    absGlobalsPath = path.resolve("./src/global.d.ts");
 
   let envSchema: Schemas = BASE_SCHEMA;
 

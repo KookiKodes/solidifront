@@ -5,7 +5,7 @@ import type {
   ClientHeaders,
 } from "./types";
 
-import ky, { KyResponse, KyRequest, KyInstance } from "ky";
+import ky, { KyResponse, KyRequest, KyInstance, Hooks } from "ky";
 import isomorphicFetch from "isomorphic-fetch";
 import {
   CLIENT,
@@ -42,6 +42,7 @@ export namespace createGraphqlClient {
     url: string;
     retries?: number;
     logger?: Logger;
+    hooks?: Hooks;
   };
 
   export type Config = {
@@ -95,6 +96,7 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
 
           return error;
         },
+        ...(options.hooks?.beforeError || []),
       ],
       beforeRequest: [
         (request) => {
@@ -102,6 +104,7 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
             request.headers.set(key, value);
           });
         },
+        ...(options.hooks?.beforeRequest || []),
       ],
       afterResponse: [
         (input, _options, response) => {
@@ -113,6 +116,7 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
             },
           });
         },
+        ...(options.hooks?.afterResponse || []),
       ],
       beforeRetry: [
         ({ request, retryCount, error }) => {
@@ -126,6 +130,7 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
             },
           });
         },
+        ...(options.hooks?.beforeRetry || []),
       ],
     },
   });
@@ -140,17 +145,19 @@ export const createGraphqlClient = (options: createGraphqlClient.Options) => {
 
 namespace generateFetch {
   export type Parameters = [operation: string, options: RequestOptions];
-  export type ReturnFn = (...props: Parameters) => Promise<KyResponse<unknown>>;
+  export type ReturnFn = <TData extends any>(
+    ...props: Parameters
+  ) => Promise<KyResponse<TData>>;
 }
 
 function generateFetch(
   client: KyInstance,
   { headers, retries }: createGraphqlClient.Config
 ): generateFetch.ReturnFn {
-  return async (
+  return async <TData extends any>(
     operation: generateFetch.Parameters[0],
     options: generateFetch.Parameters[1] = {}
-  ): Promise<KyResponse<unknown>> => {
+  ): Promise<KyResponse<TData>> => {
     const {
       variables,
       headers: overrideHeaders,

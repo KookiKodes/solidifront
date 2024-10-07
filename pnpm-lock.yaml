@@ -119,6 +119,12 @@ importers:
 
   packages/start:
     dependencies:
+      '@shopify/graphql-client':
+        specifier: ^1.2.0
+        version: 1.2.0
+      '@shopify/storefront-api-client':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@solidifront/codegen':
         specifier: workspace:*
         version: link:../codegen
@@ -183,6 +189,9 @@ importers:
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
+      type-fest:
+        specifier: ^4.24.0
+        version: 4.26.1
 
 packages:
 
@@ -1555,6 +1564,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@shopify/graphql-client@1.2.0':
+    resolution: {integrity: sha512-xHboSDWetnprv6nxhw3N9gjx1vTFZPVXTD5WH6IEQNPjf4M+S05R4nHruX0iAsfKObFDbxwBXZldao/XrRHX9Q==}
+
   '@shopify/graphql-codegen@0.0.2':
     resolution: {integrity: sha512-DScSpsQ+ucv6Y4cujXa5ye9r4lZ6Jl7S+90iyfxEgeTW6HVh/0b9PDcSCJ4T1EONc7kmvCx1dd83tTvCmc7X7A==}
     engines: {node: '>=18'}
@@ -1569,6 +1581,9 @@ packages:
 
   '@shopify/hydrogen-codegen@0.3.1':
     resolution: {integrity: sha512-9tf6WA04Ldu/E/OZ2r7ZJuJXKxZnbOH/JJ30YabqmdCvEXbec9Do8Qb0zWVB/YR/Npy4LJYKeu2xDlUjetdrtA==}
+
+  '@shopify/storefront-api-client@1.0.2':
+    resolution: {integrity: sha512-s8vYcZ9+FfM0GwQUlyzz2vJ1m8ss3V+2fum+SPUq02iUpZnpVVlgVkCNTfftrwctq7lCrj/R50sG7pAEDX1C1A==}
 
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
@@ -6275,6 +6290,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.0':
     optional: true
 
+  '@shopify/graphql-client@1.2.0': {}
+
   '@shopify/graphql-codegen@0.0.2(graphql@16.9.0)':
     dependencies:
       '@graphql-codegen/add': 5.0.3(graphql@16.9.0)
@@ -6304,6 +6321,10 @@ snapshots:
       - encoding
       - graphql
       - supports-color
+
+  '@shopify/storefront-api-client@1.0.2':
+    dependencies:
+      '@shopify/graphql-client': 1.2.0
 
   '@sinclair/typebox@0.27.8': {}
 
