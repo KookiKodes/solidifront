@@ -44,13 +44,13 @@ const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
 });
 
 const STOREFRONT_SCHEMA = LOCALIZATION_SCHEMA.extend({
-  SHOPIFY_PRIVATE_STORFRONT_TOKEN: z
+  SHOPIFY_PRIVATE_STOREFRONT_TOKEN: z
     .string({
-      message: "env 'SHOPIFY_PRIVATE_STORFRONT_TOKEN' is required",
+      message: "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' is required",
     })
     .startsWith("shpat", {
       message:
-        "env 'SHOPIFY_PRIVATE_STORFRONT_TOKEN' should start with 'shpat'",
+        "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' should start with 'shpat'",
     }),
 });
 
