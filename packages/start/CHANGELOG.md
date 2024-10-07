@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.2.4
+
+### Patch Changes
+
+- Minor bug fix
+
 ## 0.2.3
 
 ### Patch Changes

@@ -8,7 +8,9 @@ export function solidifrontCodegenSetup(
   project: Project,
   config: SolidifrontConfig["solidifront"]
 ): VitePlugin {
-  const absCodegenPath = path.resolve("./.solidifront/codegen.ts");
+  const absCodegenDir = path.resolve("./.solidifront"),
+    absCodegenPath = path.resolve(absCodegenDir, "codegen.ts");
+  if (!fs.existsSync(absCodegenDir)) fs.mkdirSync(absCodegenDir);
 
   const file = project.createSourceFile(absCodegenPath, "", {
     overwrite: true,
