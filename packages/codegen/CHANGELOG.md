@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.5
+
+### Patch Changes
+
+- Attempt at fixing package json bug
+
 ## 1.0.4
 
 ### Patch Changes

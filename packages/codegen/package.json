@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/codegen",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "type": "module",
   "main": "dist/cjs/index.cjs",
@@ -15,8 +15,8 @@
       "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json",
-    "./storefront.schema.json": "./storefront.schema.json",
-    "./customer-account.schema.json": "./customer-account.schema.json",
+    "./storefront.schema.json": "./dist/storefront.schema.json",
+    "./customer-account.schema.json": "./dist/customer-account.schema.json",
     "./storefront-api-types": "./dist/storefront-api-types.d.ts",
     "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
   },
