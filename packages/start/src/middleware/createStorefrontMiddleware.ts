@@ -72,7 +72,7 @@ export function createStorefrontMiddleware() {
         }
         return await client.request(query, options);
       },
-      async mutation(mutation: string, options?: any) {
+      async mutate(mutation: string, options?: any) {
         const locale = event.locals.locale as I18nLocale;
         if (locale && options) {
           options.variables = withLocaleVariables(

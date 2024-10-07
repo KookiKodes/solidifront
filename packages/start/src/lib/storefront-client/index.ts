@@ -19,22 +19,24 @@ export interface StorefrontMutations {
 
 export namespace createStorefrontClient {
   export type Config = StorefrontClientConfig;
+  export type OperationReturn<
+    GeneratedOperations extends CodegenOperations,
+    RawGqlString extends string,
+  > = RawGqlString extends keyof GeneratedOperations
+    ? // Known query, use generated return type
+      GeneratedOperations[RawGqlString]["return"]
+    : // Unknown query, return 'any' to avoid red squiggly underlines in editor
+      any;
+  export type OperationVariables<
+    GeneratedOperations extends CodegenOperations,
+    RawGqlString extends string,
+  > = RawGqlString extends keyof GeneratedOperations
+    ? Omit<
+        GeneratedOperations[RawGqlString]["variables"],
+        "country" | "language"
+      >
+    : any;
 }
-
-type OperationReturn<
-  GeneratedOperations extends CodegenOperations,
-  RawGqlString extends string,
-> = RawGqlString extends keyof GeneratedOperations
-  ? // Known query, use generated return type
-    GeneratedOperations[RawGqlString]["return"]
-  : // Unknown query, return 'any' to avoid red squiggly underlines in editor
-    any;
-type OperationVariables<
-  GeneratedOperations extends CodegenOperations,
-  RawGqlString extends string,
-> = RawGqlString extends keyof GeneratedOperations
-  ? Omit<GeneratedOperations[RawGqlString]["variables"], "country" | "language">
-  : any;
 
 export function createStorefrontClient(options: createStorefrontClient.Config) {
   // if (!options.apiVersion) options.apiVersion = "10-2024";
@@ -52,28 +54,35 @@ export function createStorefrontClient(options: createStorefrontClient.Config) {
     async query<RawGqlString extends string>(
       query: RawGqlString,
       options?: {
-        variables: OperationVariables<StorefrontQueries, RawGqlString>;
+        variables: createStorefrontClient.OperationVariables<
+          StorefrontQueries,
+          RawGqlString
+        >;
       }
     ) {
-      return client.request<OperationReturn<StorefrontQueries, RawGqlString>>(
-        query,
-        {
-          variables: options?.variables,
-        }
-      );
+      return client.request<
+        createStorefrontClient.OperationReturn<StorefrontQueries, RawGqlString>
+      >(query, {
+        variables: options?.variables,
+      });
     },
-    async mutation<RawGqlString extends string>(
+    async mutate<RawGqlString extends string>(
       mutation: RawGqlString,
       options?: {
-        variables: OperationVariables<StorefrontMutations, RawGqlString>;
+        variables: createStorefrontClient.OperationVariables<
+          StorefrontMutations,
+          RawGqlString
+        >;
       }
     ) {
-      return client.request<OperationReturn<StorefrontMutations, RawGqlString>>(
-        mutation,
-        {
-          variables: options?.variables,
-        }
-      );
+      return client.request<
+        createStorefrontClient.OperationReturn<
+          StorefrontMutations,
+          RawGqlString
+        >
+      >(mutation, {
+        variables: options?.variables,
+      });
     },
   };
 }
