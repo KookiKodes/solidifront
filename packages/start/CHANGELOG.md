@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.2.3
+
+### Patch Changes
+
+- Allow the storefront client cahce query to be used inside loaders
+
 ## 0.2.2
 
 ### Patch Changes

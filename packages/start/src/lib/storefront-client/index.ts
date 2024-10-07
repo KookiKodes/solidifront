@@ -54,7 +54,7 @@ export function createStorefrontClient(options: createStorefrontClient.Config) {
     async query<RawGqlString extends string>(
       query: RawGqlString,
       options?: {
-        variables: createStorefrontClient.OperationVariables<
+        variables?: createStorefrontClient.OperationVariables<
           StorefrontQueries,
           RawGqlString
         >;

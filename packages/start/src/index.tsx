@@ -7,7 +7,4 @@ export type {
   StorefrontQueries,
   StorefrontMutations,
 } from "./lib/storefront-client";
-export {
-  createStorefrontQuery,
-  createStorefrontMutation,
-} from "./hooks/index.js";
+export { createStorefrontQuery, storefront } from "./hooks/index.js";

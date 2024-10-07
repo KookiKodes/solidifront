@@ -1,1 +1,1 @@
-export { createStorefrontQuery, createStorefrontMutation } from "./storefront";
+export { createStorefrontQuery, storefront } from "./storefront";
