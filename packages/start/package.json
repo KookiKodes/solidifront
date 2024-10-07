@@ -72,6 +72,12 @@
         "default": "./dist/index.js"
       }
     },
+    "./codegen": {
+      "types": "./dist/codegen/index.d.ts",
+      "module": "./dist/codegen/index.js",
+      "import": "./dist/codegen/index.js",
+      "default": "./dist/codegen/index.js"
+    },
     "./config": {
       "types": "./dist/config/index.d.ts",
       "module": "./dist/config/index.js",
@@ -113,22 +119,30 @@
     "vinxi": "^0.4.3"
   },
   "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.39",
+    "dts-bundle-generator": "^9.5.1",
     "tsup": "^8.2.4",
-    "tsx": "^4.19.1"
+    "tsx": "^4.19.1",
+    "type-fest": "^4.24.0"
   },
   "dependencies": {
+    "@shopify/storefront-api-client": "^1.0.2",
     "@solidifront/codegen": "workspace:*",
     "@solidifront/vite-plugin-generate-shopify-locales": "workspace:*",
     "@solidjs/router": "^0.14.7",
     "@solidjs/start": "^1.0.8",
     "defu": "^6.1.4",
-    "dts-bundle-generator": "^9.5.1",
     "esbuild-plugin-solid": "^0.6.0",
+    "isomorphic-fetch": "^3.0.0",
+    "ky": "^1.7.2",
     "nitropack": "^2.9.7",
     "resolve-accept-language": "^3.1.5",
     "solid-js": "^1.9.1",
     "ts-morph": "^23.0.0",
     "tsup-preset-solid": "^2.2.0",
-    "vinxi": "^0.4.3"
+    "vinxi": "^0.4.3",
+    "vite-plugin-graphql-codegen": "^3.3.8",
+    "zod": "^3.23.8",
+    "zod-error": "^1.5.0"
   }
 }

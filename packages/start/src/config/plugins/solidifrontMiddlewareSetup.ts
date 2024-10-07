@@ -1,25 +1,29 @@
-import type { ViteCustomizableConfig } from "@solidjs/start/config";
-import type { SolidifrontConfig } from "../types";
+import type { SolidifrontConfig, VitePlugin } from "../types";
 
 import fs from "fs";
 import path from "path";
+
 import {
   Project,
   ModuleDeclarationKind,
   StructureKind,
   StatementStructures,
+  PropertySignatureStructure,
+  OptionalKind,
 } from "ts-morph";
 
 export function solidifrontMiddlewareSetup(
   project: Project,
   config: SolidifrontConfig["solidifront"]
-): NonNullable<ViteCustomizableConfig["plugins"]>[0] {
+): VitePlugin {
   const virtualModuleId = "@solidifront/start/middleware:internal";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
   const middlewarePath = path.resolve(".solidifront/middleware/virtual.ts");
 
   const middlewares = {
     locale: config && Reflect.has(config, "localization"),
+    storefront: config && Reflect.has(config, "storefront"),
+    // customer: config && Reflect.has(config, "customer"),
   };
 
   project.createSourceFile(middlewarePath, {}, { overwrite: true });
@@ -47,6 +51,19 @@ export function solidifrontMiddlewareSetup(
     ]);
   }
 
+  if (middlewares.storefront && virtualMiddlewareFile) {
+    virtualMiddlewareFile.addImportDeclarations([
+      {
+        moduleSpecifier: "@solidifront/start/middleware",
+        namedImports: [
+          {
+            name: "createStorefrontMiddleware",
+          },
+        ],
+      },
+    ]);
+  }
+
   virtualMiddlewareFile?.addFunction({
     name: "createSolidifrontMiddleware",
     isExported: true,
@@ -58,9 +75,13 @@ export function solidifrontMiddlewareSetup(
     ?.setBodyText((writer) => {
       writer
         .write("return [")
-        .conditionalWrite(
+        .conditionalWriteLine(
           middlewares.locale,
           `createLocaleMiddleware({ countries }),`
+        )
+        .conditionalWriteLine(
+          middlewares.storefront,
+          `createStorefrontMiddleware(),`
         )
         .write("];");
     });
@@ -78,7 +99,8 @@ export function solidifrontMiddlewareSetup(
           middlewareTypesPath,
           "middleware.d.ts"
         ),
-        modules: StatementStructures[] = [];
+        modules: StatementStructures[] = [],
+        properties: OptionalKind<PropertySignatureStructure>[] = [];
 
       if (!fs.existsSync(middlewareDeclarationFilePath))
         fs.mkdirSync(middlewareTypesPath, { recursive: true });
@@ -104,16 +126,34 @@ export function solidifrontMiddlewareSetup(
           ],
         });
 
+        properties.push({
+          name: "locale",
+          type: "I18nLocale",
+        });
+      }
+
+      if (middlewares.storefront && middlewareDeclarationFile) {
+        middlewareDeclarationFile.addImportDeclaration({
+          moduleSpecifier: "@solidifront/start",
+          namedImports: [
+            {
+              name: "createStorefrontClient",
+            },
+          ],
+        });
+
+        properties.push({
+          name: "storefront",
+          type: "ReturnType<typeof createStorefrontClient>",
+        });
+      }
+
+      if (middlewares.storefront || middlewares.locale) {
         modules.push({
           kind: StructureKind.Interface,
           name: "RequestEventLocals",
           isExported: true,
-          properties: [
-            {
-              name: "locale",
-              type: "I18nLocale",
-            },
-          ],
+          properties,
         });
       }
 

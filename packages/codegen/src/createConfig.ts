@@ -11,9 +11,16 @@ export namespace createSolidifrontConfig {
     documents?: Types.OperationDocumentGlobPath[];
   };
   export type Options = {
-    generates?: Record<
-      string,
-      Types.ConfiguredPlugin[] | Types.ConfiguredOutput
+    types?: {
+      storefront?: string;
+      customer?: string;
+    };
+    generates?: Omit<
+      Record<
+        string,
+        Types.ConfiguredPlugin[] | Types.ConfiguredOutput | Generates
+      >,
+      "storefront" | "customer"
     > & {
       customer?: Generates;
       storefront?: Generates;
@@ -22,6 +29,7 @@ export namespace createSolidifrontConfig {
 }
 
 const createGeneratesFromOptions = (
+  types?: createSolidifrontConfig.Options["types"],
   generates?: createSolidifrontConfig.Options["generates"]
 ) => {
   if (!generates) return {};
@@ -46,7 +54,7 @@ const createGeneratesFromOptions = (
       presetConfig: {
         importTypes: {
           namespace: sfapiDefaultValues.namespacedImportName,
-          from: sfapiDefaultValues.importTypesFrom,
+          from: types?.storefront || sfapiDefaultValues.importTypesFrom,
         },
         interfaceExtension: sfapiDefaultValues.interfaceExtensionCode,
       },
@@ -65,7 +73,7 @@ const createGeneratesFromOptions = (
       presetConfig: {
         importTypes: {
           namespace: caapiDefaultValues.namespacedImportName,
-          from: caapiDefaultValues.importTypesFrom,
+          from: types?.customer || caapiDefaultValues.importTypesFrom,
         },
         interfaceExtension: caapiDefaultValues.interfaceExtensionCode,
       },
@@ -79,7 +87,10 @@ const createGeneratesFromOptions = (
 export const createSolidifrontConfig = (
   options?: createSolidifrontConfig.Options
 ) => {
-  const generates = createGeneratesFromOptions(options?.generates);
+  const generates = createGeneratesFromOptions(
+    options?.types,
+    options?.generates
+  );
 
   return {
     overwrite: true,

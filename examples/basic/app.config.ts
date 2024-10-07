@@ -5,6 +5,7 @@ export default defineConfig({
     localization: {
       defaultLocale: "en-US",
     },
+    storefront: {},
   },
   vite: {
     plugins: [{ name: "test", buildStart: () => console.log("buildStart") }],

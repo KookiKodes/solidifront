@@ -10,7 +10,8 @@
     "allowJs": true,
     "strict": true,
     "noEmit": true,
-    "types": ["vinxi/types/client", "./virtual.d.ts"],
-    "isolatedModules": true
+    "types": [],
+    "isolatedModules": true,
+    "declaration": true
   }
 }

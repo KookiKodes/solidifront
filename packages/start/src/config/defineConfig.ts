@@ -2,16 +2,23 @@ import type { SolidifrontConfig } from "./types";
 
 import defu from "defu";
 import path from "path";
+
+import generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
+import codegen from "vite-plugin-graphql-codegen";
+
 import {
   type SolidStartInlineConfig,
   defineConfig as defineSolidConfig,
 } from "@solidjs/start/config";
-
 import { Project } from "ts-morph";
 
-import generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import { handleMiddleware } from "./utils.js";
-import { solidifrontMiddlewareSetup } from "./plugins/index.js";
+import {
+  solidifrontMiddlewareSetup,
+  solidifrontCodegenSetup,
+  solidifrontEnvSetup,
+} from "./plugins/index.js";
+import { attachPlugins } from "./viteHelpers/index.js";
 
 export namespace defineConfig {
   export type Config = SolidifrontConfig;
@@ -35,7 +42,11 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     "localization"
   );
 
-  const needsMiddleware = needsLocalization;
+  const needsStorefront = Reflect.has(config.solidifront || {}, "storefront");
+  const needsCustomer = Reflect.has(config.solidifront || {}, "customer");
+
+  const needsMiddleware = needsLocalization || needsStorefront;
+  const needsCodegen = needsStorefront || needsCustomer;
 
   config = defu(config, {
     middleware: needsMiddleware ? "./src/middleware.ts" : undefined,
@@ -45,48 +56,31 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     handleMiddleware(project, config.middleware!);
   }
 
-  if (typeof vite === "function") {
-    const defaultVite = vite;
+  vite = attachPlugins(vite, [
+    solidifrontEnvSetup(project, config.solidifront),
+    solidifrontCodegenSetup(project, config.solidifront),
+    solidifrontMiddlewareSetup(project, config.solidifront),
+  ]);
 
-    vite = (options) => {
-      const viteConfig = defaultVite(options);
-      return defu(viteConfig, {
-        plugins: [solidifrontMiddlewareSetup(project, config.solidifront)],
-      });
-    };
-  } else if (typeof vite === "object") {
-    vite.plugins = (vite.plugins || []).concat([
-      solidifrontMiddlewareSetup(project, config.solidifront),
+  if (needsLocalization) {
+    vite = attachPlugins(vite, [
+      generateShopifyLocalesPlugin({
+        defaultLocale:
+          config.solidifront?.localization?.defaultLocale ?? undefined,
+        debug: process.env.NODE_ENV === "development",
+        namespace: "@solidifront/start/locales",
+      }),
     ]);
   }
 
-  if (needsLocalization) {
-    if (typeof vite === "function") {
-      const defaultVite = vite;
-
-      vite = (options) => {
-        const viteConfig = defaultVite(options);
-        return defu(viteConfig, {
-          plugins: [
-            generateShopifyLocalesPlugin({
-              defaultLocale:
-                config.solidifront?.localization?.defaultLocale ?? undefined,
-              debug: process.env.NODE_ENV === "development",
-              namespace: "@solidifront/start/locales",
-            }),
-          ],
-        });
-      };
-    } else if (typeof vite === "object") {
-      vite.plugins = (vite.plugins || []).concat([
-        generateShopifyLocalesPlugin({
-          defaultLocale:
-            config.solidifront?.localization?.defaultLocale ?? undefined,
-          debug: process.env.NODE_ENV === "development",
-          namespace: "@solidifront/start/locales",
-        }),
-      ]);
-    }
+  if (needsCodegen) {
+    vite = attachPlugins(vite, [
+      codegen({
+        configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
+        runOnStart: false,
+        throwOnStart: false,
+      }),
+    ]);
   }
 
   return defineSolidConfig({

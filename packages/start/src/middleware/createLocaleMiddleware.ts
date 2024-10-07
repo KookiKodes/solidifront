@@ -18,9 +18,15 @@ export type CreateLocaleMiddlewareOptions = {
   countries: Localizations;
 };
 
+export namespace createLocaleMiddleware {
+  export type Config = {
+    countries: Localizations;
+  };
+}
+
 export function createLocaleMiddleware({
   countries,
-}: CreateLocaleMiddlewareOptions) {
+}: createLocaleMiddleware.Config) {
   return async (event: FetchEvent) => {
     const locale = getLocaleFromRequest(countries);
     event.locals.locale = locale;
