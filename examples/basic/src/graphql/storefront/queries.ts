@@ -3,6 +3,7 @@ export const shopQuery = `#graphql
       shop {
         id
         name
+        description
       }
     }
 ` as const;
