@@ -64,51 +64,9 @@ export function assertMutation(query: string, callerName: string) {
   }
 }
 
-export function withCountryCode<Variables extends Record<string, any>>(
-  operation: string,
-  variables: Variables,
-  locale: I18nLocale
-) {
-  if (!variables.country && /\$country/.test(operation)) {
-    return {
-      ...variables,
-      country: locale.country,
-    };
-  }
-
-  return variables;
-}
-
-export function withLanguageCode<Variables extends Record<string, any>>(
-  operation: string,
-  variables: Variables,
-  locale: I18nLocale
-) {
-  if (!variables.language && /\$language/.test(operation)) {
-    return {
-      ...variables,
-      language: locale.language,
-    };
-  }
-
-  return variables;
-}
-
 export function minifyQuery<T extends string>(string: T) {
   return string
     .replace(/\s*#.*$/gm, "") // Remove GQL comments
     .replace(/\s+/gm, " ") // Minify spaces
     .trim() as T;
-}
-
-export function withLocaleVariables<V extends Record<string, any>>(
-  operation: string,
-  variables: V,
-  locale: I18nLocale
-) {
-  return {
-    ...variables,
-    ...withCountryCode(operation, variables, locale),
-    ...withLanguageCode(operation, variables, locale),
-  };
 }

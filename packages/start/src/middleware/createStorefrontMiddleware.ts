@@ -1,7 +1,7 @@
 import type { FetchEvent } from "@solidjs/start/server";
 import type { I18nLocale } from "./createLocaleMiddleware";
-import { withLocaleVariables } from "../lib/storefront-client/utils";
-import { createStorefrontClient } from "../lib/storefront-client";
+import { createStorefrontApiClient } from "@shopify/storefront-api-client";
+import isomorphicFetch from "isomorphic-fetch";
 
 export namespace createStorefrontMiddleware {
   export type Config = {
@@ -9,25 +9,59 @@ export namespace createStorefrontMiddleware {
   };
 }
 
-export function createStorefrontMiddleware({
-  useLocaleMiddleware = false,
-}: createStorefrontMiddleware.Config) {
-  const client = createStorefrontClient({
+function withCountryCode<Variables extends Record<string, any>>(
+  operation: string,
+  variables: Variables,
+  locale: I18nLocale
+) {
+  if (!variables.country && /\$country/.test(operation)) {
+    return {
+      ...variables,
+      country: locale.country,
+    };
+  }
+
+  return variables;
+}
+
+function withLanguageCode<Variables extends Record<string, any>>(
+  operation: string,
+  variables: Variables,
+  locale: I18nLocale
+) {
+  if (!variables.language && /\$language/.test(operation)) {
+    return {
+      ...variables,
+      language: locale.language,
+    };
+  }
+
+  return variables;
+}
+
+function withLocaleVariables<V extends Record<string, any>>(
+  operation: string,
+  variables: V,
+  locale: I18nLocale
+) {
+  return {
+    ...variables,
+    ...withCountryCode(operation, variables, locale),
+    ...withLanguageCode(operation, variables, locale),
+  };
+}
+
+export function createStorefrontMiddleware() {
+  const client = createStorefrontApiClient({
     storeDomain: import.meta.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
     apiVersion: import.meta.env.SHOPIFY_STOREFRONT_API_VERSION,
     privateAccessToken: import.meta.env.SHOPIFY_PRIVATE_STORFRONT_TOKEN,
-    publicAccessToken: import.meta.env.SHOPIFY_PUBLIC_STORFRONT_TOKEN,
+    customFetchApi: isomorphicFetch,
   });
 
   return async (event: FetchEvent) => {
-    if (!useLocaleMiddleware) return (event.locals.storefront = client);
     event.locals.storefront = {
-      async query<RawGqlString extends string>(
-        query: RawGqlString,
-        options?: {
-          variables: any;
-        }
-      ) {
+      async query(query: string, options?: any) {
         const locale = event.locals.locale as I18nLocale;
         if (locale && options) {
           options.variables = withLocaleVariables(
@@ -36,14 +70,9 @@ export function createStorefrontMiddleware({
             locale
           );
         }
-        return await client.query<RawGqlString>(query, options);
+        return await client.request(query, options);
       },
-      async mutation<RawGqlString extends string>(
-        mutation: RawGqlString,
-        options?: {
-          variables: any;
-        }
-      ) {
+      async mutation(mutation: string, options?: any) {
         const locale = event.locals.locale as I18nLocale;
         if (locale && options) {
           options.variables = withLocaleVariables(
@@ -52,7 +81,7 @@ export function createStorefrontMiddleware({
             locale
           );
         }
-        return await client.mutation<RawGqlString>(mutation, options);
+        return await client.request(mutation, options);
       },
     };
   };

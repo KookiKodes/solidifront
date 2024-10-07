@@ -83,7 +83,7 @@ export function solidifrontEnvSetup(
   return {
     name: "vite-plugin-solidifront-codegen-setup",
     enforce: "pre",
-    buildStart() {
+    config() {
       const env = loadEnv("all", process.cwd(), "SHOPIFY_");
       const result = envSchema.safeParse(env);
       if (!result.success) {
@@ -138,6 +138,15 @@ export function solidifrontEnvSetup(
       globalFile?.formatText({ indentSize: 2 });
 
       fs.writeFileSync(absGlobalsPath, globalFile?.getFullText() || "");
+
+      return {
+        define: validKeys.reduce((d, key) => {
+          d[`import.meta.env.${key}`] = JSON.stringify(
+            Reflect.get(result.data, key)
+          );
+          return d;
+        }, {} as any),
+      };
     },
   };
 }
