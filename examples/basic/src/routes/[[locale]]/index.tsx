@@ -1,6 +1,12 @@
-import { createStorefrontQuery, useLocale } from "@solidifront/start";
+import {
+  getStorefrontClient,
+  createStorefrontQuery,
+  storefront,
+  useLocale,
+} from "@solidifront/start";
 import { Title } from "@solidjs/meta";
-import { createEffect } from "solid-js";
+import { createAsync } from "@solidjs/router";
+import { createEffect, createSignal, Show } from "solid-js";
 import Counter from "~/components/Counter";
 import { shopQuery } from "~/graphql/storefront/queries";
 
@@ -8,15 +14,13 @@ export default function Home() {
   const locale = useLocale();
   const query = createStorefrontQuery(shopQuery);
 
-  createEffect(() => {
-    console.log(locale());
-  });
-
   return (
     <main>
       <Title>Hello World</Title>
+
+      <h1>Hello</h1>
+
       <div>
-        <h1>{query()?.data?.shop?.name}</h1>
         <Counter />
         <p>
           Visit{" "}
@@ -27,9 +31,6 @@ export default function Home() {
         </p>
       </div>
       <pre>
-        <p>Shop Query:</p>
-        <code>{JSON.stringify(query(), null, 2)}</code>
-        <br />
         <p>Locale: </p>
         <code>{JSON.stringify(locale(), null, 2)}</code>
       </pre>

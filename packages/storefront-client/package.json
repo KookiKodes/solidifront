@@ -1,0 +1,44 @@
+{
+  "name": "@solidifront/storefront-client",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup --clean",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "Solidifront",
+  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KookiKodes/solidifront.git",
+    "directory": "packages/storefront-client"
+  },
+  "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.39",
+    "dts-bundle-generator": "^9.5.1",
+    "tsup": "^8.2.4",
+    "tsx": "^4.19.1"
+  },
+  "dependencies": {
+    "@shopify/graphql-client": "^1.2.0",
+    "@shopify/storefront-api-client": "^1.0.2",
+    "isomorphic-fetch": "^3.0.0"
+  }
+}

@@ -77,7 +77,6 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
     vite = attachPlugins(vite, [
       codegen({
         configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
-        runOnStart: false,
         throwOnStart: false,
       }),
     ]);

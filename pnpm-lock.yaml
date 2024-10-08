@@ -119,15 +119,12 @@ importers:
 
   packages/start:
     dependencies:
-      '@shopify/graphql-client':
-        specifier: ^1.2.0
-        version: 1.2.0
-      '@shopify/storefront-api-client':
-        specifier: ^1.0.2
-        version: 1.0.2
       '@solidifront/codegen':
         specifier: workspace:*
         version: link:../codegen
+      '@solidifront/storefront-client':
+        specifier: workspace:*
+        version: link:../storefront-client
       '@solidifront/vite-plugin-generate-shopify-locales':
         specifier: workspace:*
         version: link:../plugins/vite-plugin-generate-shopify-locales
@@ -146,12 +143,6 @@ importers:
       isomorphic-fetch:
         specifier: ^3.0.0
         version: 3.0.0
-      ky:
-        specifier: ^1.7.2
-        version: 1.7.2
-      nitropack:
-        specifier: ^2.9.7
-        version: 2.9.7
       resolve-accept-language:
         specifier: ^3.1.5
         version: 3.1.7
@@ -192,6 +183,31 @@ importers:
       type-fest:
         specifier: ^4.24.0
         version: 4.26.1
+
+  packages/storefront-client:
+    dependencies:
+      '@shopify/graphql-client':
+        specifier: ^1.2.0
+        version: 1.2.0
+      '@shopify/storefront-api-client':
+        specifier: ^1.0.2
+        version: 1.0.2
+      isomorphic-fetch:
+        specifier: ^3.0.0
+        version: 3.0.0
+    devDependencies:
+      '@types/isomorphic-fetch':
+        specifier: ^0.0.39
+        version: 0.0.39
+      dts-bundle-generator:
+        specifier: ^9.5.1
+        version: 9.5.1
+      tsup:
+        specifier: ^8.2.4
+        version: 8.3.0(jiti@2.1.1)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.1)
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
 
 packages:
 
@@ -3191,10 +3207,6 @@ packages:
 
   knitwork@1.1.0:
     resolution: {integrity: sha512-oHnmiBUVHz1V+URE77PNot2lv3QiYU2zQf1JjOVkMt3YDKGbu8NAFr+c4mcNOhdsGrB/VpVbRwPwhiXrPhxQbw==}
-
-  ky@1.7.2:
-    resolution: {integrity: sha512-OzIvbHKKDpi60TnF9t7UUVAF1B4mcqc02z5PIvrm08Wyb+yOcz63GRvEuVxNT18a9E1SrNouhB4W2NNLeD7Ykg==}
-    engines: {node: '>=18'}
 
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
@@ -8220,8 +8232,6 @@ snapshots:
   klona@2.0.6: {}
 
   knitwork@1.1.0: {}
-
-  ky@1.7.2: {}
 
   lazystream@1.0.1:
     dependencies:
