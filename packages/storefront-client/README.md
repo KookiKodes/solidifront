@@ -1,3 +1,3 @@
 # TODO:
 
-- [ ] Implement the functionality for handling a Request Stream
+- [ ] Better integrate requestStream

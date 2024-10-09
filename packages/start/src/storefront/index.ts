@@ -1,20 +1,12 @@
+import { type Accessor } from "solid-js";
 import {
-  createEffect,
-  createMemo,
-  createSignal,
-  type Accessor,
-} from "solid-js";
-import {
-  createStorefrontClient,
-  StorefrontQueries,
-  StorefrontMutations,
-  ClientStreamIterator,
-  ClientResponse,
+  type createStorefrontClient,
+  type StorefrontQueries,
+  type StorefrontMutations,
 } from "@solidifront/storefront-client";
 import { getStorefrontClient } from "./utils";
 
-import { createAsync, cache, action, createAsyncStore } from "@solidjs/router";
-import { createStore } from "solid-js/store";
+import { createAsync, cache, action } from "@solidjs/router";
 
 type Transformer = <T>(formData: FormData) => T;
 type MutationOptions = {
@@ -29,20 +21,25 @@ const defaultTransformer: Transformer = <T>(formData: FormData) => {
 export const storefront = {
   async query<const Query extends string>(
     query: Query,
-    variables?: createStorefrontClient.OperationReturn<
-      StorefrontMutations,
-      Query
-    >
+    options?: {
+      variables?: createStorefrontClient.OperationVariables<
+        StorefrontQueries,
+        Query
+      >;
+      name?: string;
+    }
   ) {
     return cache(async (query: Query, variables) => {
       "use server";
       const client = getStorefrontClient();
       if (!client) throw new Error("Storefront client not initialized");
       return client.query<Query>(query, { variables });
-    }, "storefront-query")(
+    }, options?.name || "storefront-query")(
       query,
-      variables
-    ) as createStorefrontClient.QueryFnReturn<Query, StorefrontQueries>;
+      options?.variables
+    ) as Promise<
+      createStorefrontClient.QueryFnReturn<Query, StorefrontQueries>
+    >;
   },
   mutate<const Mutation extends string>(
     mutation: Mutation,
@@ -63,17 +60,17 @@ export const storefront = {
   },
 };
 
-function isAsyncIterator<T>(value: any): value is AsyncIterable<T> {
-  return typeof value?.[Symbol.asyncIterator] === "function";
-}
+// function isAsyncIterator<T>(value: any): value is AsyncIterable<T> {
+//   return typeof value?.[Symbol.asyncIterator] === "function";
+// }
 
-function isClientStreamIterator<const Query extends string>(
-  value: any
-): value is ClientStreamIterator<
-  createStorefrontClient.OperationReturn<StorefrontMutations, Query>
-> {
-  return isAsyncIterator(value);
-}
+// function isClientStreamIterator<const Query extends string>(
+//   value: any
+// ): value is ClientStreamIterator<
+//   createStorefrontClient.OperationReturn<StorefrontMutations, Query>
+// > {
+//   return isAsyncIterator(value);
+// }
 
 export function createStorefrontQuery<Query extends string>(
   query: Query,

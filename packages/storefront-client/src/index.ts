@@ -27,10 +27,8 @@ export namespace createStorefrontClient {
     GeneratedOperations extends CodegenOperations,
     RawGqlString extends string,
   > = RawGqlString extends keyof GeneratedOperations
-    ? // Known query, use generated return type
-      GeneratedOperations[RawGqlString]["return"]
-    : // Unknown query, return 'any' to avoid red squiggly underlines in editor
-      any;
+    ? GeneratedOperations[RawGqlString]["return"]
+    : any;
   export type OperationVariables<
     GeneratedOperations extends CodegenOperations,
     RawGqlString extends string,
@@ -44,11 +42,10 @@ export namespace createStorefrontClient {
   export type QueryFnReturn<
     Query extends string,
     GeneratedQueries extends CodegenOperations = StorefrontQueries,
-  > = Promise<
+  > =
     Includes<Query, "@defer"> extends true
       ? ClientStreamIterator<OperationReturn<GeneratedQueries, Query>>
-      : ClientResponse<OperationReturn<GeneratedQueries, Query>>
-  >;
+      : ClientResponse<OperationReturn<GeneratedQueries, Query>>;
 }
 
 export function createStorefrontClient<
@@ -75,23 +72,23 @@ export function createStorefrontClient<
           RawGqlString
         >;
       }
-    ): createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries> {
+    ): Promise<
+      createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
+    > {
       if (query.includes("@defer"))
         return client.requestStream<
           createStorefrontClient.OperationReturn<GeneratedQueries, RawGqlString>
         >(query, {
           variables: options?.variables,
-        }) as createStorefrontClient.QueryFnReturn<
-          RawGqlString,
-          GeneratedQueries
+        }) as Promise<
+          createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
         >;
       return client.request<
         createStorefrontClient.OperationReturn<GeneratedQueries, RawGqlString>
       >(query, {
         variables: options?.variables,
-      }) as createStorefrontClient.QueryFnReturn<
-        RawGqlString,
-        GeneratedQueries
+      }) as Promise<
+        createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
       >;
     },
     async mutate<const RawGqlString extends string>(
@@ -103,15 +100,6 @@ export function createStorefrontClient<
         >;
       }
     ) {
-      if (/\@defer/g.test(mutation))
-        return client.requestStream<
-          createStorefrontClient.OperationReturn<
-            GeneratedMutations,
-            RawGqlString
-          >
-        >(mutation, {
-          variables: options?.variables,
-        });
       return client.request<
         createStorefrontClient.OperationReturn<GeneratedMutations, RawGqlString>
       >(mutation, {
