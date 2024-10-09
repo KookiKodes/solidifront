@@ -90,30 +90,34 @@ function generateShopifyShopLocales(
 
   if (options) log('Plugin initialized with options:', options);
 
-  let countries: Localizations;
+  let countries: Localizations | null = null;
+
+  const getCode = (countries: Localizations | null) => `
+    export const countries = ${JSON.stringify(countries, null, 2)};
+  `;
 
   return {
     name: 'vite-plugin-generate-shopify-locales',
     enforce: 'pre',
-    async buildStart(options) {
-      log('Validating correct environment variables...');
-      const env = getStorefrontEnv.call(this);
-      log('Overriding declaration file for virtual module: ' + virtualModuleId);
-      // const dtsContext = await fs.readFile(path.resolve(".",), 'utf8');
-      log('Fetching shop locales...');
-      const localization = await getShopLocalization(env);
-      log('Building shop locales');
-      countries = buildShopLocales(defaultLocale, localization);
-    },
     resolveId(id) {
       if (id !== virtualModuleId) return;
       return resolvedVirtualModuleId;
     },
-    load(id) {
+    async load(id) {
       if (id === resolvedVirtualModuleId) {
-        return `
-          export const countries = ${JSON.stringify(countries, null, 2)};
-        `;
+        if (countries) return getCode(countries);
+        log('Validating correct environment variables...');
+        const env = getStorefrontEnv.call(this);
+        log(
+          'Overriding declaration file for virtual module: ' + virtualModuleId,
+        );
+        log('Fetching shop locales...');
+        const localization = await getShopLocalization({
+          ...env,
+        });
+        log('Building shop locales');
+        countries = buildShopLocales(defaultLocale, localization);
+        return getCode(countries);
       }
     },
   };

@@ -85,13 +85,16 @@ importers:
       '@solidifront/codegen':
         specifier: workspace:*
         version: link:../../codegen
-      node-fetch:
-        specifier: ^3.3.2
-        version: 3.3.2
+      isomorphic-fetch:
+        specifier: ^3.0.0
+        version: 3.0.0
       vite:
         specifier: ^5.3.1
         version: 5.4.8(@types/node@22.7.4)(terser@5.34.1)
     devDependencies:
+      '@types/isomorphic-fetch':
+        specifier: ^0.0.39
+        version: 0.0.39
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.11.0
         version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1)(typescript@5.6.2)
@@ -119,15 +122,12 @@ importers:
 
   packages/start:
     dependencies:
-      '@shopify/graphql-client':
-        specifier: ^1.2.0
-        version: 1.2.0
-      '@shopify/storefront-api-client':
-        specifier: ^1.0.2
-        version: 1.0.2
       '@solidifront/codegen':
         specifier: workspace:*
         version: link:../codegen
+      '@solidifront/storefront-client':
+        specifier: workspace:*
+        version: link:../storefront-client
       '@solidifront/vite-plugin-generate-shopify-locales':
         specifier: workspace:*
         version: link:../plugins/vite-plugin-generate-shopify-locales
@@ -146,12 +146,6 @@ importers:
       isomorphic-fetch:
         specifier: ^3.0.0
         version: 3.0.0
-      ky:
-        specifier: ^1.7.2
-        version: 1.7.2
-      nitropack:
-        specifier: ^2.9.7
-        version: 2.9.7
       resolve-accept-language:
         specifier: ^3.1.5
         version: 3.1.7
@@ -192,6 +186,31 @@ importers:
       type-fest:
         specifier: ^4.24.0
         version: 4.26.1
+
+  packages/storefront-client:
+    dependencies:
+      '@shopify/graphql-client':
+        specifier: ^1.2.0
+        version: 1.2.0
+      '@shopify/storefront-api-client':
+        specifier: ^1.0.2
+        version: 1.0.2
+      isomorphic-fetch:
+        specifier: ^3.0.0
+        version: 3.0.0
+    devDependencies:
+      '@types/isomorphic-fetch':
+        specifier: ^0.0.39
+        version: 0.0.39
+      dts-bundle-generator:
+        specifier: ^9.5.1
+        version: 9.5.1
+      tsup:
+        specifier: ^8.2.4
+        version: 8.3.0(jiti@2.1.1)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.1)
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
 
 packages:
 
@@ -2250,10 +2269,6 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  data-uri-to-buffer@4.0.1:
-    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
-    engines: {node: '>= 12'}
-
   data-urls@5.0.0:
     resolution: {integrity: sha512-ZYP5VBHshaDAiVZxjbRVcFJpc+4xGgT0bK3vzy1HLN8jTO975HEbuYzZJcHoQEY5K1a0z8YayJkyVETa08eNTg==}
     engines: {node: '>=18'}
@@ -2632,10 +2647,6 @@ packages:
       picomatch:
         optional: true
 
-  fetch-blob@3.2.0:
-    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
-    engines: {node: ^12.20 || >= 14.13}
-
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -2682,10 +2693,6 @@ packages:
   form-data@4.0.0:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
-
-  formdata-polyfill@4.0.10:
-    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
-    engines: {node: '>=12.20.0'}
 
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
@@ -3192,10 +3199,6 @@ packages:
   knitwork@1.1.0:
     resolution: {integrity: sha512-oHnmiBUVHz1V+URE77PNot2lv3QiYU2zQf1JjOVkMt3YDKGbu8NAFr+c4mcNOhdsGrB/VpVbRwPwhiXrPhxQbw==}
 
-  ky@1.7.2:
-    resolution: {integrity: sha512-OzIvbHKKDpi60TnF9t7UUVAF1B4mcqc02z5PIvrm08Wyb+yOcz63GRvEuVxNT18a9E1SrNouhB4W2NNLeD7Ykg==}
-    engines: {node: '>=18'}
-
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
@@ -3437,10 +3440,6 @@ packages:
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
-  node-domexception@1.0.0:
-    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
-    engines: {node: '>=10.5.0'}
-
   node-fetch-native@1.6.4:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
 
@@ -3452,10 +3451,6 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
-
-  node-fetch@3.3.2:
-    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
@@ -7183,8 +7178,6 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  data-uri-to-buffer@4.0.1: {}
-
   data-urls@5.0.0:
     dependencies:
       whatwg-mimetype: 4.0.0
@@ -7608,11 +7601,6 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.2
 
-  fetch-blob@3.2.0:
-    dependencies:
-      node-domexception: 1.0.0
-      web-streams-polyfill: 3.3.3
-
   figures@3.2.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -7657,10 +7645,6 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-
-  formdata-polyfill@4.0.10:
-    dependencies:
-      fetch-blob: 3.2.0
 
   fresh@0.5.2: {}
 
@@ -8221,8 +8205,6 @@ snapshots:
 
   knitwork@1.1.0: {}
 
-  ky@1.7.2: {}
-
   lazystream@1.0.1:
     dependencies:
       readable-stream: 2.3.8
@@ -8540,19 +8522,11 @@ snapshots:
 
   node-addon-api@7.1.1: {}
 
-  node-domexception@1.0.0: {}
-
   node-fetch-native@1.6.4: {}
 
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
-
-  node-fetch@3.3.2:
-    dependencies:
-      data-uri-to-buffer: 4.0.1
-      fetch-blob: 3.2.0
-      formdata-polyfill: 4.0.10
 
   node-forge@1.3.1: {}
 

@@ -1,7 +1,6 @@
 import type { FetchEvent } from "@solidjs/start/server";
 import type { I18nLocale } from "./createLocaleMiddleware";
-import { createStorefrontApiClient } from "@shopify/storefront-api-client";
-import isomorphicFetch from "isomorphic-fetch";
+import { createStorefrontClient } from "@solidifront/storefront-client";
 
 export namespace createStorefrontMiddleware {
   export type Config = {
@@ -52,11 +51,10 @@ function withLocaleVariables<V extends Record<string, any>>(
 }
 
 export function createStorefrontMiddleware() {
-  const client = createStorefrontApiClient({
+  const client = createStorefrontClient({
     storeDomain: import.meta.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
     apiVersion: import.meta.env.SHOPIFY_STOREFRONT_API_VERSION,
     privateAccessToken: import.meta.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN,
-    customFetchApi: isomorphicFetch,
   });
 
   return async (event: FetchEvent) => {
@@ -70,7 +68,7 @@ export function createStorefrontMiddleware() {
             locale
           );
         }
-        return await client.request(query, options);
+        return await client.query(query, options);
       },
       async mutate(mutation: string, options?: any) {
         const locale = event.locals.locale as I18nLocale;
@@ -81,7 +79,7 @@ export function createStorefrontMiddleware() {
             locale
           );
         }
-        return await client.request(mutation, options);
+        return await client.mutate(mutation, options);
       },
     };
   };
