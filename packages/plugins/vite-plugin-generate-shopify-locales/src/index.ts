@@ -104,10 +104,9 @@ function generateShopifyShopLocales(
         log(
           'Overriding declaration file for virtual module: ' + virtualModuleId,
         );
-        // const dtsContext = await fs.readFile(path.resolve(".",), 'utf8');
         log('Fetching shop locales...');
         if (controller) {
-          controller.abort('Duplicate request aborted.');
+          controller.abort('Duplicate localization request aborted.');
           controller = null;
         }
         controller = new AbortController();
@@ -120,7 +119,7 @@ function generateShopifyShopLocales(
         countries = buildShopLocales(defaultLocale, localization);
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          console.log(error.message);
+          log(error.message);
         }
       }
     },
