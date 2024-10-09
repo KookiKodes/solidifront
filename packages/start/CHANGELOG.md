@@ -1,5 +1,14 @@
 # @solidifront/start
 
+## 0.2.5
+
+### Patch Changes
+
+- Integrated new storefront client package
+- Updated dependencies
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.0
+  - @solidifront/storefront-client@0.1.0
+
 ## 0.2.4
 
 ### Patch Changes
