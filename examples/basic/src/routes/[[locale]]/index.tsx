@@ -1,10 +1,6 @@
-import {
-  createStorefrontQuery,
-  storefront,
-  useLocale,
-} from "@solidifront/start";
+import { storefront, useLocale } from "@solidifront/start";
 import { Title } from "@solidjs/meta";
-import { createEffect } from "solid-js";
+import { createAsync } from "@solidjs/router";
 import Counter from "~/components/Counter";
 import { shopQuery } from "~/graphql/storefront/queries";
 
@@ -16,12 +12,12 @@ export const route = {
 
 export default function Home() {
   const locale = useLocale();
-  const query = createEffect(() => storefront.query(shopQuery));
+  const query = createAsync(() => storefront.query(shopQuery));
 
   return (
     <main>
-      <Title>Hello World</Title>
-      <h1>Hello</h1>
+      <Title>Hello {query()?.data?.shop?.name}</Title>
+      <h1>Hello {query()?.data?.shop?.name}</h1>
       <div>
         <Counter />
         <p>

@@ -1,19 +1,18 @@
-import { ClientResponse, ClientStreamIterator } from "@shopify/graphql-client";
+import { ClientResponse } from "@shopify/graphql-client";
 import {
   createStorefrontApiClient,
   type StorefrontQueries,
   type StorefrontMutations,
 } from "@shopify/storefront-api-client";
-import isomorphicFetch from "isomorphic-fetch";
 
 export interface CodegenOperations {
   [key: string]: any;
 }
 
-type Includes<
-  T extends string,
-  U extends string,
-> = T extends `${infer _Prefix}${U}${infer _Suffix}` ? true : false;
+// type Includes<
+//   T extends string,
+//   U extends string,
+// > = T extends `${infer _Prefix}${U}${infer _Suffix}` ? true : false;
 
 export namespace createStorefrontClient {
   export type Config = {
@@ -39,13 +38,17 @@ export namespace createStorefrontClient {
       >
     : any;
 
+  // export type QueryFnReturn<
+  //   Query extends string,
+  //   GeneratedQueries extends CodegenOperations = StorefrontQueries,
+  // > =
+  //   Includes<Query, "@defer"> extends true
+  //     ? ClientStreamIterator<OperationReturn<GeneratedQueries, Query>>
+  //     : ClientResponse<OperationReturn<GeneratedQueries, Query>>;
   export type QueryFnReturn<
     Query extends string,
     GeneratedQueries extends CodegenOperations = StorefrontQueries,
-  > =
-    Includes<Query, "@defer"> extends true
-      ? ClientStreamIterator<OperationReturn<GeneratedQueries, Query>>
-      : ClientResponse<OperationReturn<GeneratedQueries, Query>>;
+  > = ClientResponse<OperationReturn<GeneratedQueries, Query>>;
 }
 
 export function createStorefrontClient<
@@ -57,7 +60,7 @@ export function createStorefrontClient<
     apiVersion: options.apiVersion || "10-2024",
     privateAccessToken: options.privateAccessToken,
     publicAccessToken: options.publicAccessToken,
-    customFetchApi: isomorphicFetch,
+    customFetchApi: fetch,
     clientName: "Solidifront Storefront Client",
     retries: 1,
     logger: options.logger,
@@ -73,23 +76,21 @@ export function createStorefrontClient<
         >;
       }
     ): Promise<
-      createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
+      Omit<
+        createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>,
+        "headers"
+      >
     > {
-      if (query.includes("@defer"))
-        return client.requestStream<
-          createStorefrontClient.OperationReturn<GeneratedQueries, RawGqlString>
-        >(query, {
-          variables: options?.variables,
-        }) as Promise<
-          createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
-        >;
-      return client.request<
+      const { headers, ...req } = (await client.request<
         createStorefrontClient.OperationReturn<GeneratedQueries, RawGqlString>
       >(query, {
         variables: options?.variables,
-      }) as Promise<
-        createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>
+      })) as createStorefrontClient.QueryFnReturn<
+        RawGqlString,
+        GeneratedQueries
       >;
+
+      return req;
     },
     async mutate<const RawGqlString extends string>(
       mutation: RawGqlString,
