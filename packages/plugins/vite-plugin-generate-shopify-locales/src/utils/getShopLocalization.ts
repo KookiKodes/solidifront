@@ -4,11 +4,13 @@ import type {
   LanguageCode,
   UnitSystem,
 } from '@solidifront/codegen/storefront-api-types';
+import fetch from 'isomorphic-fetch';
 
 type Options = {
   shopDomain: string;
   apiVersion: string;
   accessToken: string;
+  signal?: AbortSignal;
 };
 
 const GetShopLocalization = `#graphql
@@ -63,6 +65,7 @@ export async function getShopLocalization({
   shopDomain,
   apiVersion,
   accessToken,
+  signal,
 }: Options) {
   const res = await fetch(
     `https://${shopDomain}/api/${apiVersion}/graphql.json`,
@@ -73,6 +76,7 @@ export async function getShopLocalization({
         'X-Shopify-Storefront-Access-Token': accessToken,
         Accept: 'application/json',
       },
+      signal,
       body: JSON.stringify({ query: GetShopLocalization }),
     },
   );

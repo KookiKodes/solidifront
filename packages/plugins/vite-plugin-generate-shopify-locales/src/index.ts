@@ -92,18 +92,37 @@ function generateShopifyShopLocales(
 
   let countries: Localizations;
 
+  let controller: AbortController | null = null;
+
   return {
     name: 'vite-plugin-generate-shopify-locales',
     enforce: 'pre',
     async buildStart(options) {
-      log('Validating correct environment variables...');
-      const env = getStorefrontEnv.call(this);
-      log('Overriding declaration file for virtual module: ' + virtualModuleId);
-      // const dtsContext = await fs.readFile(path.resolve(".",), 'utf8');
-      log('Fetching shop locales...');
-      const localization = await getShopLocalization(env);
-      log('Building shop locales');
-      countries = buildShopLocales(defaultLocale, localization);
+      try {
+        log('Validating correct environment variables...');
+        const env = getStorefrontEnv.call(this);
+        log(
+          'Overriding declaration file for virtual module: ' + virtualModuleId,
+        );
+        // const dtsContext = await fs.readFile(path.resolve(".",), 'utf8');
+        log('Fetching shop locales...');
+        if (controller) {
+          controller.abort('Duplicate request aborted.');
+          controller = null;
+        }
+        controller = new AbortController();
+        const localization = await getShopLocalization({
+          ...env,
+          signal: controller?.signal,
+        });
+        controller = null;
+        log('Building shop locales');
+        countries = buildShopLocales(defaultLocale, localization);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log(error.message);
+        }
+      }
     },
     resolveId(id) {
       if (id !== virtualModuleId) return;

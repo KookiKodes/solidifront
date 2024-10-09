@@ -46,11 +46,12 @@
     "vite": "^5.3.1"
   },
   "dependencies": {
-    "vite": "^5.3.1",
     "@solidifront/codegen": "workspace:*",
-    "node-fetch": "^3.3.2"
+    "isomorphic-fetch": "^3.0.0",
+    "vite": "^5.3.1"
   },
   "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.39",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
     "eslint": "^8.57.0",
