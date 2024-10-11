@@ -1,9 +1,9 @@
 import type { Accessor } from "solid-js";
-import type { StorefrontQueries } from "../types";
+import type { StorefrontQueries } from "./types";
 import { createStorefrontClient } from "@solidifront/storefront-client";
 
-import { storefront } from "./client.js";
-import { getOperationName } from "../utils.js";
+import { storefront } from "./storefront";
+import { getOperationName } from "./utils";
 
 import { cache, createAsyncStore } from "@solidjs/router";
 

@@ -1,18 +1,14 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
-import { createQueryCache } from "@solidifront/start/storefront";
+import { storefront } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
 import { createAsync } from "@solidjs/router";
 
-export const route = {
-  async preload() {},
-};
-
-const cachedShopQuery = createQueryCache(shopQuery);
+// const shopQueryCache = createQueryCache(shopQuery);
 
 export default function Home() {
   const locale = useLocale();
-  const shopData = createAsync(() => cachedShopQuery(shopQuery));
+  const shopData = createAsync(() => storefront.query(shopQuery));
 
   return (
     <main>
@@ -22,7 +18,7 @@ export default function Home() {
           <button>Submit me!</button>
         </form> */}
         <Counter />
-        <h1>Hello {shopData()?.data?.shop.name}</h1>
+        {/* <h1>Hello {shopData()?.data?.shop.name}</h1> */}
         <p>
           Visit{" "}
           <a href="https://start.solidjs.com" target="_blank">

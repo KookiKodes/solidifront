@@ -1,11 +1,10 @@
-import type { StorefrontMutations } from "../types";
-
-import { createStorefrontClient } from "@solidifront/storefront-client";
-
-import { storefront } from "./client.js";
-import { getOperationName } from "../utils.js";
+import type { StorefrontMutations } from "./types";
 
 import { action, json } from "@solidjs/router";
+import { createStorefrontClient } from "@solidifront/storefront-client";
+
+import { storefront } from "./storefront";
+import { getOperationName } from "./utils";
 
 // Simple helper to force using server-side storefront client
 

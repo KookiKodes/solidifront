@@ -74,17 +74,12 @@
     },
     "./storefront": {
       "worker": {
-        "solid": "./dist/storefront/server.jsx",
         "import": {
           "types": "./dist/storefront/index.d.ts",
           "default": "./dist/storefront/server.js"
         }
       },
       "browser": {
-        "solid": {
-          "development": "./dist/storefront/dev.jsx",
-          "import": "./dist/storefront/index.jsx"
-        },
         "development": {
           "import": {
             "types": "./dist/storefront/index.d.ts",
@@ -97,22 +92,16 @@
         }
       },
       "deno": {
-        "solid": "./dist/storefront/server.jsx",
         "import": {
           "types": "./dist/storefront/index.d.ts",
           "default": "./dist/storefront/server.js"
         }
       },
       "node": {
-        "solid": "./dist/storefront/server.jsx",
         "import": {
           "types": "./dist/storefront/index.d.ts",
           "default": "./dist/storefront/server.js"
         }
-      },
-      "solid": {
-        "development": "./dist/storefront/dev.jsx",
-        "import": "./dist/storefront/index.jsx"
       },
       "development": {
         "import": {

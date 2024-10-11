@@ -3,8 +3,8 @@ import type {
   StorefrontMutations,
   ExtractOperationName,
 } from "./types";
-import { createStorefrontClient } from "@solidifront/storefront-client";
 
+import { createStorefrontClient } from "@solidifront/storefront-client";
 import { getRequestEvent } from "solid-js/web";
 
 export function getStorefrontClient() {
