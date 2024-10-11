@@ -30,16 +30,13 @@ const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
       ".myshopify.com",
       "env 'SHOPIFY_PUBLIC_STORE_DOMAIN' should end with'.myshopify.com'"
     ),
-  SHOPIFY_STOREFRONT_API_VERSION: z
-    .enum(VALID_VERSIONS, {
-      message:
-        "env 'SHOPIFY_STOREFRONT_API_VERSION' should be one of: " +
-        VALID_VERSIONS.join(", "),
-    })
-    .optional()
-    .default("2024-10"),
-  SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN: z.string({
-    message: "env 'SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN' is required",
+  SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS, {
+    message:
+      "env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: " +
+      VALID_VERSIONS.join(", "),
+  }),
+  SHOPIFY_PUBLIC_STOREFRONT_TOKEN: z.string({
+    message: "env 'SHOPIFY_PUBLIC_STOREFRONT_TOKEN' is required",
   }),
 });
 
@@ -83,7 +80,7 @@ export function solidifrontEnvSetup(
   return {
     name: "vite-plugin-solidifront-codegen-setup",
     enforce: "pre",
-    config() {
+    config(viteConfig) {
       const env = loadEnv("all", process.cwd(), "SHOPIFY_");
       const result = envSchema.safeParse(env);
       if (!result.success) {
@@ -108,12 +105,20 @@ export function solidifrontEnvSetup(
 
       const globalFile = project.getSourceFile(absGlobalsPath);
 
-      const properties: PropertySignatureStructure[] = [];
+      const processEnvProperties: PropertySignatureStructure[] = [],
+        metaEnvProperties: PropertySignatureStructure[] = [];
 
       const validKeys = Object.keys(result.data);
 
       validKeys.forEach((key) => {
-        properties.push({
+        if (key.startsWith("SHOPIFY_PUBLIC_")) {
+          metaEnvProperties.push({
+            kind: StructureKind.PropertySignature,
+            name: key,
+            type: "string",
+          });
+        }
+        processEnvProperties.push({
           kind: StructureKind.PropertySignature,
           name: key,
           type: "string",
@@ -125,13 +130,37 @@ export function solidifrontEnvSetup(
         ALL_PROPERTY_KEYS.forEach((key) => {
           importMeta.getProperty(key)?.remove();
         });
-        properties.forEach((property) => {
+        metaEnvProperties.forEach((property) => {
           importMeta.addProperty(property);
         });
       } else {
         globalFile?.addInterface({
           name: "ImportMetaEnv",
-          properties,
+          properties: metaEnvProperties,
+        });
+      }
+
+      if (globalFile?.getModule("NodeJS")?.getInterface("ProcessEnv")) {
+        const processEnv = globalFile
+          ?.getModule("NodeJS")
+          ?.getInterface("ProcessEnv")!;
+        ALL_PROPERTY_KEYS.forEach((key) => {
+          processEnv.getProperty(key)?.remove();
+        });
+        processEnvProperties.forEach((property) => {
+          processEnv.addProperty(property);
+        });
+      } else {
+        globalFile?.addModule({
+          name: "NodeJS",
+          hasDeclareKeyword: true,
+          statements: [
+            {
+              kind: StructureKind.Interface,
+              name: "ProcessEnv",
+              properties: processEnvProperties,
+            },
+          ],
         });
       }
 
@@ -140,12 +169,7 @@ export function solidifrontEnvSetup(
       fs.writeFileSync(absGlobalsPath, globalFile?.getFullText() || "");
 
       return {
-        define: validKeys.reduce((d, key) => {
-          d[`import.meta.env.${key}`] = JSON.stringify(
-            Reflect.get(result.data, key)
-          );
-          return d;
-        }, {} as any),
+        envPrefix: "SHOPIFY_PUBLIC_",
       };
     },
   };

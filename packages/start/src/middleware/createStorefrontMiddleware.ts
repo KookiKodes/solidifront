@@ -52,9 +52,9 @@ function withLocaleVariables<V extends Record<string, any>>(
 
 export function createStorefrontMiddleware() {
   const client = createStorefrontClient({
-    storeDomain: import.meta.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
-    apiVersion: import.meta.env.SHOPIFY_STOREFRONT_API_VERSION,
-    privateAccessToken: import.meta.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN,
+    storeDomain: process.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
+    apiVersion: process.env.SHOPIFY_PUBLIC_STOREFRONT_VERSION,
+    privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN,
   });
 
   return async (event: FetchEvent) => {

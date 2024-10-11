@@ -8,6 +8,11 @@ export default defineConfig({
     storefront: {},
   },
   vite: {
-    plugins: [{ name: "test", buildStart: () => console.log("buildStart") }],
+    plugins: [
+      {
+        name: "test",
+        config(config) {},
+      },
+    ],
   },
 });

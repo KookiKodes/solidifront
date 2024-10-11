@@ -100,7 +100,10 @@ export function solidifrontMiddlewareSetup(
           "middleware.d.ts"
         ),
         modules: StatementStructures[] = [],
-        properties: OptionalKind<PropertySignatureStructure>[] = [];
+        properties: OptionalKind<PropertySignatureStructure>[] = [],
+        tsConfigFileName = "tsconfig.json",
+        tsConfigPath = path.resolve(tsConfigFileName),
+        relativeTypesPath = "./.solidifront/types/middleware.d.ts";
 
       if (!fs.existsSync(middlewareDeclarationFilePath))
         fs.mkdirSync(middlewareTypesPath, { recursive: true });
@@ -139,12 +142,20 @@ export function solidifrontMiddlewareSetup(
             {
               name: "createStorefrontClient",
             },
+            {
+              isTypeOnly: true,
+              name: "StorefrontQueries",
+            },
+            {
+              isTypeOnly: true,
+              name: "StorefrontMutations",
+            },
           ],
         });
 
         properties.push({
           name: "storefront",
-          type: "ReturnType<typeof createStorefrontClient>",
+          type: "ReturnType<typeof createStorefrontClient<StorefrontQueries, StorefrontMutations>>",
         });
       }
 
@@ -165,6 +176,36 @@ export function solidifrontMiddlewareSetup(
       });
 
       middlewareDeclarationFile?.formatText({ indentSize: 2 });
+
+      if (fs.existsSync(tsConfigPath)) {
+        const tsConfigFileContent = JSON.parse(
+          fs.readFileSync(tsConfigFileName, "utf-8")
+        );
+        if (
+          !tsConfigFileContent?.compilerOptions?.types?.includes(
+            relativeTypesPath
+          )
+        ) {
+          fs.writeFileSync(
+            tsConfigPath,
+            JSON.stringify(
+              {
+                ...tsConfigFileContent,
+                compilerOptions: {
+                  ...tsConfigFileContent.compilerOptions,
+                  types: [
+                    ...(tsConfigFileContent?.compilerOptions?.types || []),
+                    relativeTypesPath,
+                  ],
+                },
+              },
+              null,
+              2
+            )
+          );
+        }
+      }
+
       fs.writeFileSync(
         middlewareDeclarationFilePath,
         middlewareDeclarationFile?.getText() || ""

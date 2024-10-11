@@ -38,7 +38,10 @@ export const storefront = {
       query,
       options?.variables
     ) as Promise<
-      createStorefrontClient.QueryFnReturn<Query, StorefrontQueries>
+      Omit<
+        createStorefrontClient.QueryFnReturn<Query, StorefrontQueries>,
+        "headers"
+      >
     >;
   },
   mutate<const Mutation extends string>(

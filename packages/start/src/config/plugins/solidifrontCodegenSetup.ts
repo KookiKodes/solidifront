@@ -71,6 +71,10 @@ export function solidifrontCodegenSetup(
   return {
     name: "vite-plugin-solidifront-codegen-setup",
     enforce: "pre",
+    config(config) {
+      fs.writeFileSync(absCodegenPath, file.getText() || "");
+      return config;
+    },
     buildStart() {
       fs.writeFileSync(absCodegenPath, file.getText() || "");
     },

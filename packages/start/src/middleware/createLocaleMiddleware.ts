@@ -7,6 +7,7 @@ import type {
 
 import { getCookie, getHeader, setCookie } from "vinxi/http";
 import { resolveAcceptLanguage } from "resolve-accept-language";
+import { redirect } from "@solidjs/router";
 
 export type I18nLocale = Locale & {
   pathPrefix:

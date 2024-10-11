@@ -10,7 +10,7 @@
     "allowJs": true,
     "strict": true,
     "noEmit": true,
-    "types": [],
+    "types": ["node"],
     "isolatedModules": true,
     "declaration": true
   }

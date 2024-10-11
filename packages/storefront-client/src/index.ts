@@ -57,7 +57,7 @@ export function createStorefrontClient<
 >(options: createStorefrontClient.Config) {
   const client = createStorefrontApiClient({
     storeDomain: `https://${options.storeDomain}`,
-    apiVersion: options.apiVersion || "10-2024",
+    apiVersion: options.apiVersion || "2024-10",
     privateAccessToken: options.privateAccessToken,
     publicAccessToken: options.publicAccessToken,
     customFetchApi: fetch,

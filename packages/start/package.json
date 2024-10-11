@@ -120,6 +120,7 @@
   },
   "devDependencies": {
     "@types/isomorphic-fetch": "^0.0.39",
+    "@types/node": "^22.7.4",
     "dts-bundle-generator": "^9.5.1",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1",
@@ -127,8 +128,8 @@
   },
   "dependencies": {
     "@solidifront/codegen": "workspace:*",
-    "@solidifront/vite-plugin-generate-shopify-locales": "workspace:*",
     "@solidifront/storefront-client": "workspace:*",
+    "@solidifront/vite-plugin-generate-shopify-locales": "workspace:*",
     "@solidjs/router": "^0.14.7",
     "@solidjs/start": "^1.0.8",
     "defu": "^6.1.4",
