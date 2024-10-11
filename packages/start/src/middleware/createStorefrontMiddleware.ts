@@ -1,8 +1,7 @@
 import type { FetchEvent } from "@solidjs/start/server";
 import type { I18nLocale } from "./createLocaleMiddleware";
-import { createStorefrontClient } from "@solidifront/storefront-client";
 
-export namespace createStorefrontMiddleware {}
+import { createStorefrontClient } from "@solidifront/storefront-client";
 
 function withCountryCode<Variables extends Record<string, any>>(
   operation: string,
@@ -46,11 +45,21 @@ function withLocaleVariables<V extends Record<string, any>>(
   };
 }
 
-export function createStorefrontMiddleware() {
+export namespace createStorefrontMiddleware {
+  export interface Config {
+    storeDomain: string;
+    apiVersion: string;
+    privateAccessToken: string;
+  }
+}
+
+export function createStorefrontMiddleware(
+  config: createStorefrontMiddleware.Config
+) {
   const client = createStorefrontClient({
-    storeDomain: process.env.SHOPIFY_PUBLIC_STORE_DOMAIN,
-    apiVersion: process.env.SHOPIFY_PUBLIC_STOREFRONT_VERSION,
-    privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN,
+    storeDomain: config.storeDomain,
+    apiVersion: config.apiVersion,
+    privateAccessToken: config.privateAccessToken,
   });
 
   return async (event: FetchEvent) => {

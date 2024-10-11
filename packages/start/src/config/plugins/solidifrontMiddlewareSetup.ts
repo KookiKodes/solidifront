@@ -11,11 +11,13 @@ import {
   PropertySignatureStructure,
   OptionalKind,
 } from "ts-morph";
+import { loadEnv } from "vite";
 
 export function solidifrontMiddlewareSetup(
   project: Project,
   config: SolidifrontConfig["solidifront"]
 ): VitePlugin {
+  const env = loadEnv("all", process.cwd(), "SHOPIFY_");
   const virtualModuleId = "@solidifront/start/middleware:internal";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
   const middlewarePath = path.resolve(".solidifront/middleware/virtual.ts");
@@ -81,7 +83,7 @@ export function solidifrontMiddlewareSetup(
         )
         .conditionalWriteLine(
           middlewares.storefront,
-          `createStorefrontMiddleware(),`
+          `createStorefrontMiddleware({ storeDomain: "${env.SHOPIFY_PUBLIC_STORE_DOMAIN}", apiVersion: "${env.SHOPIFY_PUBLIC_STOREFRONT_VERSION}", privateAccessToken: "${env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN}" }),`
         )
         .write("];");
     });
