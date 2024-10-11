@@ -1,9 +1,9 @@
-import { storefront, useLocale } from "@solidifront/start";
+import { storefront } from "@solidifront/start";
 import { Title } from "@solidjs/meta";
 import { createAsync } from "@solidjs/router";
-import { getRequestEvent } from "solid-js/web";
 import Counter from "~/components/Counter";
 import { shopQuery } from "~/graphql/storefront/queries";
+import { useLocale } from "@solidifront/start/localization";
 
 export const route = {
   async preload() {

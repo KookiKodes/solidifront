@@ -1,4 +1,4 @@
-import type { I18nLocale } from "../middleware/createLocaleMiddleware";
+import type { I18nLocale } from "../../middleware/createLocaleMiddleware";
 
 import {
   type AnchorProps,
@@ -11,9 +11,7 @@ import {
 } from "@solidjs/router";
 import {
   createContext,
-  createEffect,
   createMemo,
-  ErrorBoundary,
   JSX,
   Show,
   splitProps,
@@ -21,8 +19,8 @@ import {
   type Accessor,
 } from "solid-js";
 
-import { notFound } from "../lib/notFound.js";
-import { getRequestLocale } from "../lib/getRequestLocale.js";
+import { notFound } from "../utils/notFound.js";
+import { getRequestLocale } from "../utils/getRequestLocale.js";
 
 /**
  * Creates a context for managing the current locale.
@@ -131,7 +129,7 @@ export const useLocale = () => {
  * @param props.children - The component or components to be wrapped.
  * @returns A `Show` component with the `children` prop conditionally rendered based on whether the `locale` value is truthy.
  */
-export function InternalLocaleProvider(props: { children?: JSX.Element }) {
+function InternalLocaleProvider(props: { children?: JSX.Element }) {
   const locale = useLocale();
 
   if (locale() === null)

@@ -1,8 +1,8 @@
 import { MetaProvider, Title } from "@solidjs/meta";
+import { A } from "@solidifront/start/localization";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
-import { A } from "@solidifront/start";
 import "./app.css";
 
 export default function App() {

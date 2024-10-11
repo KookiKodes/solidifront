@@ -1,4 +1,4 @@
-import type { I18nLocale } from "../middleware";
+import type { I18nLocale } from "../../middleware";
 
 import { getRequestEvent } from "solid-js/web";
 export function getRequestLocale() {

@@ -21,55 +21,108 @@
   "exports": {
     ".": {
       "worker": {
-        "solid": "./dist/server.jsx",
+        "solid": "./dist/index/server.jsx",
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/server.js"
+          "types": "./dist/index/index.d.ts",
+          "default": "./dist/index/server.js"
         }
       },
       "browser": {
         "solid": {
-          "development": "./dist/dev.jsx",
-          "import": "./dist/index.jsx"
+          "development": "./dist/index/dev.jsx",
+          "import": "./dist/index/index.jsx"
         },
         "development": {
           "import": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/dev.js"
+            "types": "./dist/index/index.d.ts",
+            "default": "./dist/index/dev.js"
           }
         },
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/index.js"
+          "types": "./dist/index/index.d.ts",
+          "default": "./dist/index/index.js"
         }
       },
       "deno": {
-        "solid": "./dist/server.jsx",
+        "solid": "./dist/index/server.jsx",
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/server.js"
+          "types": "./dist/index/index.d.ts",
+          "default": "./dist/index/server.js"
         }
       },
       "node": {
-        "solid": "./dist/server.jsx",
+        "solid": "./dist/index/server.jsx",
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/server.js"
+          "types": "./dist/index/index.d.ts",
+          "default": "./dist/index/server.js"
         }
       },
       "solid": {
-        "development": "./dist/dev.jsx",
-        "import": "./dist/index.jsx"
+        "development": "./dist/index/dev.jsx",
+        "import": "./dist/index/index.jsx"
       },
       "development": {
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/dev.js"
+          "types": "./dist/index/index.d.ts",
+          "default": "./dist/index/dev.js"
         }
       },
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/index/index.d.ts",
+        "default": "./dist/index/index.js"
+      }
+    },
+    "./localization": {
+      "worker": {
+        "solid": "./dist/localization/server.jsx",
+        "import": {
+          "types": "./dist/localization/index.d.ts",
+          "default": "./dist/localization/server.js"
+        }
+      },
+      "browser": {
+        "solid": {
+          "development": "./dist/localization/dev.jsx",
+          "import": "./dist/localization/index.jsx"
+        },
+        "development": {
+          "import": {
+            "types": "./dist/localization/index.d.ts",
+            "default": "./dist/localization/dev.js"
+          }
+        },
+        "import": {
+          "types": "./dist/localization/index.d.ts",
+          "default": "./dist/localization/index.js"
+        }
+      },
+      "deno": {
+        "solid": "./dist/localization/server.jsx",
+        "import": {
+          "types": "./dist/localization/index.d.ts",
+          "default": "./dist/localization/server.js"
+        }
+      },
+      "node": {
+        "solid": "./dist/localization/server.jsx",
+        "import": {
+          "types": "./dist/localization/index.d.ts",
+          "default": "./dist/localization/server.js"
+        }
+      },
+      "solid": {
+        "development": "./dist/localization/dev.jsx",
+        "import": "./dist/localization/index.jsx"
+      },
+      "development": {
+        "import": {
+          "types": "./dist/localization/index.d.ts",
+          "default": "./dist/localization/dev.js"
+        }
+      },
+      "import": {
+        "types": "./dist/localization/index.d.ts",
+        "default": "./dist/localization/index.js"
       }
     },
     "./codegen": {
@@ -103,6 +156,13 @@
     "./customer-account.schema.json": "./dist/customer-account.schema.json",
     "./storefront-api-types": "./dist/storefront-api-types.d.ts",
     "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "localization": [
+        "./dist/localization/index.d.ts"
+      ]
+    }
   },
   "files": [
     "dist"

@@ -80,7 +80,7 @@ export function solidifrontEnvSetup(
   return {
     name: "vite-plugin-solidifront-codegen-setup",
     enforce: "pre",
-    config(viteConfig) {
+    config() {
       const env = loadEnv("all", process.cwd(), "SHOPIFY_");
       const result = envSchema.safeParse(env);
       if (!result.success) {

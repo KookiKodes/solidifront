@@ -2,11 +2,7 @@ import type { FetchEvent } from "@solidjs/start/server";
 import type { I18nLocale } from "./createLocaleMiddleware";
 import { createStorefrontClient } from "@solidifront/storefront-client";
 
-export namespace createStorefrontMiddleware {
-  export type Config = {
-    useLocaleMiddleware?: boolean;
-  };
-}
+export namespace createStorefrontMiddleware {}
 
 function withCountryCode<Variables extends Record<string, any>>(
   operation: string,
