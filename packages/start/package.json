@@ -19,59 +19,6 @@
   "author": "Solidifront",
   "license": "ISC",
   "exports": {
-    ".": {
-      "worker": {
-        "solid": "./dist/index/server.jsx",
-        "import": {
-          "types": "./dist/index/index.d.ts",
-          "default": "./dist/index/server.js"
-        }
-      },
-      "browser": {
-        "solid": {
-          "development": "./dist/index/dev.jsx",
-          "import": "./dist/index/index.jsx"
-        },
-        "development": {
-          "import": {
-            "types": "./dist/index/index.d.ts",
-            "default": "./dist/index/dev.js"
-          }
-        },
-        "import": {
-          "types": "./dist/index/index.d.ts",
-          "default": "./dist/index/index.js"
-        }
-      },
-      "deno": {
-        "solid": "./dist/index/server.jsx",
-        "import": {
-          "types": "./dist/index/index.d.ts",
-          "default": "./dist/index/server.js"
-        }
-      },
-      "node": {
-        "solid": "./dist/index/server.jsx",
-        "import": {
-          "types": "./dist/index/index.d.ts",
-          "default": "./dist/index/server.js"
-        }
-      },
-      "solid": {
-        "development": "./dist/index/dev.jsx",
-        "import": "./dist/index/index.jsx"
-      },
-      "development": {
-        "import": {
-          "types": "./dist/index/index.d.ts",
-          "default": "./dist/index/dev.js"
-        }
-      },
-      "import": {
-        "types": "./dist/index/index.d.ts",
-        "default": "./dist/index/index.js"
-      }
-    },
     "./localization": {
       "worker": {
         "solid": "./dist/localization/server.jsx",
@@ -125,6 +72,59 @@
         "default": "./dist/localization/index.js"
       }
     },
+    "./storefront": {
+      "worker": {
+        "solid": "./dist/storefront/server.jsx",
+        "import": {
+          "types": "./dist/storefront/index.d.ts",
+          "default": "./dist/storefront/server.js"
+        }
+      },
+      "browser": {
+        "solid": {
+          "development": "./dist/storefront/dev.jsx",
+          "import": "./dist/storefront/index.jsx"
+        },
+        "development": {
+          "import": {
+            "types": "./dist/storefront/index.d.ts",
+            "default": "./dist/storefront/dev.js"
+          }
+        },
+        "import": {
+          "types": "./dist/storefront/index.d.ts",
+          "default": "./dist/storefront/index.js"
+        }
+      },
+      "deno": {
+        "solid": "./dist/storefront/server.jsx",
+        "import": {
+          "types": "./dist/storefront/index.d.ts",
+          "default": "./dist/storefront/server.js"
+        }
+      },
+      "node": {
+        "solid": "./dist/storefront/server.jsx",
+        "import": {
+          "types": "./dist/storefront/index.d.ts",
+          "default": "./dist/storefront/server.js"
+        }
+      },
+      "solid": {
+        "development": "./dist/storefront/dev.jsx",
+        "import": "./dist/storefront/index.jsx"
+      },
+      "development": {
+        "import": {
+          "types": "./dist/storefront/index.d.ts",
+          "default": "./dist/storefront/dev.js"
+        }
+      },
+      "import": {
+        "types": "./dist/storefront/index.d.ts",
+        "default": "./dist/storefront/index.js"
+      }
+    },
     "./codegen": {
       "types": "./dist/codegen/index.d.ts",
       "module": "./dist/codegen/index.js",
@@ -161,6 +161,9 @@
     "*": {
       "localization": [
         "./dist/localization/index.d.ts"
+      ],
+      "storefront": [
+        "./dist/storefront/index.d.ts"
       ]
     }
   },

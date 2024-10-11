@@ -7,9 +7,10 @@ const outDir = "dist";
 const preset_options: preset.PresetOptions = {
   entries: [
     {
-      entry: "src/index.tsx",
+      entry: "src/storefront/index.tsx",
       dev_entry: true,
       server_entry: true,
+      name: "storefront",
     },
     {
       entry: "src/localization/index.tsx",

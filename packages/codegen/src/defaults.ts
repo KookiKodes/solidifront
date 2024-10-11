@@ -4,13 +4,13 @@ const QUERIES_PLACEHOLDER = "%queries%";
 const MUTATIONS_PLACEHOLDER = "%mutations%";
 
 const sfapiDefaultInterfaceExtensionCode = `
-declare module '@solidifront/start' {
+declare module '@solidifront/start/storefront' {
   interface StorefrontQueries extends ${QUERIES_PLACEHOLDER} {}
   interface StorefrontMutations extends ${MUTATIONS_PLACEHOLDER} {}
 }`;
 
 const caapiDefaultInterfaceExtensionCode = `
-declare module '@solidifront/start' {
+declare module '@solidifront/start/storefront' {
   interface CustomerAccountQueries extends ${QUERIES_PLACEHOLDER} {}
   interface CustomerAccountMutations extends ${MUTATIONS_PLACEHOLDER} {}
 }`;
