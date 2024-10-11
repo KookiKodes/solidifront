@@ -15,7 +15,7 @@ interface GeneratedQueryTypes {
 interface GeneratedMutationTypes {
 }
 
-declare module '@solidifront/start' {
+declare module '@solidifront/start/storefront' {
   interface StorefrontQueries extends GeneratedQueryTypes {}
   interface StorefrontMutations extends GeneratedMutationTypes {}
 }

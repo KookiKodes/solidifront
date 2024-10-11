@@ -1,29 +1,28 @@
-import { storefront } from "@solidifront/start";
-import { Title } from "@solidjs/meta";
-import { createAsync } from "@solidjs/router";
 import Counter from "~/components/Counter";
-import { shopQuery } from "~/graphql/storefront/queries";
 import { useLocale } from "@solidifront/start/localization";
+import { createQueryCache } from "@solidifront/start/storefront";
+import { shopQuery } from "~/graphql/storefront/queries";
+import { createAsync } from "@solidjs/router";
 
 export const route = {
-  async preload() {
-    return await storefront.query(shopQuery);
-  },
+  async preload() {},
 };
+
+const cachedShopQuery = createQueryCache(shopQuery);
 
 export default function Home() {
   const locale = useLocale();
-  const query = createAsync(() => {
-    "use server";
-    return storefront.query(shopQuery);
-  });
+  const shopData = createAsync(() => cachedShopQuery(shopQuery));
 
   return (
     <main>
-      <Title>Hello {query()?.data?.shop?.name}</Title>
-      <h1>Hello {query()?.data?.shop?.name}</h1>
       <div>
+        {/* <form action={mutationAction} method="post">
+          <input type="hidden" name="test" value="test" />
+          <button>Submit me!</button>
+        </form> */}
         <Counter />
+        <h1>Hello {shopData()?.data?.shop.name}</h1>
         <p>
           Visit{" "}
           <a href="https://start.solidjs.com" target="_blank">
