@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.3.0
+
+### Minor Changes
+
+- Huge folder structure rewrite and storefront utility function updates
+
 ## 0.2.6
 
 ### Patch Changes

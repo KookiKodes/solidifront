@@ -1,5 +1,6 @@
 # TODO:
 
+- [ ] Create solidifront/start plugin that errors if a user is trying to use a module that's not setup within their config.
 - [ ] Create utilities for handling queries/mutations with "@defer" directive.
 - [ ] Implement a logging plugin that will only ever be active in development. This would be used for any server side request.
 - [ ] Integrate/create a cart handler.

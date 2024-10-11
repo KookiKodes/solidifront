@@ -7,19 +7,14 @@ import { getOperationName } from "./utils";
 
 import { cache, createAsyncStore } from "@solidjs/router";
 
-// Simple helper to force using server-side storefront client
-
 export function createQueryCache<Query extends string>(query: Query) {
   return cache(
     async (
-      query: Query,
       variables?: createStorefrontClient.OperationVariables<
         StorefrontQueries,
         Query
       >
-    ) => {
-      return storefront.query<Query>(query, variables);
-    },
+    ) => storefront.query<Query>(query, variables),
     getOperationName(query)
   );
 }
@@ -42,6 +37,6 @@ export function createAsyncQuery<Query extends string>({
       typeof variables === "function" && typeof variables !== "undefined"
         ? variables()
         : variables;
-    return cachedQuery(query, v);
+    return cachedQuery(v);
   });
 }

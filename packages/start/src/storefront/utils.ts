@@ -24,5 +24,5 @@ export function getOperationName<const Operation extends string>(
   if (!match) {
     throw new Error(`Operation name not found in operation: ${operation}`);
   }
-  return match[1] as ExtractOperationName<Operation>;
+  return match[2] as ExtractOperationName<Operation>;
 }
