@@ -1,5 +1,11 @@
 # @solidifront/vite-plugin-generate-shopify-locales
 
+## 1.1.1
+
+### Patch Changes
+
+- Minor bug fixes, vulnerability fixes, and type generation fixes
+
 ## 1.1.0
 
 ### Minor Changes

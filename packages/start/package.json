@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/start",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "",
   "main": "./dist/server.js",
   "module": "./dist/server.js",
