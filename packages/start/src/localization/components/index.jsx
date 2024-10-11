@@ -1,1 +1,1 @@
-export { LocaleProvider, useLocale, A } from "./LocaleContext.jsx";
+export { LocaleProvider, useLocale, A } from "./LocaleContext";

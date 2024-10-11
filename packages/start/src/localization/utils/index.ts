@@ -1,2 +1,2 @@
-export { getRequestLocale } from "./getRequestLocale.js";
-export { notFound } from "./notFound.js";
+export { getRequestLocale } from "./getRequestLocale";
+export { notFound } from "./notFound";

@@ -1,5 +1,5 @@
 import { redirect } from "@solidjs/router";
-import { getRequestLocale } from "./getRequestLocale.js";
+import { getRequestLocale } from "./getRequestLocale";
 
 export function notFound(notFoundRoute = "/notFound", statusText?: string) {
   const locale = getRequestLocale();
