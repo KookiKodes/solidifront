@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.6
+
+### Patch Changes
+
+- Minor bug for build and production
+
 ## 1.0.5
 
 ### Patch Changes
