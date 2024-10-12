@@ -1,14 +1,22 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
-import { createQueryCache } from "@solidifront/start/storefront";
+import {
+  createAsyncQuery,
+  createQueryCache,
+} from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
-import { createAsync } from "@solidjs/router";
 
 const cachedShopQuery = createQueryCache(shopQuery);
 
+export const route = {
+  async preload() {
+    await cachedShopQuery();
+  },
+};
+
 export default function Home() {
   const locale = useLocale();
-  const shopData = createAsync(async () => cachedShopQuery());
+  const shopData = createAsyncQuery(shopQuery);
 
   return (
     <main>

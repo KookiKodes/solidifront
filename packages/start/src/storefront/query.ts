@@ -19,19 +19,15 @@ export function createQueryCache<Query extends string>(query: Query) {
   );
 }
 
-export function createAsyncQuery<Query extends string>({
-  query,
-  variables,
-}: {
-  query: Query;
+export function createAsyncQuery<Query extends string>(
+  query: Query,
   variables?:
     | Accessor<
         createStorefrontClient.OperationVariables<StorefrontQueries, Query>
       >
-    | createStorefrontClient.OperationVariables<StorefrontQueries, Query>;
-  name?: string;
-}) {
-  const cachedQuery = createQueryCache(query);
+    | createStorefrontClient.OperationVariables<StorefrontQueries, Query>
+) {
+  const cachedQuery = createQueryCache<Query>(query);
   return createAsyncStore(async () => {
     const v =
       typeof variables === "function" && typeof variables !== "undefined"

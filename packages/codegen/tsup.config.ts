@@ -26,19 +26,31 @@ export default defineConfig([
       // Uncomment createRequire for ESM:
       await fs.writeFile(schemaFile, content.replace(/\/\/!/g, ""));
 
-      const typesPath = path.resolve(".", "types");
-      const sfTypeFile = "storefront-api-types.d.ts";
+      const typesPath = path.resolve(".", "types"),
+        sfTypeFile = "storefront-api-types.d.ts",
+        sfSchemaFile = "storefront.schema.json";
 
       await fs.copyFile(
         path.resolve(typesPath, sfTypeFile),
         path.resolve(outDir, sfTypeFile)
       );
 
-      const caTypeFile = "customer-account-api-types.d.ts";
+      await fs.copyFile(
+        path.resolve(sfSchemaFile),
+        path.resolve(outDir, sfSchemaFile)
+      );
+
+      const caTypeFile = "customer-account-api-types.d.ts",
+        csSchemaFile = "customer-account.schema.json";
 
       await fs.copyFile(
         path.resolve(typesPath, caTypeFile),
         path.resolve(outDir, caTypeFile)
+      );
+
+      await fs.copyFile(
+        path.resolve(csSchemaFile),
+        path.resolve(outDir, csSchemaFile)
       );
 
       const [dts] = generateDtsBundle([

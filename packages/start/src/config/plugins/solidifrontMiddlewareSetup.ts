@@ -139,25 +139,17 @@ export function solidifrontMiddlewareSetup(
 
       if (middlewares.storefront && middlewareDeclarationFile) {
         middlewareDeclarationFile.addImportDeclaration({
-          moduleSpecifier: "@solidifront/start",
+          moduleSpecifier: "@solidifront/start/storefront",
           namedImports: [
             {
               name: "createStorefrontClient",
-            },
-            {
-              isTypeOnly: true,
-              name: "StorefrontQueries",
-            },
-            {
-              isTypeOnly: true,
-              name: "StorefrontMutations",
             },
           ],
         });
 
         properties.push({
           name: "storefront",
-          type: "ReturnType<typeof createStorefrontClient<StorefrontQueries, StorefrontMutations>>",
+          type: "ReturnType<typeof createStorefrontClient>",
         });
       }
 
