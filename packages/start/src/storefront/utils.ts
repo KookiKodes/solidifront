@@ -18,9 +18,7 @@ export function getStorefrontClient() {
 export function getOperationName<const Operation extends string>(
   operation: Operation
 ): ExtractOperationName<Operation> {
-  const match = operation.match(
-    /(query|mutation)\s+(\w+)\s*(?:\([\s\S]*?\))?\s*{/
-  );
+  const match = operation.match(/\b(query|mutation)\b\s+(\w+)/);
   if (!match) {
     throw new Error(`Operation name not found in operation: ${operation}`);
   }

@@ -6,3 +6,11 @@ export const shopQuery = `#graphql
       }
     }
 ` as const;
+
+export const cartQuery = `#graphql
+  query cart($id: ID!) {
+    cart(id: $id) {
+      id 
+    }
+  }
+` as const;
