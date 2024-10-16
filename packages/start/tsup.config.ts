@@ -1,6 +1,8 @@
 import path from "node:path";
+import fs from "node:fs/promises";
 import { defineConfig } from "tsup";
 import * as preset from "tsup-preset-solid";
+import { generateDtsBundle } from "dts-bundle-generator";
 
 const outDir = "dist";
 
@@ -38,6 +40,17 @@ export default defineConfig(async (config) => {
 
   return [
     ...preset.generateTsupOptions(parsed_data),
+    {
+      entry: ["src/storefront/**/*.ts"],
+      format: ["esm"],
+      sourcemap: false,
+      outDir: path.resolve(outDir, "storefront"),
+      dts: {
+        entry: "src/storefront/index.ts",
+      },
+      bundle: false,
+      minify: false,
+    },
     {
       entry: ["src/config/**/*.ts"],
       format: ["esm"],

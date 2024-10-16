@@ -7,11 +7,10 @@ import type {
 
 import { action, json } from "@solidjs/router";
 import { createStorefrontClient } from "@solidifront/storefront-client";
-
-import { storefront } from "./storefront";
-import { getOperationName } from "./utils";
-
 import { cache, createAsyncStore } from "@solidjs/router";
+
+import { storefront } from "./storefront.js";
+import { getOperationName } from "./utils.js";
 
 export function createQueryCache<Query extends string>(query: Query) {
   return cache(
@@ -20,10 +19,7 @@ export function createQueryCache<Query extends string>(query: Query) {
         StorefrontQueries,
         Query
       >
-    ) => {
-      "use server";
-      return storefront.query<Query>(query, variables);
-    },
+    ) => storefront.query<Query>(query, variables),
     getOperationName(query)
   );
 }
@@ -46,6 +42,26 @@ export function createAsyncQuery<Query extends string>(
   });
 }
 
+async function fetchMutation<const Mutation extends string>(
+  mutation: Mutation,
+  revalidationKeys: string[] = [],
+  formData: FormData
+) {
+  const req = await storefront.mutate<Mutation>(
+    mutation,
+    Object.fromEntries(
+      formData.entries()
+    ) as createStorefrontClient.OperationVariables<
+      StorefrontMutations,
+      Mutation
+    >
+  );
+  return json(req, {
+    revalidate: revalidationKeys.length > 0 ? revalidationKeys : "garbage",
+    status: req.errors ? 500 : 200,
+  });
+}
+
 export function createMutationAction<Mutation extends string>(
   mutation: Mutation,
   revalidateQueries?: string[]
@@ -53,29 +69,10 @@ export function createMutationAction<Mutation extends string>(
   const revalidationKeys = (revalidateQueries || []).map((query) =>
     getOperationName(query)
   );
-  return action(
-    async (
-      mutation: Mutation,
-      revalidationKeys: string[],
-      formData: FormData
-    ) => {
-      "use server";
-      const req = await storefront.mutate<Mutation>(
-        mutation,
-        Object.fromEntries(
-          formData.entries()
-        ) as createStorefrontClient.OperationVariables<
-          StorefrontMutations,
-          Mutation
-        >
-      );
-      return json(req, {
-        revalidate: revalidationKeys,
-        status: req.errors ? 500 : 200,
-      });
-    },
-    getOperationName(mutation)
-  ).with(mutation, revalidationKeys);
+  return action(fetchMutation, getOperationName(mutation)).with(
+    mutation,
+    revalidationKeys
+  );
 }
 
 export const createCombinedOperations = <

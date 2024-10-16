@@ -1,11 +1,11 @@
 export type { StorefrontQueries, StorefrontMutations } from "./types";
 
-export { storefront } from "./storefront";
+export { storefront } from "./storefront.js";
 export {
   createQueryCache,
   createAsyncQuery,
-  // createCombinedOperations,
-  // createMutationAction,
-} from "./hooks";
-export { getStorefrontClient, getOperationName } from "./utils";
-export { createStorefrontClient } from "./client";
+  createCombinedOperations,
+  createMutationAction,
+} from "./hooks.js";
+export { getStorefrontClient, getOperationName } from "./utils.js";
+export { createStorefrontClient } from "./client.js";

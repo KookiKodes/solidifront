@@ -73,42 +73,6 @@
       }
     },
     "./storefront": {
-      "worker": {
-        "import": {
-          "types": "./dist/storefront/index.d.ts",
-          "default": "./dist/storefront/server.js"
-        }
-      },
-      "browser": {
-        "development": {
-          "import": {
-            "types": "./dist/storefront/index.d.ts",
-            "default": "./dist/storefront/dev.js"
-          }
-        },
-        "import": {
-          "types": "./dist/storefront/index.d.ts",
-          "default": "./dist/storefront/index.js"
-        }
-      },
-      "deno": {
-        "import": {
-          "types": "./dist/storefront/index.d.ts",
-          "default": "./dist/storefront/server.js"
-        }
-      },
-      "node": {
-        "import": {
-          "types": "./dist/storefront/index.d.ts",
-          "default": "./dist/storefront/server.js"
-        }
-      },
-      "development": {
-        "import": {
-          "types": "./dist/storefront/index.d.ts",
-          "default": "./dist/storefront/dev.js"
-        }
-      },
       "import": {
         "types": "./dist/storefront/index.d.ts",
         "default": "./dist/storefront/index.js"
