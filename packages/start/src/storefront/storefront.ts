@@ -1,4 +1,7 @@
-import type { StorefrontQueries, StorefrontMutations } from "./types";
+import type {
+  StorefrontQueries,
+  StorefrontMutations,
+} from "@solidifront/storefront-client";
 
 import { createStorefrontClient } from "@solidifront/storefront-client";
 import { getStorefrontClient } from "./utils.js";

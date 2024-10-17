@@ -9,16 +9,13 @@ const outDir = "dist";
 const preset_options: preset.PresetOptions = {
   entries: [
     {
-      entry: "src/storefront/index.ts",
-      dev_entry: true,
-      server_entry: true,
-      name: "storefront",
-    },
-    {
       entry: "src/localization/index.tsx",
       name: "localization",
       dev_entry: true,
       server_entry: true,
+    },
+    {
+      entry: "src/index.tsx",
     },
   ],
   drop_console: false,
@@ -46,7 +43,14 @@ export default defineConfig(async (config) => {
       sourcemap: false,
       outDir: path.resolve(outDir, "storefront"),
       dts: {
-        entry: "src/storefront/index.ts",
+        entry: [
+          "src/storefront/utils.ts",
+          "src/storefront/storefront.ts",
+          "src/storefront/types.ts",
+          "src/storefront/client.ts",
+          "src/storefront/hooks.ts",
+          "src/storefront/index.ts",
+        ],
       },
       bundle: false,
       minify: false,

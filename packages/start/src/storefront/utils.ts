@@ -1,8 +1,8 @@
 import type {
   StorefrontQueries,
   StorefrontMutations,
-  ExtractOperationName,
-} from "./types";
+} from "@solidifront/storefront-client";
+import type { ExtractOperationName } from "./types";
 
 import { createStorefrontClient } from "@solidifront/storefront-client";
 import { getRequestEvent } from "solid-js/web";

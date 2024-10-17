@@ -1,4 +1,7 @@
-export type { StorefrontQueries, StorefrontMutations } from "./types";
+export type {
+  StorefrontQueries,
+  StorefrontMutations,
+} from "@solidifront/storefront-client";
 
 export { storefront } from "./storefront.js";
 export {

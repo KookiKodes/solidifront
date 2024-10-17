@@ -1,5 +1,8 @@
-import type { StorefrontQueries, StorefrontMutations } from "./types";
-import { createStorefrontClient as _createStorefrontClient } from "@solidifront/storefront-client";
+import {
+  createStorefrontClient as _createStorefrontClient,
+  type StorefrontQueries,
+  type StorefrontMutations,
+} from "@solidifront/storefront-client";
 import { isServer } from "solid-js/web";
 
 export const createStorefrontClient = (
