@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.3.2
+
+### Patch Changes
+
+- Minor fixes to storefront module type fixes and build fixes
+
 ## 0.3.1
 
 ### Patch Changes
