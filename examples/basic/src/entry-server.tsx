@@ -7,7 +7,7 @@ export default createHandler(() => {
   return (
     <StartServer
       document={({ assets, children, scripts }) => (
-        <html lang={locale?.language.toLowerCase()}>
+        <html lang={locale?.isoCode}>
           <head>
             <meta charset="utf-8" />
             <meta
