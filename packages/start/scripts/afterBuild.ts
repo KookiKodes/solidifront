@@ -34,7 +34,9 @@ await fs.copyFile(
   path.join(solidifrontCodegen, "types", caTypeFile),
   path.resolve(outDir, caTypeFile)
 );
+
 console.log("\n", "Customer API types copied from @solidifront/codegen", "\n");
+
 await fs.copyFile(
   path.resolve(
     "..",
@@ -42,4 +44,16 @@ await fs.copyFile(
     "index.d.ts"
   ),
   path.resolve(outDir, "locales.d.ts")
+);
+
+let content = await fs.readFile(path.resolve(outDir, "locales.d.ts"), "utf-8");
+
+content = content.replace("vite-plugin-generate-shopify-locales", "start");
+
+await fs.writeFile(path.resolve(outDir, "locales.d.ts"), content);
+
+console.log(
+  "\n",
+  "Locale types copied from @solidifront/vite-plugin-generate-shopify-locales",
+  "\n"
 );
