@@ -1,3 +1,5 @@
+import { createMutationAction } from "@solidifront/start/storefront";
+
 export const createCartMutation = `#graphql
   mutation createCart {
     cartCreate {
@@ -7,3 +9,5 @@ export const createCartMutation = `#graphql
     } 
   }
 ` as const;
+
+export const createCartAction = createMutationAction(createCartMutation);

@@ -2,11 +2,10 @@ import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
 import {
   createAsyncQuery,
-  createMutationAction,
   createQueryCache,
 } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
-import { createCartMutation } from "~/graphql/storefront/mutations";
+import { createCartAction } from "~/graphql/storefront/mutations";
 
 const cachedShopQuery = createQueryCache(shopQuery);
 
@@ -15,8 +14,6 @@ export const route = {
     await cachedShopQuery();
   },
 };
-
-const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
 
 export default function Home() {
   const locale = useLocale();
