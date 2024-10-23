@@ -3,9 +3,7 @@ import type { I18nLocale } from "../../middleware/createLocaleMiddleware";
 import {
   type AnchorProps,
   A as RouterAnchor,
-  cache,
   createAsync,
-  redirect,
   useLocation,
   useParams,
 } from "@solidjs/router";
@@ -19,8 +17,7 @@ import {
   type Accessor,
 } from "solid-js";
 
-import { notFound } from "../utils/notFound.js";
-import { getRequestLocale } from "../utils/getRequestLocale.js";
+import { getLocale } from "../utils/server";
 
 /**
  * Creates a context for managing the current locale.
@@ -31,54 +28,6 @@ import { getRequestLocale } from "../utils/getRequestLocale.js";
  * @returns A context object with a `locale` property that is an asynchronous accessor to the current locale.
  */
 const LocaleContext = createContext<Accessor<I18nLocale | undefined>>();
-
-/**
- * Fetches the current locale based on the provided parameter.
- *
- * @remarks
- * This function is used to fetch the current locale from the server. It takes a `paramLocale` parameter, which is an optional string representing the desired locale. If no locale is provided, it returns the current locale. If the provided locale does not match the current locale, it throws a `404` error.
- *
- * @param {string=} paramLocale - An optional string representing the desired locale.
- * @returns The current locale as an `Accessor` object.
- */
-const fetchLocale = cache(
-  async (path: string, paramLocale?: string, notFoundRoute?: string) => {
-    "use server";
-    const locale = getRequestLocale();
-
-    if (!locale) {
-      console.warn(
-        "To use 'LocaleProvider', make sure to setup the localization within your app config!"
-      );
-      return null;
-    }
-
-    function notCorrectPathLocale() {
-      return (
-        !paramLocale &&
-        locale!.pathPrefix !== "" &&
-        !path.startsWith(locale!.pathPrefix)
-      );
-    }
-
-    if (notCorrectPathLocale()) {
-      throw redirect(`${locale.pathPrefix}${path === "/" ? "" : path}`, {
-        statusText: "Redirecting to your preferred shop view",
-      });
-    }
-    if (
-      paramLocale &&
-      paramLocale.toLowerCase() !==
-        `${locale.language}-${locale.country}`.toLowerCase()
-    )
-      throw notFound(
-        notFoundRoute,
-        "404 not found! The locale is not supported!"
-      );
-    return locale;
-  },
-  "locale"
-);
 
 /**
  * Provides the current locale to components throughout the application.
@@ -97,12 +46,12 @@ export const LocaleProvider = (props: {
   const params = useParams();
   const location = useLocation();
   const locale = createAsync(async () =>
-    fetchLocale(location.pathname, params.locale, props.notFoundRoute)
+    getLocale(location.pathname, params.locale, props.notFoundRoute)
   );
   return (
     // @ts-expect-error
     <LocaleContext.Provider value={locale}>
-      <InternalLocaleProvider>{props.children}</InternalLocaleProvider>
+      <LocaleProvider_>{props.children}</LocaleProvider_>
     </LocaleContext.Provider>
   );
 };
@@ -129,7 +78,7 @@ export const useLocale = () => {
  * @param props.children - The component or components to be wrapped.
  * @returns A `Show` component with the `children` prop conditionally rendered based on whether the `locale` value is truthy.
  */
-function InternalLocaleProvider(props: { children?: JSX.Element }) {
+function LocaleProvider_(props: { children?: JSX.Element }) {
   const locale = useLocale();
 
   if (locale() === null)
