@@ -91,7 +91,5 @@ describe("queries", () => {
     expect(result.data?.shop?.name).toBeTypeOf("string");
   });
 
-  // it("should throw error if no query name is provided", async () => {
-  //   expect().throw()
-  // });
+  it("should throw error if no query name is provided", async () => {});
 });
