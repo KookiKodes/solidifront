@@ -32,7 +32,7 @@ export const ValidVersion = S.Literal(
   "2024-07",
   "2024-10",
   "2025-01",
-  "unstable"
+  "unstable",
 );
 
 export const LatestVersion = ValidVersion.pipe(S.pickLiteral("2024-10"));
@@ -71,10 +71,10 @@ const TokenFields = S.Struct({
         S.filter(
           () =>
             isServer() ||
-            "private access tokens and headers should only be used in a server-to-server implementation. Use the public API access token in nonserver environments."
-        )
-      )
-    )
+            "private access tokens and headers should only be used in a server-to-server implementation. Use the public API access token in nonserver environments.",
+        ),
+      ),
+    ),
   ),
   publicAccessToken: S.optional(S.NonEmptyString),
 }).pipe(
@@ -92,18 +92,18 @@ const TokenFields = S.Struct({
     examples: [
       {
         privateAccessToken: Redacted.make(
-          "shpat_********************************"
+          "shpat_********************************",
         ),
       },
       {
         publicAccessToken: "********************************",
       },
     ],
-  })
+  }),
 );
 
 export const ClientOptions = S.asSchema(
-  S.extend(BaseClientOptions, TokenFields)
+  S.extend(BaseClientOptions, TokenFields),
 ).annotations({
   identifier: "ClientOptions",
   title: "Client Options",
@@ -121,7 +121,7 @@ export const ClientOptions = S.asSchema(
       storeName: "solidifront",
       retries: 2,
       privateAccessToken: Redacted.make(
-        "shpat_********************************"
+        "shpat_********************************",
       ),
       contentType: "graphql",
     },
@@ -137,22 +137,22 @@ export const GraphQLJsonBody = S.Struct({
     S.Record({
       key: S.String,
       value: S.Any,
-    })
+    }),
   ),
   errors: S.optional(
     S.Array(
       S.Struct({
         message: S.NonEmptyString,
         locations: S.optional(
-          S.Array(S.Struct({ line: S.Int, column: S.Int }))
+          S.Array(S.Struct({ line: S.Int, column: S.Int })),
         ),
         extensions: S.optional(
           S.Struct({
             code: S.NonEmptyString,
-          })
+          }),
         ),
-      })
-    )
+      }),
+    ),
   ),
 }).annotations({
   identifier: "GraphQLJsonBody",
