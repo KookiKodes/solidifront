@@ -16,7 +16,7 @@
   },
   "scripts": {
     "build": "tsup --clean",
-    "dev": "tsup --watch",
+    "dev": "tsx src/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -34,11 +34,14 @@
     "@types/isomorphic-fetch": "^0.0.39",
     "dts-bundle-generator": "^9.5.1",
     "tsup": "^8.2.4",
-    "tsx": "^4.19.1"
+    "tsx": "^4.19.1",
+    "vitest": "^2.1.4"
   },
   "dependencies": {
+    "@effect/platform": "^0.69.4",
     "@shopify/graphql-client": "^1.2.0",
     "@shopify/storefront-api-client": "^1.0.2",
+    "effect": "^3.10.0",
     "isomorphic-fetch": "^3.0.0"
   }
 }

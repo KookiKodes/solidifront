@@ -19,22 +19,16 @@ export default defineConfig([
     format: "esm",
     entry: ["src/**/*.ts"],
     outDir: `${outDir}/esm`,
-    dts: false,
-    async onSuccess() {
-      const [dts] = generateDtsBundle([
-        {
-          filePath: path.resolve("./src/index.ts"),
-          libraries: {
-            inlinedLibraries: [
-              "@shopify/graphql-client",
-              "@shopify/storefront-api-client",
-            ],
-          },
-        },
-      ]);
+    dts: true,
+    // async onSuccess() {
+    //   const [dts] = generateDtsBundle([
+    //     {
+    //       filePath: path.resolve("./src/index.ts"),
+    //     },
+    //   ]);
 
-      fs.writeFile(path.resolve(outDir, "esm", "index.d.ts"), dts);
-    },
+    //   await fs.writeFile(path.resolve(outDir, "esm", "index.d.ts"), dts);
+    // },
   },
   {
     ...commonConfig,

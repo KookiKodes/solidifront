@@ -1,113 +1,122 @@
-import { ClientResponse } from "@shopify/graphql-client";
-import {
-  createStorefrontApiClient,
-  type StorefrontQueries,
-  type StorefrontMutations,
-} from "@shopify/storefront-api-client";
+import type {
+  ClientOptions,
+  StorefrontQueries,
+  StorefrontMutations,
+  CodegenOperations,
+} from "./schemas";
 
-export interface CodegenOperations {
-  [key: string]: any;
-}
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Logger from "effect/Logger";
 
-// type Includes<
-//   T extends string,
-//   U extends string,
-// > = T extends `${infer _Prefix}${U}${infer _Suffix}` ? true : false;
+import * as StorefrontClient from "./services/StorefrontClient.js";
+import { ValidateOperation } from "./services/ValidateOperation.js";
+import { withNamespacedLogSpan } from "./utils/logger.js";
 
-export namespace createStorefrontClient {
-  export type Config = {
-    publicAccessToken?: string;
-    privateAccessToken?: string;
-    apiVersion?: string;
-    storeDomain: string;
-    logger?: Parameters<typeof createStorefrontApiClient>[0]["logger"];
-  };
-  export type OperationReturn<
-    GeneratedOperations extends CodegenOperations,
-    RawGqlString extends string,
-  > = RawGqlString extends keyof GeneratedOperations
-    ? GeneratedOperations[RawGqlString]["return"]
-    : any;
-  export type OperationVariables<
-    GeneratedOperations extends CodegenOperations,
-    RawGqlString extends string,
-  > = RawGqlString extends keyof GeneratedOperations
-    ? Omit<
-        GeneratedOperations[RawGqlString]["variables"],
-        "country" | "language"
-      >
-    : any;
+export type { StorefrontQueries, StorefrontMutations };
 
-  // export type QueryFnReturn<
-  //   Query extends string,
-  //   GeneratedQueries extends CodegenOperations = StorefrontQueries,
-  // > =
-  //   Includes<Query, "@defer"> extends true
-  //     ? ClientStreamIterator<OperationReturn<GeneratedQueries, Query>>
-  //     : ClientResponse<OperationReturn<GeneratedQueries, Query>>;
-  export type QueryFnReturn<
-    Query extends string,
-    GeneratedQueries extends CodegenOperations = StorefrontQueries,
-  > = ClientResponse<OperationReturn<GeneratedQueries, Query>>;
-}
-
-export function createStorefrontClient<
+export const createClientEffect = <
   GeneratedQueries extends CodegenOperations = StorefrontQueries,
   GeneratedMutations extends CodegenOperations = StorefrontMutations,
->(options: createStorefrontClient.Config) {
-  const client = createStorefrontApiClient({
-    storeDomain: `https://${options.storeDomain}`,
-    apiVersion: options.apiVersion || "2024-10",
-    privateAccessToken: options.privateAccessToken,
-    publicAccessToken: options.publicAccessToken,
-    customFetchApi: fetch,
-    clientName: "Solidifront Storefront Client",
-    retries: 1,
-    logger: options.logger,
-  });
+>(
+  options: ClientOptions["Encoded"]
+) => {
+  const clientLayer = Layer.mergeAll(
+    StorefrontClient.layer(options),
+    ValidateOperation.Default,
+    Logger.pretty
+  );
+  const fetchLayer = Layer.mergeAll(Logger.pretty);
 
-  return {
-    async query<const RawGqlString extends string>(
-      query: RawGqlString,
-      options?: {
-        variables?: createStorefrontClient.OperationVariables<
-          GeneratedQueries,
-          RawGqlString
-        >;
-      }
-    ): Promise<
-      Omit<
-        createStorefrontClient.QueryFnReturn<RawGqlString, GeneratedQueries>,
-        "headers"
+  const clientEffect = Effect.gen(function* () {
+    yield* Effect.logInfo("Creating...");
+    const client = yield* StorefrontClient.StorefrontClient;
+    const validateOperation = yield* ValidateOperation;
+
+    const executeOperation = <
+      const Operation extends string,
+      OperationData extends { variables: any; return: any } = {
+        variables: any;
+        return: any;
+      },
+    >(
+      type: "query" | "mutate",
+      originalOperation: Operation,
+      options?: StorefrontClient.RequestOptions<OperationData["variables"]>
+    ) =>
+      Effect.gen(function* () {
+        const operation = yield* validateOperation({
+          type,
+          operation: originalOperation,
+          variables: options?.variables,
+        });
+
+        const response = yield* client.request<
+          Operation,
+          OperationData["return"]
+        >(operation, options);
+
+        if (response?.errors) {
+          yield* Effect.logError(response);
+        } else {
+          yield* Effect.logInfo(response);
+        }
+
+        return response;
+      }).pipe(Effect.scoped);
+
+    const query = <const Query extends string>(
+      query: Query,
+      options?: StorefrontClient.RequestOptions<
+        GeneratedQueries[Query]["variables"]
       >
-    > {
-      const { headers, ...req } = (await client.request<
-        createStorefrontClient.OperationReturn<GeneratedQueries, RawGqlString>
-      >(query, {
-        variables: options?.variables,
-      })) as createStorefrontClient.QueryFnReturn<
-        RawGqlString,
-        GeneratedQueries
-      >;
+    ) =>
+      Effect.runPromise(
+        executeOperation<Query, GeneratedQueries[Query]>(
+          "query",
+          query,
+          options
+        ).pipe(Effect.provide(fetchLayer), withNamespacedLogSpan("Query"))
+      );
 
-      return req;
-    },
-    async mutate<const RawGqlString extends string>(
-      mutation: RawGqlString,
-      options?: {
-        variables: createStorefrontClient.OperationVariables<
-          GeneratedMutations,
-          RawGqlString
-        >;
-      }
-    ) {
-      return client.request<
-        createStorefrontClient.OperationReturn<GeneratedMutations, RawGqlString>
-      >(mutation, {
-        variables: options?.variables,
-      });
-    },
-  };
+    const mutate = <const Mutation extends string>(
+      mutation: Mutation,
+      options?: StorefrontClient.RequestOptions<
+        GeneratedMutations[Mutation]["variables"]
+      >
+    ) =>
+      Effect.runPromise(
+        executeOperation<Mutation, GeneratedMutations[Mutation]>(
+          "mutate",
+          mutation,
+          options
+        ).pipe(Effect.provide(fetchLayer), withNamespacedLogSpan("Mutation"))
+      );
+
+    yield* Effect.logInfo("Created!");
+
+    return {
+      query,
+      mutate,
+    };
+  }).pipe(Effect.provide(clientLayer), withNamespacedLogSpan("Client"));
+
+  return Effect.gen(function* () {
+    const cachedClient = yield* Effect.cached(clientEffect);
+    return yield* cachedClient;
+  });
+};
+
+export namespace createStorefrontClient {
+  export type Options = ClientOptions["Encoded"];
 }
 
-export type { StorefrontMutations, StorefrontQueries };
+export const createStorefrontClient = <
+  GeneratedQueries extends CodegenOperations = StorefrontQueries,
+  GeneratedMutations extends CodegenOperations = StorefrontMutations,
+>(
+  options: ClientOptions["Encoded"]
+) =>
+  Effect.runSync(
+    createClientEffect<GeneratedQueries, GeneratedMutations>(options)
+  );
