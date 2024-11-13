@@ -66,16 +66,7 @@ export const createClientEffect = <
         }
 
         return response;
-      }).pipe(
-        Effect.scoped,
-        // Effect.catchTags({
-        //   ExtractOperationNameError: (e) => Effect.dieMessage(e.message),
-        //   RequestError: (e) => Effect.dieMessage(e.message),
-        //   ResponseError: (e) => Effect.dieMessage(e.message),
-        //   HttpBodyError: (e) => Effect.die(e.reason.error),
-        //   ParseError: (e) => Effect.dieMessage(e.message),
-        // }),
-      );
+      }).pipe(Effect.scoped);
 
     const query = <const Query extends string>(
       query: Query,

@@ -1,6 +1,8 @@
 import { createStorefrontClient } from "../src";
 
-import { describe, vi, it, expect, beforeAll } from "vitest";
+import { describe, vi, it, expect } from "vitest";
+import { Cause, Data, Equal, Runtime } from "effect";
+import * as ClientResponse from "../src/data/ClientResponse";
 
 describe("client creation", () => {
   it("should create client successfully with private access token", () => {
@@ -77,10 +79,28 @@ describe("queries", () => {
     }
   `;
 
+  const shopQueryWithUnusedVariables = `#graphql
+    query shopQueryWithUnusedVariables($id: ID!) {
+      shop {
+        name
+      }
+    }
+  `;
+
   const noNameShopQuery = `#graphql
     query {
       shop {
         name
+      }
+    }
+  `;
+
+  const cartCreateMutation = `#graphql
+    mutation CartCreateMutation {
+      createCart {
+        cart {
+          id
+        } 
       }
     }
   `;
@@ -91,5 +111,26 @@ describe("queries", () => {
     expect(result.data?.shop?.name).toBeTypeOf("string");
   });
 
-  it("should throw error if no query name is provided", async () => {});
+  it("should throw error if no query name is provided", async () =>
+    client.query(noNameShopQuery).catch((failure) => {
+      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+      failure = JSON.parse(JSON.stringify(failure));
+      expect(failure.cause._tag === "Fail").toBeTruthy();
+      expect(
+        failure.cause.failure._tag === "ExtractOperationNameError",
+      ).toBeTruthy();
+    }));
+
+  it("should throw error if mutation is provided", async () =>
+    client.query(cartCreateMutation).catch((failure) => {
+      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+      failure = JSON.parse(JSON.stringify(failure));
+      expect(Cause.isDie(failure?.cause)).toBeTruthy();
+      expect(failure?.cause?.defect?._tag === "AssertQueryError").toBeTruthy();
+    }));
+
+  it("should return Response with errors object", async () =>
+    client.query(shopQueryWithUnusedVariables).then((res) => {
+      expect(res.errors?.graphQLErrors).toHaveLength(1);
+    }));
 });
