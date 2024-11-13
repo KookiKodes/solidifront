@@ -1,8 +1,41 @@
 import { createStorefrontClient } from "../src";
 
 import { describe, vi, it, expect } from "vitest";
-import { Cause, Data, Equal, Runtime } from "effect";
-import * as ClientResponse from "../src/data/ClientResponse";
+import { Cause, Runtime } from "effect";
+
+const shopQuery = `#graphql
+  query ShopQuery {
+    shop {
+      name
+    }
+  }
+`;
+
+const shopQueryWithUnusedVariables = `#graphql
+  query ShopQueryWithUnusedVariables($id: ID!) {
+    shop {
+      name
+    }
+  }
+`;
+
+const noNameShopQuery = `#graphql
+  query {
+    shop {
+      name
+    }
+  }
+`;
+
+const cartCreateMutation = `#graphql
+  mutation CartCreateMutation {
+    createCart {
+      cart {
+        id
+      } 
+    }
+  }
+`;
 
 describe("client creation", () => {
   it("should create client successfully with private access token", () => {
@@ -70,40 +103,6 @@ describe("queries", () => {
     storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
     privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
   });
-
-  const shopQuery = `#graphql
-    query ShopQuery {
-      shop {
-        name
-      }
-    }
-  `;
-
-  const shopQueryWithUnusedVariables = `#graphql
-    query shopQueryWithUnusedVariables($id: ID!) {
-      shop {
-        name
-      }
-    }
-  `;
-
-  const noNameShopQuery = `#graphql
-    query {
-      shop {
-        name
-      }
-    }
-  `;
-
-  const cartCreateMutation = `#graphql
-    mutation CartCreateMutation {
-      createCart {
-        cart {
-          id
-        } 
-      }
-    }
-  `;
 
   it("should fetch shop name", async () => {
     const result = await client.query(shopQuery);
