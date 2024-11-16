@@ -1,7 +1,13 @@
-import { createStorefrontClient } from "../src";
-
 import { describe, vi, it, expect } from "vitest";
-import { Cause, Runtime } from "effect";
+import * as Cause from "effect/Cause";
+import * as Runtime from "effect/Runtime";
+import * as ManagedRuntime from "effect/ManagedRuntime";
+import * as Layer from "effect/Layer";
+import * as Effect from "effect/Effect";
+
+import * as TypedStorefrontClient from "../src/services/TypedStorefrontClient";
+import { createStorefrontClient } from "../src";
+import { HttpClient, HttpClientResponse } from "@effect/platform";
 
 const shopQuery = `#graphql
   query ShopQuery {
@@ -29,7 +35,17 @@ const noNameShopQuery = `#graphql
 
 const cartCreateMutation = `#graphql
   mutation CartCreateMutation {
-    createCart {
+    cartCreate {
+      cart {
+        id
+      } 
+    }
+  }
+`;
+
+const noNameMutation = `#graphql
+  mutation {
+    cartCreate {
       cart {
         id
       } 
@@ -132,4 +148,82 @@ describe("queries", () => {
     client.query(shopQueryWithUnusedVariables).then((res) => {
       expect(res.errors?.graphQLErrors).toHaveLength(1);
     }));
+});
+
+describe("mutations", () => {
+  const client = createStorefrontClient({
+    storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
+    privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
+  });
+
+  it("should create a new cart instance", async () => {
+    const result = await client.mutate(cartCreateMutation);
+    // @ts-ignore
+    expect(result.data?.cartCreate?.cart?.id).toBeTypeOf("string");
+  });
+
+  it("should throw error if no mutation name is provided", async () =>
+    client.mutate(noNameMutation).catch((failure) => {
+      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+      failure = JSON.parse(JSON.stringify(failure));
+      expect(failure.cause._tag === "Fail").toBeTruthy();
+      expect(
+        failure.cause.failure._tag === "ExtractOperationNameError",
+      ).toBeTruthy();
+    }));
+
+  it("should throw error if query is provided", async () =>
+    client.query(shopQuery).catch((failure) => {
+      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+      failure = JSON.parse(JSON.stringify(failure));
+      expect(Cause.isDie(failure?.cause)).toBeTruthy();
+      expect(
+        failure?.cause?.defect?._tag === "AssertMutationError",
+      ).toBeTruthy();
+    }));
+});
+
+describe("status code errors", () => {
+  const baseLayer = Layer.mergeAll(TypedStorefrontClient.Default);
+  const createMockStatusLayer = (statusCode: number) =>
+    Layer.succeed(
+      HttpClient.HttpClient,
+      HttpClient.make((req) =>
+        Effect.succeed(
+          HttpClientResponse.fromWeb(
+            req,
+            new Response(JSON.stringify({}), {
+              status: statusCode,
+            }),
+          ),
+        ),
+      ),
+    );
+
+  const testableStatusCodes = [400, 402, 403, 404, 423, 500];
+
+  testableStatusCodes.forEach((statusCode) => {
+    it(`should return response with ${statusCode} status code`, async () => {
+      const layer = Layer.mergeAll(
+        baseLayer,
+        createMockStatusLayer(statusCode),
+      );
+
+      const runtime = ManagedRuntime.make(layer);
+
+      const makeRequest = Effect.gen(function* () {
+        const client = yield* TypedStorefrontClient.make({
+          storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
+          privateAccessToken: process.env
+            .SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
+        });
+
+        return yield* client.query(shopQuery);
+      });
+
+      const response = await runtime.runPromise(makeRequest);
+
+      expect(response.errors?.networkStatusCode).toBe(statusCode);
+    });
+  });
 });

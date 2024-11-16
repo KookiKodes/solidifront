@@ -104,7 +104,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
             () => new LockedStatusError(),
           ),
           Effect.filterOrElse(
-            (res) => res.status <= 500,
+            (res) => res.status < 500,
             (res) => new StorefrontServerStatusError(res.status),
           ),
         ),
@@ -121,9 +121,9 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
       }),
     );
 
-    const makeRequest = <const Operation extends string>(
+    const makeRequest = <const Operation extends string, TVariables>(
       operation: Operation,
-      options?: RequestOptions,
+      options?: RequestOptions<TVariables>,
     ) =>
       Effect.gen(function* () {
         let endpoint = defaultEndpoint;
@@ -174,9 +174,13 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
         return yield* request;
       });
 
-    const executeRequest = <const Operation extends string, TData = any>(
+    const executeRequest = <
+      const Operation extends string,
+      TVariables = any,
+      TData = any,
+    >(
       operation: Operation,
-      options?: RequestOptions,
+      options?: RequestOptions<TVariables>,
     ) =>
       Effect.gen(function* () {
         const request = yield* makeRequest(operation, options);
@@ -234,7 +238,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
     return {
       request: executeRequest,
     };
-  });
+  }).pipe(Effect.tapError((e) => Effect.logError(e.message)));
 
 export class StorefrontClient extends Context.Tag(
   "@solidifront/storefront-client/StorefrontClient",

@@ -86,7 +86,7 @@ export class StorefrontServerStatusError extends Data.TaggedError(
   constructor(status: number) {
     super({
       message:
-        "An internal error occurred in Shopify. Check out the Shopify Shopify status page for more information.",
+        "An internal error occurred in Shopify. Check out the Shopify status page for more information.",
       status,
     });
   }
