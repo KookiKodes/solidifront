@@ -19,7 +19,7 @@ import { BuildStorefrontApiUrl } from "./BuildStorefrontApiUrl.js";
 import { MakePublicHeadersBuilder } from "./MakePublicHeadersBuilder.js";
 import { MakePrivateHeadersBuilder } from "./MakePrivateHeadersBuilder.js";
 import { MakeDefaultHeadersBuilder } from "./MakeDefaultHeadersBuilder.js";
-import { RETRIABLE_STATUS_CODES, RETRY_WAIT_TIME } from "../constants.js";
+import { RETRY_WAIT_TIME } from "../constants.js";
 import {
   BadRequestStatusError,
   ForbiddenStatusError,
