@@ -41,7 +41,7 @@ export const createStorefrontClient = <
             GeneratedMutations[Mutation]["variables"]
           >,
         ) {
-          return Effect.runPromise(client.mutate(mutation, options));
+          return storefrontRuntime.runPromise(client.mutate(mutation, options));
         },
 
         query<const Query extends string>(
@@ -50,7 +50,7 @@ export const createStorefrontClient = <
             GeneratedQueries[Query]["variables"]
           >,
         ) {
-          return Effect.runPromise(client.query(query, options));
+          return storefrontRuntime.runPromise(client.query(query, options));
         },
       };
     }),
