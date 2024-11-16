@@ -26,6 +26,7 @@ import {
   LockedStatusError,
   NotFoundStatusError,
   PaymentRequiredStatusError,
+  RetriableStatusCodesError,
   StorefrontServerStatusError,
 } from "../errors.js";
 
@@ -104,6 +105,11 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
             () => new LockedStatusError(),
           ),
           Effect.filterOrElse(
+            (res) =>
+              !RetriableStatusCodesError.validStatuses.includes(res.status),
+            (res) => new RetriableStatusCodesError(res.status),
+          ),
+          Effect.filterOrElse(
             (res) => res.status < 500,
             (res) => new StorefrontServerStatusError(res.status),
           ),
@@ -113,9 +119,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
         times: defaultOptions.retries,
         schedule: Schedule.spaced(`${RETRY_WAIT_TIME} millis`),
         while: (error) => {
-          if (error._tag === "ResponseError") {
-            return RETRIABLE_STATUS_CODES.includes(error.response.status);
-          }
+          if (error._tag === "RetriableStatusCodesError") return true;
           return false;
         },
       }),
@@ -215,6 +219,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
             error._tag === "LockedStatusError" ||
             error._tag === "NotFoundStatusError" ||
             error._tag === "PaymentRequiredStatusError" ||
+            error._tag === "RetriableStatusCodesError" ||
             error._tag === "StorefrontServerStatusError"
           ) {
             return Effect.succeed(

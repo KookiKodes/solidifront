@@ -19,6 +19,8 @@ export namespace createStorefrontClient {
   export type Options = ClientOptions["Encoded"];
 }
 
+export type { StorefrontQueries, StorefrontMutations };
+
 export const createStorefrontClient = <
   GeneratedQueries extends CodegenOperations = StorefrontQueries,
   GeneratedMutations extends CodegenOperations = StorefrontMutations,

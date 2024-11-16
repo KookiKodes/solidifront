@@ -77,6 +77,22 @@ export class LockedStatusError extends Data.TaggedError("LockedStatusError")<{
   }
 }
 
+export class RetriableStatusCodesError extends Data.TaggedError(
+  "RetriableStatusCodesError",
+)<{
+  message: string;
+  status: number;
+}> {
+  static readonly validStatuses = [429, 503];
+  constructor(status: number) {
+    super({
+      message:
+        "Something went wrong with the request. Attempted to retry the request, but failed.",
+      status,
+    });
+  }
+}
+
 export class StorefrontServerStatusError extends Data.TaggedError(
   "StorefrontServerStatusError",
 )<{

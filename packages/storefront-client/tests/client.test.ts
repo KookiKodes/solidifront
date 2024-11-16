@@ -200,7 +200,7 @@ describe("status code errors", () => {
       ),
     );
 
-  const testableStatusCodes = [400, 402, 403, 404, 423, 500];
+  const testableStatusCodes = [400, 402, 403, 404, 423, 429, 500, 503];
 
   testableStatusCodes.forEach((statusCode) => {
     it(`should return response with ${statusCode} status code`, async () => {
