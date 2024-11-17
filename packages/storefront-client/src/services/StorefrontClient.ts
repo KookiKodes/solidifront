@@ -1,24 +1,24 @@
-import {
-  Context,
-  Effect,
-  Layer,
-  Redacted,
-  Schema,
-  Schedule,
-  pipe,
-  LogLevel,
-} from "effect";
-import {
-  FetchHttpClient,
-  HttpClient,
-  HttpClientRequest,
-  HttpClientResponse,
-} from "@effect/platform";
-import { ClientOptions, GraphQLJsonBody } from "../schemas.js";
-import { BuildStorefrontApiUrl } from "./BuildStorefrontApiUrl.js";
-import { MakePublicHeadersBuilder } from "./MakePublicHeadersBuilder.js";
-import { MakePrivateHeadersBuilder } from "./MakePrivateHeadersBuilder.js";
-import { MakeDefaultHeadersBuilder } from "./MakeDefaultHeadersBuilder.js";
+import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
+import * as HttpClient from "@effect/platform/HttpClient";
+import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
+import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
+import * as DefaultHeaders from "./DefaultHeaders.js";
+import * as PublicHeaders from "./PublicHeaders.js";
+import * as PrivateHeaders from "./PrivateHeaders.js";
+import * as ResponseErrors from "../data/ResponseErrors.js";
+import * as ClientResponse from "../data/ClientResponse.js";
+import * as Context from "effect/Context";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
+import * as Schema from "effect/Schema";
+import * as Schedule from "effect/Schedule";
+import * as LogLevel from "effect/LogLevel";
+import * as Function from "effect/Function";
+
+import * as LoggerUtils from "./LoggerUtils.js";
+import { buildStorefrontApiUrl } from "../utils/storefront.js";
+import { ClientOptions, GraphQLJsonBody, RequestOptions } from "../schemas.js";
 import { RETRY_WAIT_TIME } from "../constants.js";
 import {
   BadRequestStatusError,
@@ -30,37 +30,13 @@ import {
   StorefrontServerStatusError,
 } from "../errors.js";
 
-import * as ResponseErrors from "../data/ResponseErrors.js";
-import * as ClientResponse from "../data/ClientResponse.js";
-import { filterLogLevelOrNever } from "../utils/logger.js";
-
-export type RequestOptions<Variables = any> = Omit<
-  ClientOptions["Encoded"],
-  "retries" | "storeName"
-> & {
-  buyerIp?: string;
-} & (Variables extends {
-    [x: string]: never;
-  }
-    ? {
-        variables?: never;
-      }
-    : {
-        variables: Variables;
-      });
-
 export const make = (initOptions: ClientOptions["Encoded"]) =>
   Effect.gen(function* () {
     yield* Effect.logInfo("Creating client...");
     const defaultOptions = yield* Schema.decode(ClientOptions)(initOptions);
-    const buildEndpoint = yield* BuildStorefrontApiUrl;
-    const publicHeadersBuilder = yield* MakePublicHeadersBuilder;
-    const privateHeadersBuilder = yield* MakePrivateHeadersBuilder;
-    const defaultHeaderBuilder = yield* MakeDefaultHeadersBuilder;
-
     const defaultClient = yield* HttpClient.HttpClient;
 
-    const defaultEndpoint = buildEndpoint({
+    const defaultEndpoint = buildStorefrontApiUrl({
       apiVersion: defaultOptions.apiVersion,
       storeName: defaultOptions.storeName,
     });
@@ -68,14 +44,14 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
     const client = defaultClient.pipe(
       HttpClient.mapRequestInput((request) =>
         HttpClientRequest.setHeaders(request, {
-          ...defaultHeaderBuilder.makeFallback(request, {
+          ...DefaultHeaders.makeFallback(request, {
             contentType: defaultOptions.contentType,
             apiVersion: defaultOptions.apiVersion,
           }),
-          ...publicHeadersBuilder.makeFallback(request, {
+          ...PublicHeaders.makeFallback(request, {
             publicAccessToken: defaultOptions.publicAccessToken,
           }),
-          ...privateHeadersBuilder.makeFallback(request, {
+          ...PrivateHeaders.makeFallback(request, {
             privateAccessToken: defaultOptions.privateAccessToken
               ? Redacted.value(defaultOptions.privateAccessToken)
               : undefined,
@@ -125,32 +101,34 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
       }),
     );
 
-    const makeRequest = <const Operation extends string, TVariables>(
+    const makeRequest = <
+      const Operation extends string,
+      TVariables extends { [x: string]: any },
+    >(
       operation: Operation,
       options?: RequestOptions<TVariables>,
     ) =>
       Effect.gen(function* () {
+        const validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
+          options || {},
+        );
         let endpoint = defaultEndpoint;
-        if (options?.apiVersion)
-          endpoint = buildEndpoint({
-            apiVersion: options.apiVersion,
-            storeName: defaultOptions.storeName,
+        if (options?.apiVersion || options?.storeName)
+          endpoint = buildStorefrontApiUrl({
+            apiVersion:
+              validatedOptions.apiVersion || defaultOptions.apiVersion,
+            storeName: validatedOptions.storeName || defaultOptions.storeName,
           });
 
-        yield* filterLogLevelOrNever(
+        yield* LoggerUtils.filterLevelOrNever(
           LogLevel.None,
           Effect.gen(function* () {
-            const logOptions: any = options;
-            if (logOptions?.privateAccessToken)
-              logOptions.privateAccessToken = Redacted.make(
-                logOptions.privateAccessToken,
-              );
             yield* Effect.logInfo(
               `Creating request to ${endpoint} with...`,
             ).pipe(
               Effect.andThen(() => {
-                if (!logOptions) return;
-                return Effect.annotateLogs(logOptions);
+                if (!validatedOptions) return;
+                return Effect.annotateLogs(validatedOptions);
               }),
             );
           }),
@@ -158,29 +136,37 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
 
         const request = HttpClientRequest.post(endpoint).pipe(
           HttpClientRequest.setHeaders({
-            ...defaultHeaderBuilder.make({
-              contentType: options?.contentType,
-              apiVersion: options?.apiVersion,
+            ...DefaultHeaders.make({
+              contentType: validatedOptions?.contentType,
+              apiVersion: validatedOptions?.apiVersion,
             }),
-            ...privateHeadersBuilder.make({
-              privateAccessToken: options?.privateAccessToken,
-              buyerIp: options?.buyerIp,
+            ...PublicHeaders.make({
+              publicAccessToken: validatedOptions?.publicAccessToken,
             }),
-            ...publicHeadersBuilder.make({
-              publicAccessToken: options?.publicAccessToken,
+            ...PrivateHeaders.make({
+              privateAccessToken: validatedOptions?.privateAccessToken
+                ? Redacted.value(validatedOptions?.privateAccessToken)
+                : undefined,
+              buyerIp: validatedOptions?.buyerIp,
             }),
           }),
           HttpClientRequest.bodyJson({
             query: operation,
-            variables: options?.variables,
+            variables: validatedOptions?.variables,
           }),
         );
         return yield* request;
-      });
+      }).pipe(
+        Effect.tapError((error) => {
+          if (error._tag === "ParseError")
+            return Effect.logError(error.message);
+          return Effect.logError(error);
+        }),
+      );
 
     const executeRequest = <
       const Operation extends string,
-      TVariables = any,
+      TVariables extends { [x: string]: never },
       TData = any,
     >(
       operation: Operation,
@@ -192,7 +178,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
 
         yield* Effect.logInfo("Response received...");
 
-        const json = yield* pipe(
+        const json = yield* Function.pipe(
           response,
           HttpClientResponse.schemaBodyJson(GraphQLJsonBody),
         );
@@ -251,9 +237,5 @@ export class StorefrontClient extends Context.Tag(
 
 export const Default = Layer.mergeAll(
   Layer.succeed(StorefrontClient, StorefrontClient.of(make)),
-  BuildStorefrontApiUrl.Default,
-  MakePublicHeadersBuilder.Default,
-  MakePrivateHeadersBuilder.Default,
-  MakeDefaultHeadersBuilder.Default,
   FetchHttpClient.layer,
 );

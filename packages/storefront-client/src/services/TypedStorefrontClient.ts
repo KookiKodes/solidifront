@@ -3,6 +3,7 @@ import type {
   StorefrontQueries,
   StorefrontMutations,
   CodegenOperations,
+  RequestOptions,
 } from "../schemas";
 
 import * as Effect from "effect/Effect";
@@ -10,13 +11,10 @@ import * as Layer from "effect/Layer";
 import * as Logger from "effect/Logger";
 
 import * as StorefrontClient from "./StorefrontClient.js";
-import { ValidateOperation } from "./ValidateOperation.js";
-import { withNamespacedLogSpan } from "../utils/logger.js";
+import * as StorefrontOperation from "./StorefrontOperation.js";
+import * as LoggerUtils from "./LoggerUtils.js";
 
-export const Default = Layer.mergeAll(
-  StorefrontClient.Default,
-  ValidateOperation.Default,
-);
+export const Default = Layer.mergeAll(StorefrontClient.Default);
 
 export const make = <
   GeneratedQueries extends CodegenOperations = StorefrontQueries,
@@ -29,7 +27,6 @@ export const make = <
   const clientEffect = Effect.gen(function* () {
     const createClient = yield* StorefrontClient.StorefrontClient;
     const client = yield* createClient(options);
-    const validateOperation = yield* ValidateOperation;
 
     const executeOperation = <
       const Operation extends string,
@@ -40,13 +37,13 @@ export const make = <
     >(
       type: "query" | "mutate",
       originalOperation: Operation,
-      options?: StorefrontClient.RequestOptions<OperationData["variables"]>,
+      options?: RequestOptions<OperationData["variables"]>,
     ) =>
       Effect.gen(function* () {
-        const operation = yield* validateOperation({
+        const operation = yield* StorefrontOperation.validate({
           type,
           operation: originalOperation,
-          variables: options?.variables,
+          variables: Reflect.get(options || {}, "variables"),
         });
 
         const response = yield* client.request<
@@ -66,33 +63,38 @@ export const make = <
 
     const query = <const Query extends string>(
       query: Query,
-      options?: StorefrontClient.RequestOptions<
-        GeneratedQueries[Query]["variables"]
-      >,
+      options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
     ) =>
       executeOperation<Query, GeneratedQueries[Query]>(
         "query",
         query,
         options,
-      ).pipe(Effect.provide(loggerLayer), withNamespacedLogSpan("Query"));
+      ).pipe(
+        Effect.provide(loggerLayer),
+        LoggerUtils.withNamespacedLogSpan("Query"),
+      );
 
     const mutate = <const Mutation extends string>(
       mutation: Mutation,
-      options?: StorefrontClient.RequestOptions<
-        GeneratedMutations[Mutation]["variables"]
-      >,
+      options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
     ) =>
       executeOperation<Mutation, GeneratedMutations[Mutation]>(
         "mutate",
         mutation,
         options,
-      ).pipe(Effect.provide(loggerLayer), withNamespacedLogSpan("Mutation"));
+      ).pipe(
+        Effect.provide(loggerLayer),
+        LoggerUtils.withNamespacedLogSpan("Mutation"),
+      );
 
     return {
       query,
       mutate,
     };
-  }).pipe(Effect.provide(loggerLayer), withNamespacedLogSpan("Create"));
+  }).pipe(
+    Effect.provide(loggerLayer),
+    LoggerUtils.withNamespacedLogSpan("Create"),
+  );
 
   const cachedEffect = Effect.gen(function* () {
     const cachedClient = yield* Effect.cached(clientEffect);

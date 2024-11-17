@@ -3,13 +3,13 @@ import type {
   StorefrontQueries,
   StorefrontMutations,
   CodegenOperations,
+  RequestOptions,
 } from "./schemas";
 
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as ManagedRuntime from "effect/ManagedRuntime";
 import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
-import * as StorefrontClient from "./services/StorefrontClient.js";
 
 const mainLayer = Layer.mergeAll(TypedStorefrontClient.Default);
 
@@ -37,18 +37,14 @@ export const createStorefrontClient = <
       return {
         mutate<const Mutation extends string>(
           mutation: Mutation,
-          options?: StorefrontClient.RequestOptions<
-            GeneratedMutations[Mutation]["variables"]
-          >,
+          options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
         ) {
           return storefrontRuntime.runPromise(client.mutate(mutation, options));
         },
 
         query<const Query extends string>(
           query: Query,
-          options?: StorefrontClient.RequestOptions<
-            GeneratedQueries[Query]["variables"]
-          >,
+          options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
         ) {
           return storefrontRuntime.runPromise(client.query(query, options));
         },

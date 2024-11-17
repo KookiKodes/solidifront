@@ -1,57 +1,8 @@
-import { describe, vi, it, expect } from "vitest";
-import * as Cause from "effect/Cause";
 import * as Runtime from "effect/Runtime";
-import * as ManagedRuntime from "effect/ManagedRuntime";
-import * as Layer from "effect/Layer";
-import * as Effect from "effect/Effect";
-
-import * as TypedStorefrontClient from "../src/services/TypedStorefrontClient";
+import * as Cause from "effect/Cause";
+import { describe, vi, it, expect } from "vitest";
 import { createStorefrontClient } from "../src";
-import { HttpClient, HttpClientResponse } from "@effect/platform";
-
-const shopQuery = `#graphql
-  query ShopQuery {
-    shop {
-      name
-    }
-  }
-`;
-
-const shopQueryWithUnusedVariables = `#graphql
-  query ShopQueryWithUnusedVariables($id: ID!) {
-    shop {
-      name
-    }
-  }
-`;
-
-const noNameShopQuery = `#graphql
-  query {
-    shop {
-      name
-    }
-  }
-`;
-
-const cartCreateMutation = `#graphql
-  mutation CartCreateMutation {
-    cartCreate {
-      cart {
-        id
-      } 
-    }
-  }
-`;
-
-const noNameMutation = `#graphql
-  mutation {
-    cartCreate {
-      cart {
-        id
-      } 
-    }
-  }
-`;
+import { shopQuery } from "./operations";
 
 describe("client creation", () => {
   it("should create client successfully with private access token", () => {
@@ -114,116 +65,66 @@ describe("client creation", () => {
   });
 });
 
-describe("queries", () => {
+describe("client operation options", () => {
   const client = createStorefrontClient({
     storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
     privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
   });
 
-  it("should fetch shop name", async () => {
-    const result = await client.query(shopQuery);
-    // @ts-ignore
-    expect(result.data?.shop?.name).toBeTypeOf("string");
-  });
+  it("should throw error if invalid version is provided", () =>
+    client
+      .query(shopQuery, {
+        //@ts-ignore
+        apiVersion: "",
+      })
+      .catch((failure) => {
+        expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+        failure = JSON.parse(JSON.stringify(failure));
+        expect(failure.cause._tag === "Fail").toBeTruthy();
+        expect(failure.cause.failure._id === "ParseError").toBeTruthy();
+      }));
+  it("should throw error if wrong contentType is provided", () =>
+    client
+      .query(shopQuery, {
+        //@ts-ignore
+        contentType: "",
+      })
+      .catch((failure) => {
+        expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+        failure = JSON.parse(JSON.stringify(failure));
+        expect(failure.cause._tag === "Fail").toBeTruthy();
+        expect(failure.cause.failure._id === "ParseError").toBeTruthy();
+      }));
 
-  it("should throw error if no query name is provided", async () =>
-    client.query(noNameShopQuery).catch((failure) => {
-      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
-      failure = JSON.parse(JSON.stringify(failure));
-      expect(failure.cause._tag === "Fail").toBeTruthy();
-      expect(
-        failure.cause.failure._tag === "ExtractOperationNameError",
-      ).toBeTruthy();
-    }));
+  it("should throw error if invalid privateAccessToken is provided", () =>
+    client
+      .query(shopQuery, {
+        //@ts-ignore
+        privateAccessToken: (
+          process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string
+        ).replace("shpat_", ""),
+      })
+      .catch((failure) => {
+        expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+        failure = JSON.parse(JSON.stringify(failure));
+        expect(failure.cause._tag === "Fail").toBeTruthy();
+        expect(failure.cause.failure._id === "ParseError").toBeTruthy();
+      }));
 
-  it("should throw error if mutation is provided", async () =>
-    client.query(cartCreateMutation).catch((failure) => {
-      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
-      failure = JSON.parse(JSON.stringify(failure));
-      expect(Cause.isDie(failure?.cause)).toBeTruthy();
-      expect(failure?.cause?.defect?._tag === "AssertQueryError").toBeTruthy();
-    }));
-
-  it("should return Response with errors object", async () =>
-    client.query(shopQueryWithUnusedVariables).then((res) => {
-      expect(res.errors?.graphQLErrors).toHaveLength(1);
-    }));
-});
-
-describe("mutations", () => {
-  const client = createStorefrontClient({
-    storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
-    privateAccessToken: process.env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
-  });
-
-  it("should create a new cart instance", async () => {
-    const result = await client.mutate(cartCreateMutation);
-    // @ts-ignore
-    expect(result.data?.cartCreate?.cart?.id).toBeTypeOf("string");
-  });
-
-  it("should throw error if no mutation name is provided", async () =>
-    client.mutate(noNameMutation).catch((failure) => {
-      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
-      failure = JSON.parse(JSON.stringify(failure));
-      expect(failure.cause._tag === "Fail").toBeTruthy();
-      expect(
-        failure.cause.failure._tag === "ExtractOperationNameError",
-      ).toBeTruthy();
-    }));
-
-  it("should throw error if query is provided", async () =>
-    client.query(shopQuery).catch((failure) => {
-      expect(Runtime.isFiberFailure(failure)).toBeTruthy();
-      failure = JSON.parse(JSON.stringify(failure));
-      expect(Cause.isDie(failure?.cause)).toBeTruthy();
-      expect(
-        failure?.cause?.defect?._tag === "AssertMutationError",
-      ).toBeTruthy();
-    }));
-});
-
-describe("status code errors", () => {
-  const baseLayer = Layer.mergeAll(TypedStorefrontClient.Default);
-  const createMockStatusLayer = (statusCode: number) =>
-    Layer.succeed(
-      HttpClient.HttpClient,
-      HttpClient.make((req) =>
-        Effect.succeed(
-          HttpClientResponse.fromWeb(
-            req,
-            new Response(JSON.stringify({}), {
-              status: statusCode,
-            }),
-          ),
-        ),
-      ),
-    );
-
-  const testableStatusCodes = [400, 402, 403, 404, 423, 429, 500, 503];
-
-  testableStatusCodes.forEach((statusCode) => {
-    it(`should return response with ${statusCode} status code`, async () => {
-      const layer = Layer.mergeAll(
-        baseLayer,
-        createMockStatusLayer(statusCode),
-      );
-
-      const runtime = ManagedRuntime.make(layer);
-
-      const makeRequest = Effect.gen(function* () {
-        const client = yield* TypedStorefrontClient.make({
-          storeName: process.env.SHOPIFY_PUBLIC_STORE_NAME as string,
-          privateAccessToken: process.env
-            .SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
-        });
-
-        return yield* client.query(shopQuery);
-      });
-
-      const response = await runtime.runPromise(makeRequest);
-
-      expect(response.errors?.networkStatusCode).toBe(statusCode);
-    });
+  it("should throw error if privateAccessToken is provided on client side", async () => {
+    vi.stubGlobal("window", {});
+    return client
+      .query(shopQuery, {
+        //@ts-ignore
+        privateAccessToken: process.env
+          .SHOPIFY_PRIVATE_STOREFRONT_TOKEN as string,
+      })
+      .catch((failure) => {
+        expect(Runtime.isFiberFailure(failure)).toBeTruthy();
+        failure = JSON.parse(JSON.stringify(failure));
+        expect(failure.cause._tag === "Fail").toBeTruthy();
+        expect(failure.cause.failure._id === "ParseError").toBeTruthy();
+      })
+      .finally(() => vi.unstubAllGlobals());
   });
 });

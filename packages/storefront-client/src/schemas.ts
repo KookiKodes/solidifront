@@ -26,6 +26,22 @@ export type ContentType = S.Schema.Type<typeof ContentType>;
 
 export type GraphQLJsonBody = S.Schema.Type<typeof GraphQLJsonBody>;
 
+type RequestOptionsWithoutVariables = Omit<
+  S.Schema.Encoded<typeof RequestOptions>,
+  "variables"
+>;
+
+export type RequestOptions<TVariables = any> = TVariables extends
+  | {
+      [x: string]: never;
+    }
+  | undefined
+  | unknown
+  ? RequestOptionsWithoutVariables
+  : Omit<S.Schema.Encoded<typeof RequestOptions>, "variables"> & {
+      variables: TVariables;
+    };
+
 export const ValidVersion = S.Literal(
   "2024-01",
   "2024-04",
@@ -33,11 +49,28 @@ export const ValidVersion = S.Literal(
   "2024-10",
   "2025-01",
   "unstable",
-);
+).annotations({
+  identifier: "ValidVersion",
+  title: "Valid Version",
+  description: "Valid version for the Storefront client",
+  examples: ["2024-01", "2024-04", "2024-07", "2024-10", "unstable"],
+});
 
-export const LatestVersion = ValidVersion.pipe(S.pickLiteral("2024-10"));
+export const LatestVersion = ValidVersion.pipe(
+  S.pickLiteral("2024-10"),
+).annotations({
+  identifier: "LatestVersion",
+  title: "Latest Version",
+  description: "Latest version for the Storefront client",
+  examples: ["2024-10"],
+});
 
-export const ContentType = S.Literal("json", "graphql");
+export const ContentType = S.Literal("json", "graphql").annotations({
+  identifier: "ContentType",
+  title: "Content Type",
+  description: "Content type for the Storefront client",
+  examples: ["json", "graphql"],
+});
 
 const BaseClientOptions = S.Struct({
   apiVersion: S.optionalWith(ValidVersion, {
@@ -60,23 +93,37 @@ const BaseClientOptions = S.Struct({
   ],
 });
 
-const TokenFields = S.Struct({
-  privateAccessToken: S.optional(
-    S.Redacted(
-      S.NonEmptyString.pipe(
-        S.startsWith("shpat_", {
-          message: () =>
-            "Invalid private access token format, expected format: shpat_************",
-        }),
-        S.filter(
-          () =>
-            isServer() ||
-            "private access tokens and headers should only be used in a server-to-server implementation. Use the public API access token in nonserver environments.",
-        ),
-      ),
+const PrivateToken = S.Redacted(
+  S.NonEmptyString.pipe(
+    S.startsWith("shpat_", {
+      message: () =>
+        "Invalid private access token format, expected format: shpat_************",
+    }),
+    S.filter(
+      () =>
+        isServer() ||
+        "private access tokens and headers should only be used in a server-to-server implementation. Use the public API access token in nonserver environments.",
     ),
   ),
-  publicAccessToken: S.optional(S.NonEmptyString),
+).annotations({
+  identifier: "PrivateToken",
+  title: "Private Token",
+  description: "Private API access token for the Storefront client",
+  examples: [Redacted.make("shpat_****************************")],
+  redacted: Redacted.make("shpat_****************************"),
+  sensitive: true,
+});
+
+const PublicToken = S.NonEmptyString.annotations({
+  identifier: "PublicToken",
+  title: "Public Token",
+  description: "Public API access token for the Storefront client",
+  examples: ["****************************"],
+});
+
+const TokenFields = S.Struct({
+  privateAccessToken: S.optional(PrivateToken),
+  publicAccessToken: S.optional(PublicToken),
 }).pipe(
   S.filter((fields) => {
     if (hasPublicAccessToken(fields) && hasPrivateAccessToken(fields))
@@ -179,4 +226,50 @@ export const GraphQLJsonBody = S.Struct({
       extensions: {},
     },
   ],
+});
+
+export const RequestOptions = S.partial(
+  S.Struct({
+    apiVersion: ValidVersion,
+    storeName: S.NonEmptyString,
+    contentType: ContentType,
+    buyerIp: S.NonEmptyString,
+    variables: S.Record({
+      key: S.String,
+      value: S.Any,
+    }),
+    privateAccessToken: PrivateToken,
+    publicAccessToken: S.NonEmptyString,
+  }),
+).annotations({
+  identifier: "RequestOptions",
+  title: "Request Options",
+  description: "Options for making requests to the Storefront API",
+  examples: [
+    {
+      apiVersion: "2024-01",
+    },
+    {
+      storeName: "my-store",
+    },
+    {
+      variables: {
+        productID: "12345",
+      },
+      publicAccessToken: "********************************",
+    },
+    {
+      storeName: "my-store",
+      variables: {
+        productID: "12345",
+      },
+      buyerIp: "127.0.0.1",
+      privateAccessToken: Redacted.make(
+        "shpat_********************************",
+      ),
+    },
+  ],
+  parseOptions: {
+    onExcessProperty: "error",
+  },
 });

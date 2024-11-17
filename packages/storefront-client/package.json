@@ -12,6 +12,11 @@
       "types": "./dist/esm/index.d.ts",
       "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/index.js"
+    },
+    "./effect": {
+      "types": "./dist/esm/effect.d.ts",
+      "require": "./dist/cjs/effect.cjs",
+      "import": "./dist/esm/effect.js"
     }
   },
   "scripts": {
