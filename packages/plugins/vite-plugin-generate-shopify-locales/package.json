@@ -21,36 +21,38 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/index.cjs"
     },
     "./locales": {
+      "types": "./dist/locales/index.d.ts",
       "import": "./dist/locales/index.js",
-      "require": "./dist/locales/index.cjs",
-      "types": "./dist/locales/index.d.ts"
+      "require": "./dist/locales/index.cjs"
     }
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup --clean",
+    "build": "pnpm codegen && tsup --clean",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "codegen": "graphql-codegen"
   },
   "peerDependencies": {
     "vite": "^5.3.1"
   },
   "dependencies": {
-    "@solidifront/codegen": "workspace:*",
-    "isomorphic-fetch": "^3.0.0",
+    "@solidifront/storefront-client": "workspace:*",
     "vite": "^5.3.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@solidifront/codegen": "workspace:*",
     "@types/isomorphic-fetch": "^0.0.39",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
