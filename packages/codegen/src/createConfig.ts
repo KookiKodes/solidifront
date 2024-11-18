@@ -1,4 +1,4 @@
-import type { CodegenConfig } from "@graphql-codegen/cli";
+// import type { CodegenConfig } from "@graphql-codegen/cli";
 import type { Types } from "@graphql-codegen/plugin-helpers";
 import { pluckConfig, preset } from "@shopify/hydrogen-codegen";
 import { sfapiDefaultValues, caapiDefaultValues } from "./defaults";
@@ -10,40 +10,55 @@ export namespace createSolidifrontConfig {
     path?: string;
     documents?: Types.OperationDocumentGlobPath[];
   };
+
+  // Define the types for ConfiguredPlugin and ConfiguredOutput
+  // (Replace these with the actual types from your `Types` namespace)
+  type ConfiguredPlugin = {};
+  type ConfiguredOutput = {};
+
+  // Define the index signature for general properties
+  type GeneralProperties = {
+    [key: string]: ConfiguredPlugin[] | ConfiguredOutput | Generates;
+  };
+
+  // Define the specific properties `storefront` and `customer`
+  interface SpecificProperties {
+    storefront?: Generates & {
+      types?: string;
+      moduleName?: string;
+    };
+    customer?: Generates & {
+      types?: string;
+      moduleName?: string;
+    };
+  }
+
+  // Merge the general and specific properties
+  type ExtendedGenerates = GeneralProperties & SpecificProperties;
+
+  // Use the ExtendedGenerates type in your main type definition
   export type Options = {
-    types?: {
-      storefront?: string;
-      customer?: string;
-    };
-    generates?: Omit<
-      Record<
-        string,
-        Types.ConfiguredPlugin[] | Types.ConfiguredOutput | Generates
-      >,
-      "storefront" | "customer"
-    > & {
-      customer?: Generates;
-      storefront?: Generates;
-    };
+    generates?: ExtendedGenerates;
   };
 }
 
 const createGeneratesFromOptions = (
-  types?: createSolidifrontConfig.Options["types"],
-  generates?: createSolidifrontConfig.Options["generates"]
+  generates?: createSolidifrontConfig.Options["generates"],
 ) => {
   if (!generates) return {};
 
   let resolvedGenerates = Object.keys(generates).reduce(
     (acc, key) => {
       if (key === "storefront" || key === "customer") return acc;
+      //@ts-ignore
       acc[key] = generates[key];
       return acc;
     },
-    {} as Record<string, Types.ConfiguredPlugin[] | Types.ConfiguredOutput>
+    {} as Record<string, Types.ConfiguredPlugin[] | Types.ConfiguredOutput>,
   );
 
   if (generates.storefront) {
+    const defaults = sfapiDefaultValues(generates.storefront.moduleName);
     const documents = generates.storefront.documents || [
       "./*.{ts,tsx,js,jsx}",
       "./src/**/*.{ts,tsx,js,jsx}",
@@ -53,10 +68,10 @@ const createGeneratesFromOptions = (
       preset,
       presetConfig: {
         importTypes: {
-          namespace: sfapiDefaultValues.namespacedImportName,
-          from: types?.storefront || sfapiDefaultValues.importTypesFrom,
+          namespace: defaults.namespacedImportName,
+          from: generates.storefront.types || defaults.importTypesFrom,
         },
-        interfaceExtension: sfapiDefaultValues.interfaceExtensionCode,
+        interfaceExtension: defaults.interfaceExtensionCode,
       },
       schema: getSchema("storefront"),
       documents,
@@ -67,15 +82,16 @@ const createGeneratesFromOptions = (
     const documents = generates.customer.documents || [
       "./src/graphql/customer-account/*.{ts,tsx,js,jsx}",
     ];
+    const defaults = caapiDefaultValues(generates.customer.moduleName);
     resolvedGenerates[combinePath(generates.customer.path, "customer")] = {
       preset,
       schema: getSchema("customer-account"),
       presetConfig: {
         importTypes: {
-          namespace: caapiDefaultValues.namespacedImportName,
-          from: types?.customer || caapiDefaultValues.importTypesFrom,
+          namespace: defaults.namespacedImportName,
+          from: generates?.customer?.types || defaults.importTypesFrom,
         },
-        interfaceExtension: caapiDefaultValues.interfaceExtensionCode,
+        interfaceExtension: defaults.interfaceExtensionCode,
       },
       documents,
     };
@@ -85,16 +101,13 @@ const createGeneratesFromOptions = (
 };
 
 export const createSolidifrontConfig = (
-  options?: createSolidifrontConfig.Options
+  options?: createSolidifrontConfig.Options,
 ) => {
-  const generates = createGeneratesFromOptions(
-    options?.types,
-    options?.generates
-  );
+  const generates = createGeneratesFromOptions(options?.generates);
 
   return {
     overwrite: true,
     pluckConfig,
     generates,
-  } as CodegenConfig;
+  };
 };

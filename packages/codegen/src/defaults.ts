@@ -3,14 +3,14 @@ import type { PresetConfig } from "@shopify/graphql-codegen";
 const QUERIES_PLACEHOLDER = "%queries%";
 const MUTATIONS_PLACEHOLDER = "%mutations%";
 
-const sfapiDefaultInterfaceExtensionCode = `
-declare module '@solidifront/start/storefront' {
+const sfapiDefaultInterfaceExtensionCode = (moduleName: string) => `
+declare module '${moduleName}' {
   interface StorefrontQueries extends ${QUERIES_PLACEHOLDER} {}
   interface StorefrontMutations extends ${MUTATIONS_PLACEHOLDER} {}
 }`;
 
-const caapiDefaultInterfaceExtensionCode = `
-declare module '@solidifront/start/storefront' {
+const caapiDefaultInterfaceExtensionCode = (moduleName: string) => `
+declare module '${moduleName}' {
   interface CustomerAccountQueries extends ${QUERIES_PLACEHOLDER} {}
   interface CustomerAccountMutations extends ${MUTATIONS_PLACEHOLDER} {}
 }`;
@@ -18,7 +18,7 @@ declare module '@solidifront/start/storefront' {
 function replacePlaceholders(
   code: string,
   queryType: string,
-  mutationType: string
+  mutationType: string,
 ) {
   return code
     .replace(QUERIES_PLACEHOLDER, queryType)
@@ -31,24 +31,28 @@ type DefaultValues = {
   interfaceExtensionCode: NonNullable<PresetConfig["interfaceExtension"]>;
 };
 
-export const sfapiDefaultValues: DefaultValues = {
+export const sfapiDefaultValues = (
+  moduleName: string = "@solidifront/storefront-client",
+): DefaultValues => ({
   importTypesFrom: "@solidifront/codegen/storefront-api-types",
   namespacedImportName: "StorefrontAPI",
   interfaceExtensionCode: ({ queryType, mutationType }) =>
     replacePlaceholders(
-      sfapiDefaultInterfaceExtensionCode,
+      sfapiDefaultInterfaceExtensionCode(moduleName),
       queryType,
-      mutationType
+      mutationType,
     ),
-};
+});
 
-export const caapiDefaultValues: DefaultValues = {
+export const caapiDefaultValues = (
+  moduleName: string = "@solidifront/storefront-client",
+): DefaultValues => ({
   importTypesFrom: "@solidifront/codegen/customer-account-api-types",
   namespacedImportName: "CustomerAccountAPI",
   interfaceExtensionCode: ({ queryType, mutationType }) =>
     replacePlaceholders(
-      caapiDefaultInterfaceExtensionCode,
+      caapiDefaultInterfaceExtensionCode(moduleName),
       queryType,
-      mutationType
+      mutationType,
     ),
-};
+});
