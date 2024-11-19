@@ -1,6 +1,6 @@
 import * as Runtime from "effect/Runtime";
-import * as Cause from "effect/Cause";
 import { describe, vi, it, expect } from "vitest";
+
 import { createStorefrontClient } from "../src";
 import { shopQuery } from "./operations";
 

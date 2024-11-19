@@ -1,14 +1,16 @@
 export type {
   StorefrontQueries,
   StorefrontMutations,
-} from "@solidifront/storefront-client";
-
-export { storefront } from "./storefront.js";
+  QueryVariables,
+  MutationVariables,
+} from "./types";
 export {
   createQueryCache,
   createAsyncQuery,
   createCombinedOperations,
   createMutationAction,
 } from "./hooks.js";
-export { getStorefrontClient, getOperationName } from "./utils.js";
-export { createStorefrontClient } from "./client.js";
+
+export * from "./client.js";
+export * from "./utils.js";
+export * from "./storefront.js";

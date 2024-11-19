@@ -13,10 +13,8 @@ import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
 import * as Schedule from "effect/Schedule";
-import * as LogLevel from "effect/LogLevel";
 import * as Function from "effect/Function";
 
-import * as LoggerUtils from "./LoggerUtils.js";
 import { buildStorefrontApiUrl } from "../utils/storefront.js";
 import { ClientOptions, GraphQLJsonBody, RequestOptions } from "../schemas.js";
 import { RETRY_WAIT_TIME } from "../constants.js";
@@ -32,7 +30,6 @@ import {
 
 export const make = (initOptions: ClientOptions["Encoded"]) =>
   Effect.gen(function* () {
-    yield* Effect.logInfo("Creating client...");
     const defaultOptions = yield* Schema.decode(ClientOptions)(initOptions);
     const defaultClient = yield* HttpClient.HttpClient;
 
@@ -120,20 +117,6 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
             storeName: validatedOptions.storeName || defaultOptions.storeName,
           });
 
-        yield* LoggerUtils.filterLevelOrNever(
-          LogLevel.None,
-          Effect.gen(function* () {
-            yield* Effect.logInfo(
-              `Creating request to ${endpoint} with...`,
-            ).pipe(
-              Effect.andThen(() => {
-                if (!validatedOptions) return;
-                return Effect.annotateLogs(validatedOptions);
-              }),
-            );
-          }),
-        );
-
         const request = HttpClientRequest.post(endpoint).pipe(
           HttpClientRequest.setHeaders({
             ...DefaultHeaders.make({
@@ -156,13 +139,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
           }),
         );
         return yield* request;
-      }).pipe(
-        Effect.tapError((error) => {
-          if (error._tag === "ParseError")
-            return Effect.logError(error.message);
-          return Effect.logError(error);
-        }),
-      );
+      });
 
     const executeRequest = <
       const Operation extends string,
@@ -175,8 +152,6 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
       Effect.gen(function* () {
         const request = yield* makeRequest(operation, options);
         const response = yield* client.execute(request);
-
-        yield* Effect.logInfo("Response received...");
 
         const json = yield* Function.pipe(
           response,
@@ -220,16 +195,13 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
           }
           return Effect.fail(error);
         }),
+        Effect.tapError(Effect.logError),
       );
-
-    yield* Effect.logInfo("Created client with...").pipe(
-      Effect.annotateLogs(Object.assign({}, defaultOptions)),
-    );
 
     return {
       request: executeRequest,
     };
-  }).pipe(Effect.tapError((e) => Effect.logError(e.message)));
+  }).pipe(Effect.tapError(Effect.logError));
 
 export class StorefrontClient extends Context.Tag(
   "@solidifront/storefront-client/StorefrontClient",

@@ -1,34 +1,39 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
-import {
-  createAsyncQuery,
-  createMutationAction,
-  createQueryCache,
-} from "@solidifront/start/storefront";
+// import { createAsyncQuery } from "@solidifront/start/storefront";
+import { getStorefrontClient } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
-import { createCartMutation } from "~/graphql/storefront/mutations";
+import { createAsync, query } from "@solidjs/router";
+// import { createCartMutation } from "~/graphql/storefront/mutations";
 
-const cachedShopQuery = createQueryCache(shopQuery);
+// const cachedShopQuery = createQueryCache(shopQuery);
+//
+// export const route = {
+//   async preload() {
+//     await cachedShopQuery();
+//   },
+// };
+//
+// const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
 
-export const route = {
-  async preload() {
-    await cachedShopQuery();
-  },
-};
-
-const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
+const cachedShopQuery = query(async () => {
+  "use server";
+  const client = getStorefrontClient();
+  if (!client) throw new Error("Storefront client not found!");
+  return client.query(shopQuery);
+}, "test");
 
 export default function Home() {
   const locale = useLocale();
-  const shopData = createAsyncQuery(shopQuery);
+  const shopData = createAsync(() => cachedShopQuery());
 
   return (
     <main>
       <div>
-        <form action={createCartAction} method="post">
+        {/*<form action={createCartAction} method="post">
           <input type="hidden" name="test" value="test" />
           <button>Submit me!</button>
-        </form>
+        </form> */}
         <Counter />
         <h1>Hello {shopData()?.data?.shop.name}</h1>
         <p>

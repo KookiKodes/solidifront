@@ -1,12 +1,15 @@
 import type { FetchEvent } from "@solidjs/start/server";
 import type { I18nLocale } from "./createLocaleMiddleware";
 
-import { createStorefrontClient } from "@solidifront/storefront-client";
+import {
+  type ValidVersion,
+  createStorefrontClient,
+} from "@solidifront/storefront-client";
 
 function withCountryCode<Variables extends Record<string, any>>(
   operation: string,
   variables: Variables,
-  locale: I18nLocale
+  locale: I18nLocale,
 ) {
   if (!variables.country && /\$country/.test(operation)) {
     return {
@@ -21,7 +24,7 @@ function withCountryCode<Variables extends Record<string, any>>(
 function withLanguageCode<Variables extends Record<string, any>>(
   operation: string,
   variables: Variables,
-  locale: I18nLocale
+  locale: I18nLocale,
 ) {
   if (!variables.language && /\$language/.test(operation)) {
     return {
@@ -36,7 +39,7 @@ function withLanguageCode<Variables extends Record<string, any>>(
 function withLocaleVariables<V extends Record<string, any>>(
   operation: string,
   variables: V,
-  locale: I18nLocale
+  locale: I18nLocale,
 ) {
   return {
     ...variables,
@@ -47,17 +50,17 @@ function withLocaleVariables<V extends Record<string, any>>(
 
 export namespace createStorefrontMiddleware {
   export interface Config {
-    storeDomain: string;
-    apiVersion: string;
+    storeName: string;
+    apiVersion: ValidVersion;
     privateAccessToken: string;
   }
 }
 
 export function createStorefrontMiddleware(
-  config: createStorefrontMiddleware.Config
+  config: createStorefrontMiddleware.Config,
 ) {
   const client = createStorefrontClient({
-    storeDomain: config.storeDomain,
+    storeName: config.storeName,
     apiVersion: config.apiVersion,
     privateAccessToken: config.privateAccessToken,
   });
@@ -70,7 +73,7 @@ export function createStorefrontMiddleware(
           options.variables = withLocaleVariables(
             query,
             options?.variables ?? {},
-            locale
+            locale,
           );
         }
         return await client.query(query, options);
@@ -81,7 +84,7 @@ export function createStorefrontMiddleware(
           options.variables = withLocaleVariables(
             mutation,
             options?.variables ?? {},
-            locale
+            locale,
           );
         }
         return await client.mutate(mutation, options);

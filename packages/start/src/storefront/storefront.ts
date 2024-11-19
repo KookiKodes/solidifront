@@ -1,34 +1,24 @@
-import type {
-  StorefrontQueries,
-  StorefrontMutations,
-} from "@solidifront/storefront-client";
+import type { QueryVariables, MutationVariables } from "./types";
 
-import { createStorefrontClient } from "@solidifront/storefront-client";
 import { getStorefrontClient } from "./utils.js";
 
 export const storefront = {
   query: async <const Query extends string>(
     query: Query,
-    variables?: createStorefrontClient.OperationVariables<
-      StorefrontQueries,
-      Query
-    >
+    variables?: QueryVariables<Query>,
   ) => {
     "use server";
     const client = getStorefrontClient();
     if (!client) throw new Error("Storefront client not found!");
-    return client.query<Query>(query, { variables });
+    return client.query<Query>(query, { variables } as any);
   },
   mutate: async <const Mutation extends string>(
     mutation: Mutation,
-    variables: createStorefrontClient.OperationVariables<
-      StorefrontMutations,
-      Mutation
-    >
+    variables: MutationVariables<Mutation>,
   ) => {
     "use server";
     const client = getStorefrontClient();
     if (!client) throw new Error("Storefront client not found!");
-    return client.mutate<Mutation>(mutation, { variables });
+    return client.mutate<Mutation>(mutation, { variables } as any);
   },
 };

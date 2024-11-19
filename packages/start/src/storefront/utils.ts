@@ -1,11 +1,14 @@
-import type {
-  StorefrontQueries,
-  StorefrontMutations,
-} from "@solidifront/storefront-client";
-import type { ExtractOperationName } from "./types";
+import type { createStorefrontClient } from "@solidifront/storefront-client";
+import type { StorefrontQueries, StorefrontMutations } from "./types";
 
-import { createStorefrontClient } from "@solidifront/storefront-client";
 import { getRequestEvent } from "solid-js/web";
+
+export {
+  extractOperationName,
+  buildShopDomain,
+  buildStorefrontApiUrl,
+  minifyOperation,
+} from "@solidifront/storefront-client/utils";
 
 export function getStorefrontClient() {
   const event = getRequestEvent();
@@ -13,14 +16,4 @@ export function getStorefrontClient() {
   return event?.locals!.storefront as ReturnType<
     typeof createStorefrontClient<StorefrontQueries, StorefrontMutations>
   >;
-}
-
-export function getOperationName<const Operation extends string>(
-  operation: Operation
-): ExtractOperationName<Operation> {
-  const match = operation.match(/\b(query|mutation)\b\s+(\w+)/);
-  if (!match) {
-    throw new Error(`Operation name not found in operation: ${operation}`);
-  }
-  return match[2] as ExtractOperationName<Operation>;
 }

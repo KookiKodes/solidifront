@@ -129,9 +129,9 @@
     "directory": "packages/start"
   },
   "peerDependencies": {
-    "@solidjs/router": "^0.14.7",
-    "@solidjs/start": "^1.0.8",
-    "solid-js": "^1.9.1",
+    "@solidjs/router": "^0.15.1",
+    "@solidjs/start": "^1.0.10",
+    "solid-js": "^1.9.3",
     "vinxi": "^0.4.3"
   },
   "devDependencies": {
@@ -147,13 +147,13 @@
     "@solidifront/codegen": "workspace:*",
     "@solidifront/storefront-client": "workspace:*",
     "@solidifront/vite-plugin-generate-shopify-locales": "workspace:*",
-    "@solidjs/router": "^0.14.7",
-    "@solidjs/start": "^1.0.8",
+    "@solidjs/router": "^0.15.1",
+    "@solidjs/start": "^1.0.10",
     "defu": "^6.1.4",
     "esbuild-plugin-solid": "^0.6.0",
     "isomorphic-fetch": "^3.0.0",
     "resolve-accept-language": "^3.1.5",
-    "solid-js": "^1.9.1",
+    "solid-js": "^1.9.3",
     "ts-morph": "^23.0.0",
     "tsup-preset-solid": "^2.2.0",
     "vinxi": "^0.4.3",

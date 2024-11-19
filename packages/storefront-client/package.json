@@ -3,9 +3,9 @@
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "private": false,
   "exports": {
     ".": {
@@ -17,6 +17,11 @@
       "types": "./dist/esm/effect.d.ts",
       "require": "./dist/cjs/effect.cjs",
       "import": "./dist/esm/effect.js"
+    },
+    "./utils": {
+      "types": "./dist/esm/utils.d.ts",
+      "require": "./dist/cjs/utils.cjs",
+      "import": "./dist/esm/utils.js"
     }
   },
   "scripts": {
@@ -37,7 +42,6 @@
     "directory": "packages/storefront-client"
   },
   "devDependencies": {
-    "@types/isomorphic-fetch": "^0.0.39",
     "dts-bundle-generator": "^9.5.1",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1",
@@ -46,9 +50,6 @@
   },
   "dependencies": {
     "@effect/platform": "^0.69.4",
-    "@shopify/graphql-client": "^1.2.0",
-    "@shopify/storefront-api-client": "^1.0.2",
-    "effect": "^3.10.0",
-    "isomorphic-fetch": "^3.0.0"
+    "effect": "^3.10.0"
   }
 }

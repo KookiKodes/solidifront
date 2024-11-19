@@ -6,15 +6,6 @@ var app_config_default = defineConfig({
       defaultLocale: "en-US"
     },
     storefront: {}
-  },
-  vite: {
-    plugins: [
-      {
-        name: "test",
-        config(config) {
-        }
-      }
-    ]
   }
 });
 export {

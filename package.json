@@ -10,7 +10,7 @@
     "release": "turbo build && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.8",
+    "@changesets/cli": "^2.27.9",
     "@types/node": "^22.7.4",
     "prettier": "^3.3.3",
     "turbo": "^2.1.2",

@@ -1,6 +1,6 @@
-import { action, cache, redirect } from "@solidjs/router";
-import { getRequestLocale } from "./getRequestLocale";
-import { notFound } from "./notFound";
+import { query, redirect } from "@solidjs/router";
+import { getRequestLocale } from "./getRequestLocale.js";
+import { notFound } from "./notFound.js";
 
 /**
  * Fetches the current locale based on the provided parameter.
@@ -11,14 +11,14 @@ import { notFound } from "./notFound";
  * @param {string=} paramLocale - An optional string representing the desired locale.
  * @returns The current locale as an `Accessor` object.
  */
-export const getLocale = cache(
+export const getLocale = query(
   async (path: string, paramLocale?: string, notFoundRoute?: string) => {
     "use server";
     const locale = getRequestLocale();
 
     if (!locale) {
       console.warn(
-        "To use 'LocaleProvider', make sure to setup the localization within your app config!"
+        "To use 'LocaleProvider', make sure to setup the localization within your app config!",
       );
       return null;
     }
@@ -43,13 +43,9 @@ export const getLocale = cache(
     )
       throw notFound(
         notFoundRoute,
-        "404 not found! The locale is not supported!"
+        "404 not found! The locale is not supported!",
       );
     return locale;
   },
-  "locale"
+  "locale",
 );
-
-export const setLocale = action(async (formData: FormData) => {
-  "use server";
-});

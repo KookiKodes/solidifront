@@ -17,7 +17,7 @@ import {
   type Accessor,
 } from "solid-js";
 
-import { getLocale } from "../utils/server";
+import { getLocale } from "../utils/server.js";
 
 /**
  * Creates a context for managing the current locale.
@@ -46,7 +46,7 @@ export const LocaleProvider = (props: {
   const params = useParams();
   const location = useLocation();
   const locale = createAsync(async () =>
-    getLocale(location.pathname, params.locale, props.notFoundRoute)
+    getLocale(location.pathname, params.locale, props.notFoundRoute),
   );
   return (
     // @ts-expect-error
@@ -108,7 +108,7 @@ export const A = (props: AnchorProps) => {
   const [hrefProps, childrenProps, restProps] = splitProps(
     props,
     ["href"],
-    ["children"]
+    ["children"],
   );
 
   // Create a memoized href attribute

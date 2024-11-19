@@ -1,69 +1,49 @@
 import type { Accessor } from "solid-js";
-import type {
-  StorefrontQueries,
-  StorefrontMutations,
-} from "@solidifront/storefront-client";
-import type { ExtractOperationName } from "./types";
+import type { MutationVariables, QueryVariables } from "./types";
+import type { ExtractOperationName } from "@solidifront/storefront-client/utils";
 
 import { action, json } from "@solidjs/router";
-import { createStorefrontClient } from "@solidifront/storefront-client";
-import { cache, createAsyncStore } from "@solidjs/router";
+import { query, createAsyncStore } from "@solidjs/router";
 
 import { storefront } from "./storefront.js";
-import { getOperationName } from "./utils.js";
+import { extractOperationName } from "./utils.js";
 
-export function createQueryCache<Query extends string>(query: Query) {
-  return cache(
-    async (
-      variables?: createStorefrontClient.OperationVariables<
-        StorefrontQueries,
-        Query
-      >
-    ) => storefront.query<Query>(query, variables),
-    getOperationName(query)
+export function createQueryCache<Query extends string>(operation: Query) {
+  return query(
+    async (variables?: QueryVariables<Query>) =>
+      storefront.query<Query>(operation, variables),
+    extractOperationName(operation),
   );
 }
 
 export function createAsyncQuery<Query extends string>(
   query: Query,
-  variables?:
-    | Accessor<
-        createStorefrontClient.OperationVariables<StorefrontQueries, Query>
-      >
-    | createStorefrontClient.OperationVariables<StorefrontQueries, Query>
+  variables?: QueryVariables<Query> | Accessor<QueryVariables<Query>>,
 ) {
   const cachedQuery = createQueryCache<Query>(query);
   return createAsyncStore(async () => {
-    const v =
-      typeof variables === "function" && typeof variables !== "undefined"
-        ? variables()
-        : variables;
+    const v = variables instanceof Function ? variables() : variables;
     return cachedQuery(v);
   });
 }
 
 export function createMutationAction<Mutation extends string>(
   mutation: Mutation,
-  revalidateQueries?: string[]
+  revalidateQueries?: string[],
 ) {
   const revalidationKeys = (revalidateQueries || []).map((query) =>
-    getOperationName(query)
+    extractOperationName(query),
   );
   return action(
     async (
       mutation: Mutation,
       revalidationKeys: string[] = [],
-      formData: FormData
+      formData: FormData,
     ) => {
       "use server";
       const req = await storefront.mutate<Mutation>(
         mutation,
-        Object.fromEntries(
-          formData.entries()
-        ) as createStorefrontClient.OperationVariables<
-          StorefrontMutations,
-          Mutation
-        >
+        Object.fromEntries(formData.entries()) as MutationVariables<Mutation>,
       );
       return json(
         {
@@ -74,10 +54,10 @@ export function createMutationAction<Mutation extends string>(
           revalidate:
             revalidationKeys.length > 0 ? revalidationKeys : "garbage",
           status: req.errors ? 500 : 200,
-        }
+        },
       );
     },
-    getOperationName(mutation)
+    extractOperationName(mutation),
   ).with(mutation, revalidationKeys);
 }
 
@@ -86,7 +66,7 @@ export const createCombinedOperations = <
   const Mutations extends string[],
 >(
   queries: Queries,
-  mutations: Mutations
+  mutations: Mutations,
 ) => {
   type Query = Queries[number];
   type QueryNames = ExtractOperationName<Query>;
@@ -103,21 +83,21 @@ export const createCombinedOperations = <
 
   const queryFunctions = queries.reduce<CachedQueries>(
     (acc: CachedQueries, query: Query) => {
-      const queryName = getOperationName(query);
+      const queryName = extractOperationName(query);
       if (queryName) acc[queryName] = createQueryCache<Query>(query);
       return acc;
     },
-    {} as CachedQueries
+    {} as CachedQueries,
   );
 
   const mutationActions = mutations.reduce<MutationActions>(
     (acc: MutationActions, mutation: Mutation) => {
-      const mutationName = getOperationName(mutation);
+      const mutationName = extractOperationName(mutation);
       if (mutationName)
         acc[mutationName] = createMutationAction<Mutation>(mutation, queries);
       return acc;
     },
-    {} as MutationActions
+    {} as MutationActions,
   );
 
   return [queryFunctions, mutationActions] as const;
