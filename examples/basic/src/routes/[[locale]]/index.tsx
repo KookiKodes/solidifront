@@ -1,27 +1,20 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
 // import { createAsyncQuery } from "@solidifront/start/storefront";
-import { getStorefrontClient } from "@solidifront/start/storefront";
+import { createQueryCache } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
-import { createAsync, query } from "@solidjs/router";
+import { createAsync } from "@solidjs/router";
 // import { createCartMutation } from "~/graphql/storefront/mutations";
 
-// const cachedShopQuery = createQueryCache(shopQuery);
-//
-// export const route = {
-//   async preload() {
-//     await cachedShopQuery();
-//   },
-// };
-//
-// const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
+const cachedShopQuery = createQueryCache(shopQuery);
 
-const cachedShopQuery = query(async () => {
-  "use server";
-  const client = getStorefrontClient();
-  if (!client) throw new Error("Storefront client not found!");
-  return client.query(shopQuery);
-}, "test");
+export const route = {
+  async preload() {
+    await cachedShopQuery();
+  },
+};
+
+// const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
 
 export default function Home() {
   const locale = useLocale();

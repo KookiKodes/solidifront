@@ -1,9 +1,8 @@
 import type { Accessor } from "solid-js";
-import type { MutationVariables, QueryVariables } from "./types";
 import type { ExtractOperationName } from "@solidifront/storefront-client/utils";
+import type { MutationVariables, QueryVariables } from "./types";
 
-import { action, json } from "@solidjs/router";
-import { query, createAsyncStore } from "@solidjs/router";
+import { action, json, query, createAsyncStore } from "@solidjs/router";
 
 import { storefront } from "./storefront.js";
 import { extractOperationName } from "./utils.js";

@@ -14,7 +14,7 @@ export const storefront = {
   },
   mutate: async <const Mutation extends string>(
     mutation: Mutation,
-    variables: MutationVariables<Mutation>,
+    variables?: MutationVariables<Mutation>,
   ) => {
     "use server";
     const client = getStorefrontClient();
