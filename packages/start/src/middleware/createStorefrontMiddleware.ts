@@ -76,7 +76,7 @@ export function createStorefrontMiddleware(
             locale,
           );
         }
-        return await client.query(query, options);
+        return client.query(query, options);
       },
       async mutate(mutation: string, options?: any) {
         const locale = event.locals.locale as I18nLocale;
@@ -87,7 +87,7 @@ export function createStorefrontMiddleware(
             locale,
           );
         }
-        return await client.mutate(mutation, options);
+        return client.mutate(mutation, options);
       },
     };
   };
