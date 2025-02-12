@@ -11,7 +11,6 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as ManagedRuntime from "effect/ManagedRuntime";
 import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
-import * as StorefrontOperation from "./services/StorefrontOperation.js";
 
 const mainLayer = Layer.mergeAll(TypedStorefrontClient.Default);
 
