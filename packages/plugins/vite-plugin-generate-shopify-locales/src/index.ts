@@ -1,18 +1,14 @@
 import type { Plugin } from 'vite';
 import { getStorefrontEnv } from './utils/env.js';
-import {
-  getShopLocalization,
-  type ShopLocalizationResult,
-} from './utils/getShopLocalization.js';
+import { getShopLocalization } from './utils/getShopLocalization.js';
 import { debugLog } from './utils/debugLog.js';
 
 import { Localizations, IsoCode, Locale } from './types.js';
 
 function buildShopLocales(
   defaultLocale: IsoCode,
-  localization: ShopLocalizationResult,
-): Localizations {
-  //@ts-expect-error
+  localization: Awaited<ReturnType<typeof getShopLocalization>>,
+) {
   return localization.availableCountries.reduce(
     (localizations: Localizations, localization) => {
       localization.availableLanguages.forEach((language) => {
@@ -26,8 +22,8 @@ function buildShopLocales(
           language: language.isoCode,
           languageLabel: language.endonymName,
           market: {
-            id: localization.market.id,
-            handle: localization.market.handle,
+            id: localization?.market!.id,
+            handle: localization?.market!.handle,
           },
         };
         if (isoCode === defaultLocale) localizations.default = data;
@@ -37,7 +33,7 @@ function buildShopLocales(
       });
       return localizations;
     },
-    {},
+    {} as Localizations,
   );
 }
 

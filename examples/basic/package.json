@@ -11,13 +11,17 @@
   "dependencies": {
     "@solidifront/start": "workspace:*",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.14.7",
-    "@solidjs/start": "^1.0.8",
-    "solid-js": "^1.9.1",
+    "@solidjs/router": "^0.15.1",
+    "@solidjs/start": "^1.0.10",
+    "@threlte/core": "8.0.0-next.31",
+    "solid-js": "^1.9.3",
+    "svelte-email": "^0.0.4",
+    "three": "^0.171.0",
     "vinxi": "^0.4.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.2"
+    "@graphql-codegen/cli": "^5.0.3",
+    "@types/three": "^0.170.0"
   },
   "engines": {
     "node": ">=18"

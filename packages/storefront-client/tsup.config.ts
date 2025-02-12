@@ -9,6 +9,7 @@ const commonConfig = {
   minify: false,
   bundle: false,
   splitting: true,
+  clean: true,
   treeshake: true,
   sourcemap: true,
 };
@@ -19,21 +20,27 @@ export default defineConfig([
     format: "esm",
     entry: ["src/**/*.ts"],
     outDir: `${outDir}/esm`,
-    dts: false,
+    // dts: true,
     async onSuccess() {
-      const [dts] = generateDtsBundle([
+      const [indexDts] = generateDtsBundle([
         {
           filePath: path.resolve("./src/index.ts"),
-          libraries: {
-            inlinedLibraries: [
-              "@shopify/graphql-client",
-              "@shopify/storefront-api-client",
-            ],
-          },
+        },
+      ]);
+      const [effectDts] = generateDtsBundle([
+        {
+          filePath: path.resolve("./src/effect.ts"),
+        },
+      ]);
+      const [utilsDts] = generateDtsBundle([
+        {
+          filePath: path.resolve("./src/utils.ts"),
         },
       ]);
 
-      fs.writeFile(path.resolve(outDir, "esm", "index.d.ts"), dts);
+      await fs.writeFile(path.resolve(outDir, "esm", "index.d.ts"), indexDts);
+      await fs.writeFile(path.resolve(outDir, "esm", "effect.d.ts"), effectDts);
+      await fs.writeFile(path.resolve(outDir, "esm", "utils.d.ts"), utilsDts);
     },
   },
   {
@@ -55,9 +62,9 @@ export default defineConfig([
 
                 await fs.writeFile(
                   filepath,
-                  contents.replace(/\.js'\);/g, ".cjs');")
+                  contents.replace(/\.js'\);/g, ".cjs');"),
                 );
-              })
+              }),
           );
         },
       },

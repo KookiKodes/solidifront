@@ -1,4 +1,5 @@
 import type { SolidifrontConfig, VitePlugin } from "../types";
+import type { ValidVersion } from "@solidifront/storefront-client";
 
 import { z } from "zod";
 import { generateErrorMessage } from "zod-error";
@@ -12,7 +13,7 @@ import {
 import fs from "fs";
 import path from "path";
 
-const VALID_VERSIONS = [
+const VALID_VERSIONS: ValidVersion[] = [
   "2024-01",
   "2024-04",
   "2024-07",
@@ -24,13 +25,10 @@ const VALID_VERSIONS = [
 const BASE_SCHEMA = z.object({});
 
 const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
-  SHOPIFY_PUBLIC_STORE_DOMAIN: z
-    .string({ message: "env 'SHOPIFY_PUBLIC_STORE_DOMAIN' is required" })
-    .endsWith(
-      ".myshopify.com",
-      "env 'SHOPIFY_PUBLIC_STORE_DOMAIN' should end with'.myshopify.com'"
-    ),
-  SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS, {
+  SHOPIFY_PUBLIC_STORE_NAME: z.string({
+    message: "env 'SHOPIFY_PUBLIC_STORE_NAME' is required",
+  }),
+  SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS as any, {
     message:
       "env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: " +
       VALID_VERSIONS.join(", "),
@@ -60,7 +58,7 @@ type Schemas =
 
 export function solidifrontEnvSetup(
   project: Project,
-  config: SolidifrontConfig["solidifront"]
+  config: SolidifrontConfig["solidifront"],
 ): VitePlugin {
   const needsLocalization = Reflect.has(config || {}, "localization"),
     needsStorefront = Reflect.has(config || {}, "storefront"),
@@ -93,13 +91,13 @@ export function solidifrontEnvSetup(
         project.createSourceFile(
           absGlobalsPath,
           `/// <reference types="@solidjs/start/env" />`,
-          { overwrite: true }
+          { overwrite: true },
         );
       } else {
         project.createSourceFile(
           absGlobalsPath,
           fs.readFileSync(absGlobalsPath, { encoding: "utf-8" }),
-          { overwrite: true }
+          { overwrite: true },
         );
       }
 

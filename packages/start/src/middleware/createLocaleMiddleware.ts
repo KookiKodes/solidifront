@@ -7,7 +7,6 @@ import type {
 
 import { getCookie, getHeader, setCookie } from "vinxi/http";
 import { resolveAcceptLanguage } from "resolve-accept-language";
-import { redirect } from "@solidjs/router";
 
 export type I18nLocale = Locale & {
   pathPrefix:
@@ -46,7 +45,7 @@ function parseLocaleFromCookie(countries: Localizations): I18nLocale | null {
 
 function getPathPrefix(
   defaultLocale: Localizations["default"],
-  locale: Locale
+  locale: Locale,
 ): I18nLocale["pathPrefix"] {
   if (defaultLocale.isoCode === locale.isoCode) return "";
   return `/${locale.isoCode.toLowerCase() as Lowercase<IsoCode>}`;
@@ -70,7 +69,7 @@ function getLocaleFromRequest(countries: Localizations): I18nLocale {
     countries.default.isoCode,
     {
       matchCountry: true,
-    }
+    },
   );
 
   if (locale === countries.default.isoCode)

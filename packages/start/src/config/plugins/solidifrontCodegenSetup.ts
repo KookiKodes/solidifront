@@ -6,7 +6,7 @@ import fs from "fs";
 
 export function solidifrontCodegenSetup(
   project: Project,
-  config: SolidifrontConfig["solidifront"]
+  config: SolidifrontConfig["solidifront"],
 ): VitePlugin {
   const absCodegenDir = path.resolve("./.solidifront"),
     absCodegenPath = path.resolve(absCodegenDir, "codegen.ts");
@@ -30,21 +30,25 @@ export function solidifrontCodegenSetup(
     expression(writer) {
       writer
         .writeLine("createSolidifrontConfig({")
-        .writeLine("types: {")
-        .writeLine('storefront: "@solidifront/start/storefront-api-types",')
-        .writeLine('customer: "@solidifront/start/customer-api-types",')
-        .writeLine("},")
         .write("generates: {")
         .conditionalNewLine(!!config?.customer || !!config?.storefront)
         .conditionalWrite(!!config?.storefront, "storefront: {")
         .conditionalWriteLine(
           !!config?.storefront && !!config?.storefront?.codegen?.documents,
           () =>
-            `documents: ${JSON.stringify(config!.storefront!.codegen!.documents)},`
+            `documents: ${JSON.stringify(config!.storefront!.codegen!.documents)},`,
         )
         .conditionalWriteLine(
           !!config?.storefront && !!config?.storefront?.codegen?.path,
-          () => `path: ${JSON.stringify(config!.storefront!.codegen!.path)},`
+          () => `path: ${JSON.stringify(config!.storefront!.codegen!.path)},`,
+        )
+        .conditionalWriteLine(
+          !!config?.storefront,
+          () => `types: "@solidifront/start/storefront-api-types",`,
+        )
+        .conditionalWriteLine(
+          !!config?.storefront,
+          () => `moduleName: "@solidifront/start/storefront",`,
         )
         .conditionalWrite(!!config?.storefront, "},")
         .conditionalNewLine(!!config?.customer)
@@ -52,11 +56,19 @@ export function solidifrontCodegenSetup(
         .conditionalWriteLine(
           !!config?.customer && !!config?.customer?.codegen?.documents,
           () =>
-            `documents: ${JSON.stringify(config!.customer!.codegen!.documents)},`
+            `documents: ${JSON.stringify(config!.customer!.codegen!.documents)},`,
         )
         .conditionalWriteLine(
           !!config?.customer && !!config?.customer?.codegen?.path,
-          () => `path: ${JSON.stringify(config!.customer!.codegen!.path)},`
+          () => `path: ${JSON.stringify(config!.customer!.codegen!.path)},`,
+        )
+        .conditionalWriteLine(
+          !!config?.customer,
+          () => `types: "@solidifront/start/customer-api-types",`,
+        )
+        .conditionalWriteLine(
+          !!config?.customer,
+          () => `moduleName: "@solidifront/start/storefront",`,
         )
         .conditionalWrite(!!config?.customer, "}")
         .conditionalNewLine(!!config?.customer || !!config?.storefront)

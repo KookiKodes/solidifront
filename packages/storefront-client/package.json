@@ -3,21 +3,32 @@
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "private": false,
   "exports": {
     ".": {
       "types": "./dist/esm/index.d.ts",
       "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/index.js"
+    },
+    "./effect": {
+      "types": "./dist/esm/effect.d.ts",
+      "require": "./dist/cjs/effect.cjs",
+      "import": "./dist/esm/effect.js"
+    },
+    "./utils": {
+      "types": "./dist/esm/utils.d.ts",
+      "require": "./dist/cjs/utils.cjs",
+      "import": "./dist/esm/utils.js"
     }
   },
   "scripts": {
     "build": "tsup --clean",
-    "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "Solidifront",
@@ -31,14 +42,12 @@
     "directory": "packages/storefront-client"
   },
   "devDependencies": {
-    "@types/isomorphic-fetch": "^0.0.39",
+    "@effect/platform": "^0.71.2",
     "dts-bundle-generator": "^9.5.1",
+    "effect": "^3.11.7",
     "tsup": "^8.2.4",
-    "tsx": "^4.19.1"
-  },
-  "dependencies": {
-    "@shopify/graphql-client": "^1.2.0",
-    "@shopify/storefront-api-client": "^1.0.2",
-    "isomorphic-fetch": "^3.0.0"
+    "tsx": "^4.19.1",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.4"
   }
 }
