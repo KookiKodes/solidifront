@@ -44,7 +44,7 @@
   "devDependencies": {
     "@effect/platform": "^0.71.2",
     "dts-bundle-generator": "^9.5.1",
-    "effect": "^3.11.7",
+    "effect": "^3.12.11",
     "tsup": "^8.2.4",
     "tsx": "^4.19.1",
     "vite": "^5.4.11",
