@@ -1,5 +1,15 @@
 # @solidifront/start
 
+## 0.3.3
+
+### Patch Changes
+
+- Complete rewrite of the storefront-client. Still need to implement a logging hook.
+- Updated dependencies
+  - @solidifront/storefront-client@0.2.0
+  - @solidifront/codegen@1.0.7
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.3
+
 ## 0.3.2
 
 ### Patch Changes

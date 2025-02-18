@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.2.0
+
+### Minor Changes
+
+- Complete rewrite of the storefront-client. Still need to implement a logging hook.
+
 ## 0.1.1
 
 ### Patch Changes
