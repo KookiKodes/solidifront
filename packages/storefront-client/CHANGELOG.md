@@ -1,5 +1,17 @@
 # @solidifront/storefront-client
 
+## 0.2.2
+
+### Patch Changes
+
+- Type fix for "RequestOptions"
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated exported types from effect
+
 ## 0.2.0
 
 ### Minor Changes

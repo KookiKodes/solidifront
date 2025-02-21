@@ -1,7 +1,10 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
 // import { createAsyncQuery } from "@solidifront/start/storefront";
-import { createQueryCache } from "@solidifront/start/storefront";
+import {
+  createQueryCache,
+  createStorefrontClient,
+} from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
 import { createAsync } from "@solidjs/router";
 // import { createCartMutation } from "~/graphql/storefront/mutations";
@@ -13,6 +16,11 @@ export const route = {
     await cachedShopQuery();
   },
 };
+
+// Fix variables not being picked up correctly
+const client = createStorefrontClient();
+
+client.query(shopQuery);
 
 // const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
 

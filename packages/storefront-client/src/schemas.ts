@@ -10,9 +10,9 @@ export interface CodegenOperations {
   [key: string]: any;
 }
 
-export interface StorefrontQueries {}
+export interface StorefrontQueries extends CodegenOperations {}
 
-export interface StorefrontMutations {}
+export interface StorefrontMutations extends CodegenOperations {}
 
 export type TokenFields = S.Schema.Encoded<typeof TokenFields>;
 
@@ -33,10 +33,10 @@ type RequestOptionsWithoutVariables = Omit<
 
 export type RequestOptions<TVariables = any> = TVariables extends
   | {
-      [x: string]: never;
+      [key: string]: never;
     }
   | undefined
-  | unknown
+  | never
   ? RequestOptionsWithoutVariables
   : Omit<S.Schema.Encoded<typeof RequestOptions>, "variables"> & {
       variables: TVariables;
