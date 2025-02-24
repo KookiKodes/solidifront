@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/storefront-client",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "type": "module",
   "types": "./dist/esm/index.d.ts",

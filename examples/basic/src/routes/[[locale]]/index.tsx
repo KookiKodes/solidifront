@@ -17,11 +17,6 @@ export const route = {
   },
 };
 
-// Fix variables not being picked up correctly
-const client = createStorefrontClient();
-
-client.query(shopQuery);
-
 // const createCartAction = createMutationAction(createCartMutation, [shopQuery]);
 
 export default function Home() {

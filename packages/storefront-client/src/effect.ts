@@ -1,6 +1,6 @@
 import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
 
-import { type StorefrontQueries, type StorefrontMutations } from "./schemas";
+import type { StorefrontQueries, StorefrontMutations } from "./schemas.js";
 
 export type { StorefrontQueries, StorefrontMutations };
 

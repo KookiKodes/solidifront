@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.2.3
+
+### Patch Changes
+
+- Minor import bug fix
+
 ## 0.2.2
 
 ### Patch Changes
