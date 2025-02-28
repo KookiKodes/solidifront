@@ -10,9 +10,9 @@ export interface CodegenOperations {
   [key: string]: any;
 }
 
-export interface StorefrontQueries extends CodegenOperations {}
+export interface StorefrontQueries extends CodegenOperations { }
 
-export interface StorefrontMutations extends CodegenOperations {}
+export interface StorefrontMutations extends CodegenOperations { }
 
 export type TokenFields = S.Schema.Encoded<typeof TokenFields>;
 
@@ -33,14 +33,14 @@ type RequestOptionsWithoutVariables = Omit<
 
 export type RequestOptions<TVariables = any> = TVariables extends
   | {
-      [key: string]: never;
-    }
+    [key: string]: never;
+  }
   | undefined
   | never
   ? RequestOptionsWithoutVariables
   : Omit<S.Schema.Encoded<typeof RequestOptions>, "variables"> & {
-      variables: TVariables;
-    };
+    variables: TVariables;
+  };
 
 export const ValidVersion = S.Literal(
   "2024-01",
@@ -240,6 +240,7 @@ export const RequestOptions = S.partial(
     }),
     privateAccessToken: PrivateToken,
     publicAccessToken: S.NonEmptyString,
+    signal: S.optional(S.instanceOf(AbortSignal)),
   }),
 ).annotations({
   identifier: "RequestOptions",

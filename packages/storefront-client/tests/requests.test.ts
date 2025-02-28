@@ -9,7 +9,6 @@ import { describe, it, expect } from "vitest";
 import * as TypedStorefrontClient from "../src/services/TypedStorefrontClient";
 import { shopQuery } from "./operations";
 
-const baseLayer = Layer.mergeAll(TypedStorefrontClient.Default);
 const createMockStatusLayer = (statusCode: number) =>
   Layer.succeed(
     HttpClient.HttpClient,
@@ -31,11 +30,9 @@ describe("status code errors", () => {
   testableStatusCodes.forEach((statusCode) => {
     it(`should return response with ${statusCode} status code`, async () => {
       const layer = Layer.mergeAll(
-        baseLayer,
+        TypedStorefrontClient.Default,
         createMockStatusLayer(statusCode),
       );
-
-      const runtime = ManagedRuntime.make(layer);
 
       const makeRequest = Effect.gen(function* () {
         const client = yield* TypedStorefrontClient.make({
@@ -45,9 +42,9 @@ describe("status code errors", () => {
         });
 
         return yield* client.query(shopQuery);
-      });
+      }).pipe(Effect.provide(layer));
 
-      const response = await runtime.runPromise(makeRequest);
+      const response = await Effect.runPromise(makeRequest);
 
       expect(response.errors?.networkStatusCode).toBe(statusCode);
     });

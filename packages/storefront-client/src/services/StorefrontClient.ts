@@ -205,7 +205,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
 
 export class StorefrontClient extends Context.Tag(
   "@solidifront/storefront-client/StorefrontClient",
-)<StorefrontClient, typeof make>() {}
+)<StorefrontClient, typeof make>() { }
 
 export const Default = Layer.mergeAll(
   Layer.succeed(StorefrontClient, StorefrontClient.of(make)),

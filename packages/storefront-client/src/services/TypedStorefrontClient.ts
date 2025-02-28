@@ -7,14 +7,10 @@ import type {
 } from "../schemas";
 
 import * as Effect from "effect/Effect";
-import * as Layer from "effect/Layer";
-import * as Logger from "effect/Logger";
 
 import * as StorefrontClient from "./StorefrontClient.js";
 import * as StorefrontOperation from "./StorefrontOperation.js";
 import * as LoggerUtils from "./LoggerUtils.js";
-
-export const Default = Layer.mergeAll(StorefrontClient.Default);
 
 export const make = <
   GeneratedQueries extends CodegenOperations = StorefrontQueries,
@@ -22,8 +18,6 @@ export const make = <
 >(
   options: ClientOptions["Encoded"],
 ) => {
-  const loggerLayer = Layer.mergeAll(Logger.pretty);
-
   const clientEffect = Effect.gen(function* () {
     const createClient = yield* StorefrontClient.StorefrontClient;
     const client = yield* createClient(options);
@@ -69,10 +63,7 @@ export const make = <
         "query",
         query,
         options,
-      ).pipe(
-        Effect.provide(loggerLayer),
-        LoggerUtils.withNamespacedLogSpan("Query"),
-      );
+      ).pipe(LoggerUtils.withNamespacedLogSpan("Query"));
 
     const mutate = <const Mutation extends string>(
       mutation: Mutation,
@@ -82,19 +73,13 @@ export const make = <
         "mutate",
         mutation,
         options,
-      ).pipe(
-        Effect.provide(loggerLayer),
-        LoggerUtils.withNamespacedLogSpan("Mutation"),
-      );
+      ).pipe(LoggerUtils.withNamespacedLogSpan("Mutation"));
 
     return {
       query,
       mutate,
     };
-  }).pipe(
-    Effect.provide(loggerLayer),
-    LoggerUtils.withNamespacedLogSpan("Create"),
-  );
+  }).pipe(LoggerUtils.withNamespacedLogSpan("Create"));
 
   const cachedEffect = Effect.gen(function* () {
     const cachedClient = yield* Effect.cached(clientEffect);
@@ -105,3 +90,5 @@ export const make = <
     Effect.catchTag("ParseError", (e) => Effect.dieMessage(e.message)),
   );
 };
+
+export const Default = StorefrontClient.Default;
