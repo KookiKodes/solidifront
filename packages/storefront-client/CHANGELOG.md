@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.0
+
+### Minor Changes
+
+- Removed unecessary use of runtime and added ability to use custom logging
+
 ## 0.2.3
 
 ### Patch Changes

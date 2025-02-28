@@ -4,7 +4,7 @@ import type { I18nLocale } from "./createLocaleMiddleware";
 
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
-import * as ManagedRuntime from "effect/ManagedRuntime";
+import * as Logger from "effect/Logger";
 
 import * as StorefrontClient from "@solidifront/storefront-client/effect";
 
@@ -63,8 +63,11 @@ export namespace createStorefrontMiddleware {
 export function createStorefrontMiddleware(
   config: createStorefrontMiddleware.Config,
 ) {
-  const mainLayer = Layer.mergeAll(StorefrontClient.layer);
-  const storefrontRuntime = ManagedRuntime.make(mainLayer);
+  let mainLayer = StorefrontClient.layer;
+
+  if (import.meta.env.DEV) {
+    mainLayer = Layer.mergeAll(Logger.pretty, mainLayer);
+  }
 
   const operationFactory =
     (operationType: "query" | "mutate") =>
@@ -87,7 +90,7 @@ export function createStorefrontMiddleware(
         }
 
         return yield* client[operationType](operation, options);
-      });
+      }).pipe(Effect.provide(mainLayer));
 
   const queryEffect = operationFactory("query"),
     mutateEffect = operationFactory("mutate");
@@ -95,9 +98,9 @@ export function createStorefrontMiddleware(
   return async (event: FetchEvent) => {
     event.locals.storefront = {
       query: (query: string, options?: any) =>
-        storefrontRuntime.runPromise(queryEffect(event, query, options)),
+        Effect.runPromise(queryEffect(event, query, options)),
       mutate: (mutation: string, options?: any) =>
-        storefrontRuntime.runPromise(mutateEffect(event, mutation, options)),
+        Effect.runPromise(mutateEffect(event, mutation, options)),
     };
   };
 }

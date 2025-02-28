@@ -1,5 +1,14 @@
 # @solidifront/start
 
+## 0.3.7
+
+### Patch Changes
+
+- Removed unecessary use of runtime and added ability to use custom logging
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.0
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.7
+
 ## 0.3.6
 
 ### Patch Changes
