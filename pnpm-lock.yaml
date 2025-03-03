@@ -24,8 +24,8 @@ importers:
         specifier: ^2.1.2
         version: 2.3.0
       typescript:
-        specifier: ^5.6.2
-        version: 5.6.3
+        specifier: ^5.8.2
+        version: 5.8.2
 
   examples/basic:
     dependencies:
@@ -40,7 +40,7 @@ importers:
         version: 0.15.1(solid-js@1.9.3)
       '@solidjs/start':
         specifier: ^1.0.10
-        version: 1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
+        version: 1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
       '@threlte/core':
         specifier: 8.0.0-next.31
         version: 8.0.0-next.31(svelte@5.3.1)(three@0.171.0)
@@ -55,11 +55,11 @@ importers:
         version: 0.171.0
       vinxi:
         specifier: ^0.4.3
-        version: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
+        version: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2)
     devDependencies:
       '@graphql-codegen/cli':
         specifier: ^5.0.3
-        version: 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.3)
+        version: 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2)
       '@types/three':
         specifier: ^0.170.0
         version: 0.170.0
@@ -72,7 +72,7 @@ importers:
     devDependencies:
       '@graphql-codegen/cli':
         specifier: ^5.0.2
-        version: 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.3)
+        version: 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2)
       '@graphql-codegen/plugin-helpers':
         specifier: ^5.0.4
         version: 5.1.0(graphql@16.9.0)
@@ -87,7 +87,7 @@ importers:
         version: 9.5.1
       tsup:
         specifier: ^8.2.4
-        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)
+        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0)
       type-fest:
         specifier: ^4.24.0
         version: 4.27.0
@@ -130,7 +130,7 @@ importers:
         version: 0.15.1(solid-js@1.9.3)
       '@solidjs/start':
         specifier: ^1.0.10
-        version: 1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
+        version: 1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
       defu:
         specifier: ^6.1.4
         version: 6.1.4
@@ -154,13 +154,13 @@ importers:
         version: 23.0.0
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.3)(tsup@8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0))
+        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.3)(tsup@8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0))
       vinxi:
         specifier: ^0.4.3
-        version: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
+        version: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2)
       vite-plugin-graphql-codegen:
         specifier: ^3.3.8
-        version: 3.3.8(@graphql-codegen/cli@5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.3))(graphql@16.9.0)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
+        version: 3.3.8(@graphql-codegen/cli@5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2))(graphql@16.9.0)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -179,7 +179,7 @@ importers:
         version: 9.5.1
       tsup:
         specifier: ^8.2.4
-        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)
+        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0)
       tsx:
         specifier: ^4.19.1
         version: 4.19.2
@@ -198,13 +198,16 @@ importers:
       effect:
         specifier: ^3.13.4
         version: 3.13.4
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
     devDependencies:
       dts-bundle-generator:
         specifier: ^9.5.1
         version: 9.5.1
       tsup:
         specifier: ^8.2.4
-        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)
+        version: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0)
       tsx:
         specifier: ^4.19.1
         version: 4.19.2
@@ -4431,6 +4434,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@5.8.2:
+    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   ua-parser-js@1.0.39:
     resolution: {integrity: sha512-k24RCVWlEcjkdOxYmVJgeD/0a1TiSpqLg+ZalVGV9lsnr4yqu0w7tX/x2xX6G4zpkgQnRf89lxuZ1wsbjXM8lw==}
     hasBin: true
@@ -5689,6 +5697,56 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@graphql-codegen/cli@5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2)':
+    dependencies:
+      '@babel/generator': 7.26.2
+      '@babel/template': 7.25.9
+      '@babel/types': 7.26.0
+      '@graphql-codegen/client-preset': 4.5.0(graphql@16.9.0)
+      '@graphql-codegen/core': 4.0.2(graphql@16.9.0)
+      '@graphql-codegen/plugin-helpers': 5.1.0(graphql@16.9.0)
+      '@graphql-tools/apollo-engine-loader': 8.0.4(graphql@16.9.0)
+      '@graphql-tools/code-file-loader': 8.1.5(graphql@16.9.0)
+      '@graphql-tools/git-loader': 8.0.9(graphql@16.9.0)
+      '@graphql-tools/github-loader': 8.0.4(@types/node@22.9.0)(graphql@16.9.0)
+      '@graphql-tools/graphql-file-loader': 8.0.3(graphql@16.9.0)
+      '@graphql-tools/json-file-loader': 8.0.3(graphql@16.9.0)
+      '@graphql-tools/load': 8.0.4(graphql@16.9.0)
+      '@graphql-tools/prisma-loader': 8.0.17(@types/node@22.9.0)(graphql@16.9.0)
+      '@graphql-tools/url-loader': 8.0.15(@types/node@22.9.0)(graphql@16.9.0)
+      '@graphql-tools/utils': 10.5.6(graphql@16.9.0)
+      '@whatwg-node/fetch': 0.9.23
+      chalk: 4.1.2
+      cosmiconfig: 8.3.6(typescript@5.8.2)
+      debounce: 1.2.1
+      detect-indent: 6.1.0
+      graphql: 16.9.0
+      graphql-config: 5.1.3(@types/node@22.9.0)(graphql@16.9.0)(typescript@5.8.2)
+      inquirer: 8.2.6
+      is-glob: 4.0.3
+      jiti: 1.21.6
+      json-to-pretty-yaml: 1.2.2
+      listr2: 4.0.5(enquirer@2.4.1)
+      log-symbols: 4.1.0
+      micromatch: 4.0.8
+      shell-quote: 1.8.1
+      string-env-interpolation: 1.0.1
+      ts-log: 2.2.7
+      tslib: 2.8.1
+      yaml: 2.6.0
+      yargs: 17.7.2
+    optionalDependencies:
+      '@parcel/watcher': 2.5.0
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - cosmiconfig-toml-loader
+      - encoding
+      - enquirer
+      - supports-color
+      - typescript
+      - utf-8-validate
+
   '@graphql-codegen/client-preset@4.5.0(graphql@16.9.0)':
     dependencies:
       '@babel/helper-plugin-utils': 7.25.9
@@ -6421,11 +6479,11 @@ snapshots:
     dependencies:
       solid-js: 1.9.3
 
-  '@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))':
+  '@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))
-      '@vinxi/server-components': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))
-      '@vinxi/server-functions': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))
+      '@vinxi/server-components': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))
+      '@vinxi/server-functions': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))
       defu: 6.1.4
       error-stack-parser: 2.1.4
       html-to-image: 1.11.11
@@ -6563,7 +6621,7 @@ snapshots:
     transitivePeerDependencies:
       - uWebSockets.js
 
-  '@vinxi/plugin-directives@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))':
+  '@vinxi/plugin-directives@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))':
     dependencies:
       '@babel/parser': 7.26.2
       acorn: 8.14.0
@@ -6574,29 +6632,29 @@ snapshots:
       magicast: 0.2.11
       recast: 0.23.9
       tslib: 2.8.1
-      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
+      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2)
 
-  '@vinxi/server-components@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))':
+  '@vinxi/server-components@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))
       acorn: 8.14.0
       acorn-loose: 8.4.0
       acorn-typescript: 1.4.13(acorn@8.14.0)
       astring: 1.9.0
       magicast: 0.2.11
       recast: 0.23.9
-      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
+      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2)
 
-  '@vinxi/server-functions@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))':
+  '@vinxi/server-functions@0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2))
       acorn: 8.14.0
       acorn-loose: 8.4.0
       acorn-typescript: 1.4.13(acorn@8.14.0)
       astring: 1.9.0
       magicast: 0.2.11
       recast: 0.23.9
-      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
+      vinxi: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2)
 
   '@vitest/expect@2.1.5':
     dependencies:
@@ -7188,6 +7246,15 @@ snapshots:
     optionalDependencies:
       typescript: 5.6.3
 
+  cosmiconfig@8.3.6(typescript@5.8.2):
+    dependencies:
+      import-fresh: 3.3.0
+      js-yaml: 4.1.0
+      parse-json: 5.2.0
+      path-type: 4.0.0
+    optionalDependencies:
+      typescript: 5.8.2
+
   crc-32@1.2.2: {}
 
   crc32-stream@6.0.0:
@@ -7321,7 +7388,7 @@ snapshots:
 
   dts-bundle-generator@9.5.1:
     dependencies:
-      typescript: 5.6.3
+      typescript: 5.8.2
       yargs: 17.7.2
 
   duplexer@0.1.2: {}
@@ -7757,6 +7824,27 @@ snapshots:
       '@graphql-tools/url-loader': 8.0.15(@types/node@22.9.0)(graphql@16.9.0)
       '@graphql-tools/utils': 10.5.6(graphql@16.9.0)
       cosmiconfig: 8.3.6(typescript@5.6.3)
+      graphql: 16.9.0
+      jiti: 2.4.0
+      minimatch: 9.0.5
+      string-env-interpolation: 1.0.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+
+  graphql-config@5.1.3(@types/node@22.9.0)(graphql@16.9.0)(typescript@5.8.2):
+    dependencies:
+      '@graphql-tools/graphql-file-loader': 8.0.3(graphql@16.9.0)
+      '@graphql-tools/json-file-loader': 8.0.3(graphql@16.9.0)
+      '@graphql-tools/load': 8.0.4(graphql@16.9.0)
+      '@graphql-tools/merge': 9.0.9(graphql@16.9.0)
+      '@graphql-tools/url-loader': 8.0.15(@types/node@22.9.0)(graphql@16.9.0)
+      '@graphql-tools/utils': 10.5.6(graphql@16.9.0)
+      cosmiconfig: 8.3.6(typescript@5.8.2)
       graphql: 16.9.0
       jiti: 2.4.0
       minimatch: 9.0.5
@@ -8384,7 +8472,7 @@ snapshots:
 
   nanoid@3.3.7: {}
 
-  nitropack@2.10.4(typescript@5.6.3):
+  nitropack@2.10.4(typescript@5.8.2):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@netlify/functions': 2.8.2
@@ -8433,7 +8521,7 @@ snapshots:
       node-fetch-native: 1.6.4
       ofetch: 1.4.1
       ohash: 1.1.4
-      openapi-typescript: 7.4.3(typescript@5.6.3)
+      openapi-typescript: 7.4.3(typescript@5.8.2)
       pathe: 1.1.2
       perfect-debounce: 1.0.0
       pkg-types: 1.2.1
@@ -8569,14 +8657,14 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openapi-typescript@7.4.3(typescript@5.6.3):
+  openapi-typescript@7.4.3(typescript@5.8.2):
     dependencies:
       '@redocly/openapi-core': 1.25.11(supports-color@9.4.0)
       ansi-colors: 4.1.3
       change-case: 5.4.4
       parse-json: 8.1.0
       supports-color: 9.4.0
-      typescript: 5.6.3
+      typescript: 5.8.2
       yargs-parser: 21.1.1
     transitivePeerDependencies:
       - encoding
@@ -9308,10 +9396,10 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsup-preset-solid@2.2.0(esbuild@0.24.0)(solid-js@1.9.3)(tsup@8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)):
+  tsup-preset-solid@2.2.0(esbuild@0.24.0)(solid-js@1.9.3)(tsup@8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0)):
     dependencies:
       esbuild-plugin-solid: 0.5.0(esbuild@0.24.0)(solid-js@1.9.3)
-      tsup: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)
+      tsup: 8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0)
     transitivePeerDependencies:
       - esbuild
       - solid-js
@@ -9338,6 +9426,33 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.49
       typescript: 5.6.3
+    transitivePeerDependencies:
+      - jiti
+      - supports-color
+      - tsx
+      - yaml
+
+  tsup@8.3.5(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.8.2)(yaml@2.6.0):
+    dependencies:
+      bundle-require: 5.0.0(esbuild@0.24.0)
+      cac: 6.7.14
+      chokidar: 4.0.1
+      consola: 3.2.3
+      debug: 4.3.7(supports-color@9.4.0)
+      esbuild: 0.24.0
+      joycon: 3.1.1
+      picocolors: 1.1.1
+      postcss-load-config: 6.0.1(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(yaml@2.6.0)
+      resolve-from: 5.0.0
+      rollup: 4.27.3
+      source-map: 0.8.0-beta.0
+      sucrase: 3.35.0
+      tinyexec: 0.3.1
+      tinyglobby: 0.2.10
+      tree-kill: 1.2.2
+    optionalDependencies:
+      postcss: 8.4.49
+      typescript: 5.8.2
     transitivePeerDependencies:
       - jiti
       - supports-color
@@ -9389,6 +9504,8 @@ snapshots:
   type-fest@4.27.0: {}
 
   typescript@5.6.3: {}
+
+  typescript@5.8.2: {}
 
   ua-parser-js@1.0.39: {}
 
@@ -9520,7 +9637,7 @@ snapshots:
 
   value-or-promise@1.0.12: {}
 
-  vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3):
+  vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.8.2):
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
@@ -9542,7 +9659,7 @@ snapshots:
       hookable: 5.5.3
       http-proxy: 1.18.1
       micromatch: 4.0.8
-      nitropack: 2.10.4(typescript@5.6.3)
+      nitropack: 2.10.4(typescript@5.8.2)
       node-fetch-native: 1.6.4
       path-to-regexp: 6.3.0
       pathe: 1.1.2
@@ -9608,9 +9725,9 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-graphql-codegen@3.3.8(@graphql-codegen/cli@5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.3))(graphql@16.9.0)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)):
+  vite-plugin-graphql-codegen@3.3.8(@graphql-codegen/cli@5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2))(graphql@16.9.0)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)):
     dependencies:
-      '@graphql-codegen/cli': 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.6.3)
+      '@graphql-codegen/cli': 5.0.3(@parcel/watcher@2.5.0)(@types/node@22.9.0)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.8.2)
       '@graphql-codegen/plugin-helpers': 5.1.0(graphql@16.9.0)
       graphql: 16.9.0
       vite: 5.4.11(@types/node@22.9.0)(terser@5.36.0)

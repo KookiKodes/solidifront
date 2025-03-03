@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated to most recent version of typscript
+
 ## 0.3.1
 
 ### Patch Changes
