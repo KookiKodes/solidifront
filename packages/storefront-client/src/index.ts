@@ -20,14 +20,14 @@ export namespace createStorefrontClient {
   export type Variables<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-    | StorefrontQueries
-    | StorefrontMutations,
+      | StorefrontQueries
+      | StorefrontMutations,
   > = GeneratedOperations[Operation]["variables"];
   export type ReturnData<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-    | StorefrontMutations
-    | StorefrontMutations,
+      | StorefrontMutations
+      | StorefrontMutations,
   > = GeneratedOperations[Operation]["return"];
 }
 
