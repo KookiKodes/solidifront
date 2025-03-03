@@ -135,8 +135,8 @@ importers:
         specifier: ^6.1.4
         version: 6.1.4
       effect:
-        specifier: ^3.12.11
-        version: 3.12.11
+        specifier: ^3.13.4
+        version: 3.13.4
       esbuild-plugin-solid:
         specifier: ^0.6.0
         version: 0.6.0(esbuild@0.24.0)(solid-js@1.9.3)
@@ -2556,9 +2556,6 @@ packages:
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
-
-  effect@3.12.11:
-    resolution: {integrity: sha512-toXTZx8nNuS7By7EcCHmFT/uOVmkhlCFECsCAI+gNgDJhhMK8FJMjAyuqm5YEA58YJFZmMckuwiFs5Fzr8GiYg==}
 
   effect@3.13.4:
     resolution: {integrity: sha512-XZgCImyBpONuKdsBRk37JfV7242yxTu8r/TcL5ZELIyqRbMYa+Prr86cz1INxXi7iFXfU0havZkCJGyYp1BsiA==}
@@ -7339,10 +7336,6 @@ snapshots:
       semver: 7.6.3
 
   ee-first@1.1.1: {}
-
-  effect@3.12.11:
-    dependencies:
-      fast-check: 3.23.1
 
   effect@3.13.4:
     dependencies:
