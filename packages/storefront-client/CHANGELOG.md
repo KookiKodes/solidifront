@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Updated to most recent version of typscript
+- Updated typescript version
 
 ## 0.3.1
 
