@@ -1,3 +1,8 @@
+import type { ParseError } from "effect/ParseResult";
+import type { HttpClientError } from "@effect/platform/HttpClientError";
+import type { HttpBodyError } from "@effect/platform/HttpBody";
+import type { Scope } from "effect/Scope";
+
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
 import * as HttpClient from "@effect/platform/HttpClient";
 import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
@@ -28,7 +33,28 @@ import {
   StorefrontServerStatusError,
 } from "../errors.js";
 
-export const make = (initOptions: ClientOptions["Encoded"]) =>
+type MakeResult = Effect.Effect<
+  {
+    request: <
+      const Operation extends string,
+      TVariables extends {
+        [x: string]: never;
+      },
+      TData = any,
+    >(
+      operation: Operation,
+      options?: RequestOptions<TVariables>
+    ) => Effect.Effect<
+      ClientResponse.ClientResponse<TData>,
+      ParseError | HttpClientError | HttpBodyError,
+      Scope
+    >;
+  },
+  ParseError,
+  HttpClient.HttpClient
+>;
+
+export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
   Effect.gen(function* () {
     const defaultOptions = yield* Schema.decode(ClientOptions)(initOptions);
     const defaultClient = yield* HttpClient.HttpClient;
@@ -53,40 +79,40 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
               ? Redacted.value(defaultOptions.privateAccessToken)
               : undefined,
           }),
-        }),
+        })
       ),
       HttpClient.transformResponse((response) =>
         response.pipe(
           Effect.filterOrFail(
             (res) => res.status !== BadRequestStatusError.status,
-            () => new BadRequestStatusError(),
+            () => new BadRequestStatusError()
           ),
           Effect.filterOrFail(
             (res) => res.status !== PaymentRequiredStatusError.status,
-            () => new PaymentRequiredStatusError(),
+            () => new PaymentRequiredStatusError()
           ),
           Effect.filterOrFail(
             (res) => res.status !== ForbiddenStatusError.status,
-            () => new ForbiddenStatusError(),
+            () => new ForbiddenStatusError()
           ),
           Effect.filterOrFail(
             (res) => res.status !== NotFoundStatusError.status,
-            () => new NotFoundStatusError(),
+            () => new NotFoundStatusError()
           ),
           Effect.filterOrFail(
             (res) => res.status !== LockedStatusError.status,
-            () => new LockedStatusError(),
+            () => new LockedStatusError()
           ),
           Effect.filterOrElse(
             (res) =>
               !RetriableStatusCodesError.validStatuses.includes(res.status),
-            (res) => new RetriableStatusCodesError(res.status),
+            (res) => new RetriableStatusCodesError(res.status)
           ),
           Effect.filterOrElse(
             (res) => res.status < 500,
-            (res) => new StorefrontServerStatusError(res.status),
-          ),
-        ),
+            (res) => new StorefrontServerStatusError(res.status)
+          )
+        )
       ),
       HttpClient.retry({
         times: defaultOptions.retries,
@@ -95,7 +121,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
           if (error._tag === "RetriableStatusCodesError") return true;
           return false;
         },
-      }),
+      })
     );
 
     const makeRequest = <
@@ -103,11 +129,11 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
       TVariables extends { [x: string]: any },
     >(
       operation: Operation,
-      options?: RequestOptions<TVariables>,
+      options?: RequestOptions<TVariables>
     ) =>
       Effect.gen(function* () {
         const validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
-          options || {},
+          options || {}
         );
         let endpoint = defaultEndpoint;
         if (options?.apiVersion || options?.storeName)
@@ -136,7 +162,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
           HttpClientRequest.bodyJson({
             query: operation,
             variables: validatedOptions?.variables,
-          }),
+          })
         );
         return yield* request;
       });
@@ -147,7 +173,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
       TData = any,
     >(
       operation: Operation,
-      options?: RequestOptions<TVariables>,
+      options?: RequestOptions<TVariables>
     ) =>
       Effect.gen(function* () {
         const request = yield* makeRequest(operation, options);
@@ -155,7 +181,7 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
 
         const json = yield* Function.pipe(
           response,
-          HttpClientResponse.schemaBodyJson(GraphQLJsonBody),
+          HttpClientResponse.schemaBodyJson(GraphQLJsonBody)
         );
 
         if (json.errors) {
@@ -190,12 +216,12 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
                   graphQLErrors: [],
                   message: error.message,
                 }),
-              }),
+              })
             );
           }
           return Effect.fail(error);
         }),
-        Effect.tapError(Effect.logError),
+        Effect.tapError(Effect.logError)
       );
 
     return {
@@ -204,10 +230,14 @@ export const make = (initOptions: ClientOptions["Encoded"]) =>
   }).pipe(Effect.tapError(Effect.logError));
 
 export class StorefrontClient extends Context.Tag(
-  "@solidifront/storefront-client/StorefrontClient",
-)<StorefrontClient, typeof make>() { }
+  "@solidifront/storefront-client/StorefrontClient"
+)<StorefrontClient, typeof make>() {}
 
-export const Default = Layer.mergeAll(
+export const Default: Layer.Layer<
+  HttpClient.HttpClient | StorefrontClient,
+  never,
+  never
+> = Layer.mergeAll(
   Layer.succeed(StorefrontClient, StorefrontClient.of(make)),
-  FetchHttpClient.layer,
+  FetchHttpClient.layer
 );

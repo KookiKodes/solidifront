@@ -1,8 +1,3 @@
-import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
+export type { StorefrontQueries, StorefrontMutations } from "./schemas";
 
-import type { StorefrontQueries, StorefrontMutations } from "./schemas.js";
-
-export type { StorefrontQueries, StorefrontMutations };
-
-export const make = TypedStorefrontClient.make;
-export const layer = TypedStorefrontClient.Default;
+export * from "./services/TypedStorefrontClient.js";

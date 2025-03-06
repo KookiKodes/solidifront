@@ -5,19 +5,52 @@ import type {
   CodegenOperations,
   RequestOptions,
 } from "../schemas";
+import type { ClientResponse } from "../data/ClientResponse";
+import type { ExtractOperationNameError } from "../errors";
+import type { HttpClientError } from "@effect/platform/HttpClientError";
+import type { HttpBodyError } from "@effect/platform/HttpBody";
+import type { HttpClient } from "@effect/platform/HttpClient";
+import type { ParseError } from "effect/ParseResult";
+import type { Layer } from "effect/Layer";
 
 import * as Effect from "effect/Effect";
 
-import * as StorefrontClient from "./StorefrontClient.js";
 import * as StorefrontOperation from "./StorefrontOperation.js";
+import * as StorefrontClient from "./StorefrontClient.js";
 import * as LoggerUtils from "./LoggerUtils.js";
+
+type MakeReturn<
+  GeneratedQueries extends CodegenOperations = StorefrontQueries,
+  GeneratedMutations extends CodegenOperations = StorefrontMutations,
+> = Effect.Effect<
+  {
+    query: <const Query extends string>(
+      query: Query,
+      options?: RequestOptions<GeneratedQueries[Query]["variables"]>
+    ) => Effect.Effect<
+      ClientResponse<GeneratedQueries[Query]["return"]>,
+      ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError,
+      never
+    >;
+    mutate: <const Mutation extends string>(
+      mutation: Mutation,
+      options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>
+    ) => Effect.Effect<
+      ClientResponse<GeneratedMutations[Mutation]["return"]>,
+      ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError,
+      never
+    >;
+  },
+  never,
+  StorefrontClient.StorefrontClient | HttpClient
+>;
 
 export const make = <
   GeneratedQueries extends CodegenOperations = StorefrontQueries,
   GeneratedMutations extends CodegenOperations = StorefrontMutations,
 >(
-  options: ClientOptions["Encoded"],
-) => {
+  options: ClientOptions["Encoded"]
+): MakeReturn<GeneratedQueries, GeneratedMutations> => {
   const clientEffect = Effect.gen(function* () {
     const createClient = yield* StorefrontClient.StorefrontClient;
     const client = yield* createClient(options);
@@ -31,7 +64,7 @@ export const make = <
     >(
       type: "query" | "mutate",
       originalOperation: Operation,
-      options?: RequestOptions<OperationData["variables"]>,
+      options?: RequestOptions<OperationData["variables"]>
     ) =>
       Effect.gen(function* () {
         const operation = yield* StorefrontOperation.validate({
@@ -57,22 +90,22 @@ export const make = <
 
     const query = <const Query extends string>(
       query: Query,
-      options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
+      options?: RequestOptions<GeneratedQueries[Query]["variables"]>
     ) =>
       executeOperation<Query, GeneratedQueries[Query]>(
         "query",
         query,
-        options,
+        options
       ).pipe(LoggerUtils.withNamespacedLogSpan("Query"));
 
     const mutate = <const Mutation extends string>(
       mutation: Mutation,
-      options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
+      options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>
     ) =>
       executeOperation<Mutation, GeneratedMutations[Mutation]>(
         "mutate",
         mutation,
-        options,
+        options
       ).pipe(LoggerUtils.withNamespacedLogSpan("Mutation"));
 
     return {
@@ -87,8 +120,12 @@ export const make = <
   });
 
   return cachedEffect.pipe(
-    Effect.catchTag("ParseError", (e) => Effect.dieMessage(e.message)),
+    Effect.catchTag("ParseError", (e) => Effect.dieMessage(e.message))
   );
 };
 
-export const Default = StorefrontClient.Default;
+export const Default: Layer<
+  HttpClient | StorefrontClient.StorefrontClient,
+  never,
+  never
+> = StorefrontClient.Default;

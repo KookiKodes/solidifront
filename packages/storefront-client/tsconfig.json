@@ -1,13 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    ".turbo"
-  ],
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", ".turbo"],
   "compilerOptions": {
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -22,9 +16,7 @@
     "noImplicitOverride": true,
     "module": "preserve",
     "noEmit": true,
-    "lib": [
-      "es2022",
-      "DOM"
-    ]
+    "noErrorTruncation": true,
+    "lib": ["es2022", "DOM"]
   }
 }

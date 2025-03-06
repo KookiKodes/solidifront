@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.3
+
+### Patch Changes
+
+- Fixed types for use in external Effect libraries
+
 ## 0.3.2
 
 ### Patch Changes
