@@ -12,9 +12,9 @@ import * as StorefrontClient from "@solidifront/storefront-client/effect";
 const withCountryCode = <Variables extends Record<string, any>>(
   operation: string,
   variables: Variables,
-  locale: I18nLocale,
+  locale: I18nLocale
 ) =>
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     if (!variables.country && /\$country/.test(operation)) {
       return {
         ...variables,
@@ -28,9 +28,9 @@ const withCountryCode = <Variables extends Record<string, any>>(
 const withLanguageCode = <Variables extends Record<string, any>>(
   operation: string,
   variables: Variables,
-  locale: I18nLocale,
+  locale: I18nLocale
 ) =>
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     if (!variables.language && /\$language/.test(operation)) {
       return {
         ...variables,
@@ -44,9 +44,9 @@ const withLanguageCode = <Variables extends Record<string, any>>(
 const withLocaleVariables = <V extends Record<string, any>>(
   operation: string,
   variables: V,
-  locale: I18nLocale,
+  locale: I18nLocale
 ) =>
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     (variables = yield* withCountryCode(operation, variables, locale)),
       (variables = yield* withLanguageCode(operation, variables, locale));
 
@@ -62,9 +62,9 @@ export namespace createStorefrontMiddleware {
 }
 
 export function createStorefrontMiddleware(
-  config: createStorefrontMiddleware.Config,
+  config: createStorefrontMiddleware.Config
 ) {
-  let mainLayer = StorefrontClient.layer;
+  let mainLayer = StorefrontClient.Default;
   let minimumLogLevel = LogLevel.None;
 
   if (import.meta.env.DEV) {
@@ -74,29 +74,29 @@ export function createStorefrontMiddleware(
 
   const operationFactory =
     (operationType: "query" | "mutate") =>
-      (event: FetchEvent, operation: string, options?: any) =>
-        Effect.gen(function*() {
-          const client = yield* StorefrontClient.make({
-            storeName: config.storeName,
-            apiVersion: config.apiVersion,
-            privateAccessToken: config.privateAccessToken,
-          });
+    (event: FetchEvent, operation: string, options?: any) =>
+      Effect.gen(function* () {
+        const client = yield* StorefrontClient.make({
+          storeName: config.storeName,
+          apiVersion: config.apiVersion,
+          privateAccessToken: config.privateAccessToken,
+        });
 
-          const locale = event.locals.locale as I18nLocale;
+        const locale = event.locals.locale as I18nLocale;
 
-          if (locale && options) {
-            options.variables = yield* withLocaleVariables(
-              operation,
-              options?.variables ?? {},
-              locale,
-            );
-          }
+        if (locale && options) {
+          options.variables = yield* withLocaleVariables(
+            operation,
+            options?.variables ?? {},
+            locale
+          );
+        }
 
-          return yield* client[operationType](operation, options);
-        }).pipe(
-          Logger.withMinimumLogLevel(minimumLogLevel),
-          Effect.provide(mainLayer),
-        );
+        return yield* client[operationType](operation, options);
+      }).pipe(
+        Logger.withMinimumLogLevel(minimumLogLevel),
+        Effect.provide(mainLayer)
+      );
 
   const queryEffect = operationFactory("query"),
     mutateEffect = operationFactory("mutate");
