@@ -135,8 +135,8 @@ importers:
         specifier: ^6.1.4
         version: 6.1.4
       effect:
-        specifier: ^3.13.4
-        version: 3.13.4
+        specifier: ^3.13.7
+        version: 3.13.7
       esbuild-plugin-solid:
         specifier: ^0.6.0
         version: 0.6.0(esbuild@0.24.0)(solid-js@1.9.3)
@@ -193,11 +193,11 @@ importers:
   packages/storefront-client:
     dependencies:
       '@effect/platform':
-        specifier: ^0.77.4
-        version: 0.77.4(effect@3.13.4)
+        specifier: ^0.78.0
+        version: 0.78.0(effect@3.13.7)
       effect:
-        specifier: ^3.13.4
-        version: 3.13.4
+        specifier: ^3.13.7
+        version: 3.13.7
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -590,10 +590,10 @@ packages:
   '@deno/shim-deno@0.19.2':
     resolution: {integrity: sha512-q3VTHl44ad8T2Tw2SpeAvghdGOjlnLPDNO2cpOxwMrBE/PVas6geWpbpIgrM+czOCH0yejp0yi8OaTuB+NU40Q==}
 
-  '@effect/platform@0.77.4':
-    resolution: {integrity: sha512-3jBDn4bAWqRSKARmoMY2NmMxIMM5Py5BqJdUuYJqPyI6jbz7qkOMwgeaF62rWqiqhQLHLTgU4QL/cPwyZl7mVg==}
+  '@effect/platform@0.78.0':
+    resolution: {integrity: sha512-2vGIfBtPO7zPioVy4wmSbeF0VWfj3GLpB9+6JT7K0lZVeYogHF2GTuPDB87xMILw86Ecz9iR98JuA9Co7PgxKQ==}
     peerDependencies:
-      effect: ^3.13.4
+      effect: ^3.13.7
 
   '@esbuild/aix-ppc64@0.20.2':
     resolution: {integrity: sha512-D+EBOJHXdNZcLJRBkhENNG8Wji2kgc9AZ9KiPr1JuZjsNtyHzrsfLRrY0tk2H2aoFu6RANO1y1iPPUCDYWkb5g==}
@@ -2560,8 +2560,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@3.13.4:
-    resolution: {integrity: sha512-XZgCImyBpONuKdsBRk37JfV7242yxTu8r/TcL5ZELIyqRbMYa+Prr86cz1INxXi7iFXfU0havZkCJGyYp1BsiA==}
+  effect@3.13.7:
+    resolution: {integrity: sha512-yjDuWX5M34kB38Pwilv8QU956nA2m1a6ws0i+04VQkQJEBPI4GfVhUhtNNFRaqKIOlkqdqzJHCDOwARmaf2XzA==}
 
   electron-to-chromium@1.5.63:
     resolution: {integrity: sha512-ddeXKuY9BHo/mw145axlyWjlJ1UBt4WK3AlvkT7W2AbqfRQoacVoRUCF6wL3uIx/8wT9oLKXzI+rFqHHscByaA==}
@@ -5353,9 +5353,9 @@ snapshots:
       '@deno/shim-deno-test': 0.5.0
       which: 4.0.0
 
-  '@effect/platform@0.77.4(effect@3.13.4)':
+  '@effect/platform@0.78.0(effect@3.13.7)':
     dependencies:
-      effect: 3.13.4
+      effect: 3.13.7
       find-my-way-ts: 0.1.5
       multipasta: 0.2.5
 
@@ -7404,7 +7404,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.13.4:
+  effect@3.13.7:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.1

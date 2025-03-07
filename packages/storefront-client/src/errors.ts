@@ -1,7 +1,7 @@
 import * as Data from "effect/Data";
 
 export class BadRequestStatusError extends Data.TaggedError(
-  "BadRequestStatusError",
+  "BadRequestStatusError"
 )<{
   message: string;
   status: 400;
@@ -16,7 +16,7 @@ export class BadRequestStatusError extends Data.TaggedError(
 }
 
 export class PaymentRequiredStatusError extends Data.TaggedError(
-  "PaymentRequiredStatusError",
+  "PaymentRequiredStatusError"
 )<{
   message: string;
   status: 402;
@@ -32,7 +32,7 @@ export class PaymentRequiredStatusError extends Data.TaggedError(
 }
 
 export class ForbiddenStatusError extends Data.TaggedError(
-  "ForbiddenStatusError",
+  "ForbiddenStatusError"
 )<{
   message: string;
   status: 403;
@@ -48,7 +48,7 @@ export class ForbiddenStatusError extends Data.TaggedError(
 }
 
 export class NotFoundStatusError extends Data.TaggedError(
-  "NotFoundStatusError",
+  "NotFoundStatusError"
 )<{
   message: string;
   status: 404;
@@ -78,7 +78,7 @@ export class LockedStatusError extends Data.TaggedError("LockedStatusError")<{
 }
 
 export class RetriableStatusCodesError extends Data.TaggedError(
-  "RetriableStatusCodesError",
+  "RetriableStatusCodesError"
 )<{
   message: string;
   status: number;
@@ -94,7 +94,7 @@ export class RetriableStatusCodesError extends Data.TaggedError(
 }
 
 export class StorefrontServerStatusError extends Data.TaggedError(
-  "StorefrontServerStatusError",
+  "StorefrontServerStatusError"
 )<{
   message: string;
   status: number;
@@ -121,7 +121,7 @@ export class AssertQueryError extends Data.TaggedError("AssertQueryError")<{
 }
 
 export class AssertMutationError extends Data.TaggedError(
-  "AssertMutationError",
+  "AssertMutationError"
 )<{
   message: string;
   mutation: string;
@@ -135,7 +135,7 @@ export class AssertMutationError extends Data.TaggedError(
 }
 
 export class ExtractOperationNameError extends Data.TaggedError(
-  "ExtractOperationNameError",
+  "ExtractOperationNameError"
 )<{
   message: string;
 }> {
