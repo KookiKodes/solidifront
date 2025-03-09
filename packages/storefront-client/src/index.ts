@@ -13,6 +13,8 @@ import * as Logger from "effect/Logger";
 import * as LogLevel from "effect/LogLevel";
 import * as Layer from "effect/Layer";
 
+export type * from "./errors";
+
 export namespace createStorefrontClient {
   export type Options = ClientOptions["Encoded"] & {
     logger?: Parameters<typeof Logger.make>[0];
@@ -20,14 +22,14 @@ export namespace createStorefrontClient {
   export type Variables<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-      | StorefrontQueries
-      | StorefrontMutations,
+    | StorefrontQueries
+    | StorefrontMutations,
   > = GeneratedOperations[Operation]["variables"];
   export type ReturnData<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-      | StorefrontMutations
-      | StorefrontMutations,
+    | StorefrontMutations
+    | StorefrontMutations,
   > = GeneratedOperations[Operation]["return"];
 }
 

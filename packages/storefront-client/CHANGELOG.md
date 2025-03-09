@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.5
+
+### Patch Changes
+
+- Export errors from build
+
 ## 0.3.4
 
 ### Patch Changes
