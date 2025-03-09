@@ -13,8 +13,6 @@ import * as Logger from "effect/Logger";
 import * as LogLevel from "effect/LogLevel";
 import * as Layer from "effect/Layer";
 
-export type * from "./errors";
-
 export namespace createStorefrontClient {
   export type Options = ClientOptions["Encoded"] & {
     logger?: Parameters<typeof Logger.make>[0];
@@ -22,14 +20,14 @@ export namespace createStorefrontClient {
   export type Variables<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-    | StorefrontQueries
-    | StorefrontMutations,
+      | StorefrontQueries
+      | StorefrontMutations,
   > = GeneratedOperations[Operation]["variables"];
   export type ReturnData<
     Operation extends string,
     GeneratedOperations extends CodegenOperations =
-    | StorefrontMutations
-    | StorefrontMutations,
+      | StorefrontMutations
+      | StorefrontMutations,
   > = GeneratedOperations[Operation]["return"];
 }
 
@@ -65,12 +63,42 @@ export const createStorefrontClient = <
           options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
         ) =>
           Effect.runPromise(
-            client
-              .mutate(mutation, options)
-              .pipe(
-                Logger.withMinimumLogLevel(minimumLogLevel),
-                Effect.provide(loggerLayer),
-              ),
+            client.mutate(mutation, options).pipe(
+              Logger.withMinimumLogLevel(minimumLogLevel),
+              Effect.provide(loggerLayer),
+              Effect.catchAll((error) => {
+                if (
+                  error._tag === "ExtractOperationNameError" ||
+                  error._tag === "ParseError" ||
+                  error._tag === "RequestError" ||
+                  error._tag === "ResponseError"
+                ) {
+                  return Effect.fail(
+                    new Error(error.message, {
+                      cause: error.cause,
+                    }),
+                  );
+                }
+
+                if (error._tag === "HttpBodyError") {
+                  const reason = error.reason;
+                  if (reason._tag === "JsonError") {
+                    return Effect.fail(
+                      new Error("Failed to parse JSON response"),
+                    );
+                  }
+                  if (reason._tag === "SchemaError") {
+                    return Effect.fail(
+                      new Error(reason.error.message, {
+                        cause: reason.error.cause,
+                      }),
+                    );
+                  }
+                }
+
+                return Effect.fail(new Error("Something went horribly wrong!"));
+              }),
+            ),
             {
               signal: options?.signal,
             },
@@ -81,12 +109,42 @@ export const createStorefrontClient = <
           options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
         ) =>
           Effect.runPromise(
-            client
-              .query(query, options)
-              .pipe(
-                Logger.withMinimumLogLevel(minimumLogLevel),
-                Effect.provide(loggerLayer),
-              ),
+            client.query(query, options).pipe(
+              Logger.withMinimumLogLevel(minimumLogLevel),
+              Effect.provide(loggerLayer),
+              Effect.catchAll((error) => {
+                if (
+                  error._tag === "ExtractOperationNameError" ||
+                  error._tag === "ParseError" ||
+                  error._tag === "RequestError" ||
+                  error._tag === "ResponseError"
+                ) {
+                  return Effect.fail(
+                    new Error(error.message, {
+                      cause: error.cause,
+                    }),
+                  );
+                }
+
+                if (error._tag === "HttpBodyError") {
+                  const reason = error.reason;
+                  if (reason._tag === "JsonError") {
+                    return Effect.fail(
+                      new Error("Failed to parse JSON response"),
+                    );
+                  }
+                  if (reason._tag === "SchemaError") {
+                    return Effect.fail(
+                      new Error(reason.error.message, {
+                        cause: reason.error.cause,
+                      }),
+                    );
+                  }
+                }
+
+                return Effect.fail(new Error("Something went horribly wrong!"));
+              }),
+            ),
             {
               signal: options?.signal,
             },

@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.6
+
+### Patch Changes
+
+- Handle errors for non effect users
+
 ## 0.3.5
 
 ### Patch Changes
