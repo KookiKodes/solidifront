@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.10
+
+### Patch Changes
+
+- Added "Accept" header to fix potential cors issue
+
 ## 0.3.9
 
 ### Patch Changes

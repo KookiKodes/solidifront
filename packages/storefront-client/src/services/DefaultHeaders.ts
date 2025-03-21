@@ -9,6 +9,7 @@ export type Options = {
 export const make = ({ contentType, apiVersion }: Options) => ({
   "Content-Type":
     contentType === "graphql" ? "application/graphql" : "application/json",
+  Accept: "application/json",
   "X-SDK-Variant": "solidifront",
   "X-SDK-Variant-Source": "solid",
   "X-SDK-Version": apiVersion,
