@@ -135,8 +135,8 @@ importers:
         specifier: ^6.1.4
         version: 6.1.4
       effect:
-        specifier: ^3.13.12
-        version: 3.13.12
+        specifier: ^3.14.1
+        version: 3.14.1
       esbuild-plugin-solid:
         specifier: ^0.6.0
         version: 0.6.0(esbuild@0.24.0)(solid-js@1.9.5)
@@ -194,10 +194,10 @@ importers:
     dependencies:
       '@effect/platform':
         specifier: ^0.79.3
-        version: 0.79.3(effect@3.13.12)
+        version: 0.79.3(effect@3.14.1)
       effect:
-        specifier: ^3.13.12
-        version: 3.13.12
+        specifier: ^3.14.1
+        version: 3.14.1
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -2565,8 +2565,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@3.13.12:
-    resolution: {integrity: sha512-XHvZA8lOX7vxk+ME3Q+4BN6EVYsyo8csdHmHsD4oYEtWPb2Ou3WPkpavlHOD+DNap8QIwfZjmDtshcGlgV34hA==}
+  effect@3.14.1:
+    resolution: {integrity: sha512-YrE6KYUu8r+fF3/cvdM+SZRZRjarVGhfcJwQjP/YyMmF79fwE1Rf0nWqLZ9Xfw7a9njm5/wmrYP83RYt5WTTbQ==}
 
   electron-to-chromium@1.5.63:
     resolution: {integrity: sha512-ddeXKuY9BHo/mw145axlyWjlJ1UBt4WK3AlvkT7W2AbqfRQoacVoRUCF6wL3uIx/8wT9oLKXzI+rFqHHscByaA==}
@@ -5371,9 +5371,9 @@ snapshots:
       '@deno/shim-deno-test': 0.5.0
       which: 4.0.0
 
-  '@effect/platform@0.79.3(effect@3.13.12)':
+  '@effect/platform@0.79.3(effect@3.14.1)':
     dependencies:
-      effect: 3.13.12
+      effect: 3.14.1
       find-my-way-ts: 0.1.5
       multipasta: 0.2.5
 
@@ -7428,7 +7428,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.13.12:
+  effect@3.14.1:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
