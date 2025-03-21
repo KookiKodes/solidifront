@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.3.9
+
+### Patch Changes
+
+- Minor library update
+
 ## 0.3.8
 
 ### Patch Changes
