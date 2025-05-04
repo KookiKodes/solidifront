@@ -1,16 +1,9 @@
-import type {
-  CountryCode,
-  CurrencyCode,
-  LanguageCode,
-  UnitSystem,
-} from '@solidifront/codegen/storefront-api-types';
-import fetch from 'isomorphic-fetch';
+import { createStorefrontClient } from '@solidifront/storefront-client';
 
 type Options = {
-  shopDomain: string;
+  storeName: string;
   apiVersion: string;
   accessToken: string;
-  signal?: AbortSignal;
 };
 
 const GetShopLocalization = `#graphql
@@ -37,50 +30,18 @@ const GetShopLocalization = `#graphql
         }
       }
     }
-`;
-
-export type ShopLocalizationResult = {
-  availableCountries: Array<{
-    isoCode: CountryCode;
-    name: string;
-    unitSystem: UnitSystem;
-    availableLanguages: Array<{
-      isoCode: LanguageCode;
-      endonymName: string;
-      name: string;
-    }>;
-    currency: {
-      isoCode: CurrencyCode;
-      name: string;
-      symbol: string;
-    };
-    market: {
-      id: string;
-      handle: string;
-    };
-  }>;
-};
+` as const;
 
 export async function getShopLocalization({
-  shopDomain,
+  storeName,
   apiVersion,
   accessToken,
-  signal,
 }: Options) {
-  const res = await fetch(
-    `https://${shopDomain}/api/${apiVersion}/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': accessToken,
-        Accept: 'application/json',
-      },
-      signal,
-      body: JSON.stringify({ query: GetShopLocalization }),
-    },
-  );
-  const jsonRes = (await res.json()) as any;
-  if (jsonRes?.errors) throw jsonRes.errors;
-  return jsonRes?.data?.localization as ShopLocalizationResult;
+  const client = createStorefrontClient({
+    storeName,
+    apiVersion: apiVersion as any,
+    publicAccessToken: accessToken,
+  });
+  const response = await client.query(GetShopLocalization);
+  return response.data!.localization!;
 }

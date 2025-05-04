@@ -1,8 +1,10 @@
 import Counter from "~/components/Counter";
 import { useLocale } from "@solidifront/start/localization";
+// import { createAsyncQuery } from "@solidifront/start/storefront";
 import {
   createAsyncQuery,
   createQueryCache,
+  createStorefrontClient,
 } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
 import { createCartAction } from "~/graphql/storefront/mutations";
@@ -17,15 +19,15 @@ export const route = {
 
 export default function Home() {
   const locale = useLocale();
-  const shopData = createAsyncQuery(shopQuery);
+  const shopData = createAsync(() => cachedShopQuery());
 
   return (
     <main>
       <div>
-        <form action={createCartAction} method="post">
+        {/*<form action={createCartAction} method="post">
           <input type="hidden" name="test" value="test" />
           <button>Submit me!</button>
-        </form>
+        </form> */}
         <Counter />
         <h1>Hello {shopData()?.data?.shop.name}</h1>
         <p>

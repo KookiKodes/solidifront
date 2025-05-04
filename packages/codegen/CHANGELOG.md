@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.7
+
+### Patch Changes
+
+- Complete rewrite of the storefront-client. Still need to implement a logging hook.
+
 ## 1.0.6
 
 ### Patch Changes

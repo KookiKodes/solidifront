@@ -15,7 +15,7 @@ import { loadEnv } from "vite";
 
 export function solidifrontMiddlewareSetup(
   project: Project,
-  config: SolidifrontConfig["solidifront"]
+  config: SolidifrontConfig["solidifront"],
 ): VitePlugin {
   const env = loadEnv("all", process.cwd(), "SHOPIFY_");
   const virtualModuleId = "@solidifront/start/middleware:internal";
@@ -79,11 +79,11 @@ export function solidifrontMiddlewareSetup(
         .write("return [")
         .conditionalWriteLine(
           middlewares.locale,
-          `createLocaleMiddleware({ countries }),`
+          `createLocaleMiddleware({ countries }),`,
         )
         .conditionalWriteLine(
           middlewares.storefront,
-          `createStorefrontMiddleware({ storeDomain: "${env.SHOPIFY_PUBLIC_STORE_DOMAIN}", apiVersion: "${env.SHOPIFY_PUBLIC_STOREFRONT_VERSION}", privateAccessToken: "${env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN}" }),`
+          `createStorefrontMiddleware({ storeName: "${env.SHOPIFY_PUBLIC_STORE_NAME}", apiVersion: "${env.SHOPIFY_PUBLIC_STOREFRONT_VERSION}", privateAccessToken: "${env.SHOPIFY_PRIVATE_STOREFRONT_TOKEN}" }),`,
         )
         .write("];");
     });
@@ -99,7 +99,7 @@ export function solidifrontMiddlewareSetup(
       const middlewareTypesPath = path.resolve(".solidifront/types"),
         middlewareDeclarationFilePath = path.resolve(
           middlewareTypesPath,
-          "middleware.d.ts"
+          "middleware.d.ts",
         ),
         modules: StatementStructures[] = [],
         properties: OptionalKind<PropertySignatureStructure>[] = [],
@@ -113,11 +113,11 @@ export function solidifrontMiddlewareSetup(
       project.createSourceFile(
         middlewareDeclarationFilePath,
         {},
-        { overwrite: true }
+        { overwrite: true },
       );
 
       const middlewareDeclarationFile = project.getSourceFile(
-        middlewareDeclarationFilePath
+        middlewareDeclarationFilePath,
       );
 
       if (middlewares.locale && middlewareDeclarationFile) {
@@ -173,11 +173,11 @@ export function solidifrontMiddlewareSetup(
 
       if (fs.existsSync(tsConfigPath)) {
         const tsConfigFileContent = JSON.parse(
-          fs.readFileSync(tsConfigFileName, "utf-8")
+          fs.readFileSync(tsConfigFileName, "utf-8"),
         );
         if (
           !tsConfigFileContent?.compilerOptions?.types?.includes(
-            relativeTypesPath
+            relativeTypesPath,
           )
         ) {
           fs.writeFileSync(
@@ -194,15 +194,15 @@ export function solidifrontMiddlewareSetup(
                 },
               },
               null,
-              2
-            )
+              2,
+            ),
           );
         }
       }
 
       fs.writeFileSync(
         middlewareDeclarationFilePath,
-        middlewareDeclarationFile?.getText() || ""
+        middlewareDeclarationFile?.getText() || "",
       );
     },
     resolveId(id) {

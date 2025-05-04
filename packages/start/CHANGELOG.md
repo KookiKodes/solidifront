@@ -1,5 +1,154 @@
 # @solidifront/start
 
+## 0.3.20
+
+### Patch Changes
+
+- Updated effect versions
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.11
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.19
+
+## 0.3.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.10
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.18
+
+## 0.3.18
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.9
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.17
+
+## 0.3.17
+
+### Patch Changes
+
+- Updated effect versions
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.8
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.16
+
+## 0.3.16
+
+### Patch Changes
+
+- Updated effect versions
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.7
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.15
+
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.6
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.14
+
+## 0.3.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.5
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.13
+
+## 0.3.13
+
+### Patch Changes
+
+- Updated effect versions
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.4
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.12
+
+## 0.3.12
+
+### Patch Changes
+
+- Minor bug fix
+
+## 0.3.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.3
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.11
+
+## 0.3.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.2
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.10
+
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.2
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.9
+
+## 0.3.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.1
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.8
+
+## 0.3.7
+
+### Patch Changes
+
+- Removed unecessary use of runtime and added ability to use custom logging
+- Updated dependencies
+  - @solidifront/storefront-client@0.3.0
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.7
+
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.2.3
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.6
+
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.2.2
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.5
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.2.1
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.4
+
+## 0.3.3
+
+### Patch Changes
+
+- Complete rewrite of the storefront-client. Still need to implement a logging hook.
+- Updated dependencies
+  - @solidifront/storefront-client@0.2.0
+  - @solidifront/codegen@1.0.7
+  - @solidifront/vite-plugin-generate-shopify-locales@1.1.3
+
 ## 0.3.2
 
 ### Patch Changes
