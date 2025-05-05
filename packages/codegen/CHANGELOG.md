@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 1.0.8
+
+### Patch Changes
+
+- Type fixes and package updates
+
 ## 1.0.7
 
 ### Patch Changes
