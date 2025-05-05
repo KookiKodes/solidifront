@@ -44,11 +44,11 @@
     "codegen": "graphql-codegen"
   },
   "peerDependencies": {
-    "vite": "^5.3.1"
+    "vite": "^6.3.0"
   },
   "dependencies": {
     "@solidifront/storefront-client": "workspace:*",
-    "vite": "^5.3.1"
+    "vite": "^6.3.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.3",

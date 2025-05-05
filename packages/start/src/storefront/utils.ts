@@ -9,11 +9,14 @@ import {
   minifyOperation,
 } from "@solidifront/storefront-client/utils";
 
-export function getStorefrontClient() {
+export function getStorefrontClient<
+  GeneratedQueries extends StorefrontQueries = StorefrontQueries,
+  GeneratedMutations extends StorefrontMutations = StorefrontMutations,
+>() {
   const event = getRequestEvent();
   if (!event?.locals.storefront) return null;
   return event?.locals!.storefront as ReturnType<
-    typeof createStorefrontClient<StorefrontQueries, StorefrontMutations>
+    typeof createStorefrontClient<GeneratedQueries, GeneratedMutations>
   >;
 }
 

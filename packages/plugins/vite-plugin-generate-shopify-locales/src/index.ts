@@ -1,13 +1,13 @@
-import type { Plugin } from 'vite';
-import { getStorefrontEnv } from './utils/env.js';
-import { getShopLocalization } from './utils/getShopLocalization.js';
-import { debugLog } from './utils/debugLog.js';
+import type { PluginOption } from "vite";
+import { getStorefrontEnv } from "./utils/env.js";
+import { getShopLocalization } from "./utils/getShopLocalization.js";
+import { debugLog } from "./utils/debugLog.js";
 
-import { Localizations, IsoCode, Locale } from './types.js';
+import { Localizations, IsoCode, Locale } from "./types.js";
 
 function buildShopLocales(
   defaultLocale: IsoCode,
-  localization: Awaited<ReturnType<typeof getShopLocalization>>,
+  localization: Awaited<ReturnType<typeof getShopLocalization>>
 ) {
   return localization.availableCountries.reduce(
     (localizations: Localizations, localization) => {
@@ -33,13 +33,13 @@ function buildShopLocales(
       });
       return localizations;
     },
-    {} as Localizations,
+    {} as Localizations
   );
 }
 
-const DEFAULT_LOCALE: IsoCode = 'en-US',
+const DEFAULT_LOCALE: IsoCode = "en-US",
   DEFAULT_NAMESPACE =
-    '@solidifront/vite-plugin-generate-shopify-locales/locales';
+    "@solidifront/vite-plugin-generate-shopify-locales/locales";
 
 export namespace generateShopifyShopLocales {
   export type Options = {
@@ -65,8 +65,8 @@ export namespace generateShopifyShopLocales {
 }
 
 function generateShopifyShopLocales(
-  options?: generateShopifyShopLocales.Options,
-): Plugin {
+  options?: generateShopifyShopLocales.Options
+): PluginOption {
   const {
     debug = false,
     defaultLocale = DEFAULT_LOCALE,
@@ -77,14 +77,14 @@ function generateShopifyShopLocales(
   };
 
   const virtualModuleId = namespace;
-  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+  const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
   const log = (...args: unknown[]) => {
     if (!debug) return;
     debugLog(...args);
   };
 
-  if (options) log('Plugin initialized with options:', options);
+  if (options) log("Plugin initialized with options:", options);
 
   let countries: Localizations | null = null;
 
@@ -93,8 +93,8 @@ function generateShopifyShopLocales(
   `;
 
   return {
-    name: 'vite-plugin-generate-shopify-locales',
-    enforce: 'pre',
+    name: "vite-plugin-generate-shopify-locales",
+    enforce: "pre",
     resolveId(id) {
       if (id !== virtualModuleId) return;
       return resolvedVirtualModuleId;
@@ -102,16 +102,16 @@ function generateShopifyShopLocales(
     async load(id) {
       if (id === resolvedVirtualModuleId) {
         if (countries) return getCode(countries);
-        log('Validating correct environment variables...');
+        log("Validating correct environment variables...");
         const env = getStorefrontEnv.call(this);
         log(
-          'Overriding declaration file for virtual module: ' + virtualModuleId,
+          "Overriding declaration file for virtual module: " + virtualModuleId
         );
-        log('Fetching shop locales...');
+        log("Fetching shop locales...");
         const localization = await getShopLocalization({
           ...env,
         });
-        log('Building shop locales');
+        log("Building shop locales");
         countries = buildShopLocales(defaultLocale, localization);
         return getCode(countries);
       }

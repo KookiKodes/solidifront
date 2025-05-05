@@ -53,8 +53,8 @@
     "dist"
   ],
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.2",
-    "@graphql-codegen/plugin-helpers": "^5.0.4",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/plugin-helpers": "^5.1.0",
     "@shopify/graphql-codegen": "^0.1.0",
     "copy-files-from-to": "^3.11.0",
     "dts-bundle-generator": "^9.5.1",
@@ -62,6 +62,6 @@
     "type-fest": "^4.24.0"
   },
   "dependencies": {
-    "@shopify/hydrogen-codegen": "^0.3.1"
+    "@shopify/hydrogen-codegen": "^0.3.2"
   }
 }

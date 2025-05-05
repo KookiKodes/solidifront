@@ -1,4 +1,4 @@
-import type { SolidifrontConfig } from "./types";
+import type { SolidifrontConfig, VitePlugin } from "./types";
 
 import defu from "defu";
 import path from "path";
@@ -69,7 +69,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
           config.solidifront?.localization?.defaultLocale ?? undefined,
         debug: process.env.NODE_ENV === "development",
         namespace: "@solidifront/start/locales",
-      }),
+      }) as VitePlugin,
     ]);
   }
 
@@ -78,7 +78,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
       codegen({
         configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
         throwOnStart: false,
-      }),
+      }) as VitePlugin,
     ]);
   }
 

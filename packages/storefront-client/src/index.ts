@@ -12,6 +12,7 @@ import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
 import * as Logger from "effect/Logger";
 import * as LogLevel from "effect/LogLevel";
 import * as Layer from "effect/Layer";
+import type { ClientResponse } from "./data/ClientResponse";
 
 export namespace createStorefrontClient {
   export type Options = ClientOptions["Encoded"] & {
@@ -29,6 +30,10 @@ export namespace createStorefrontClient {
       | StorefrontMutations
       | StorefrontMutations,
   > = GeneratedOperations[Operation]["return"];
+  export type Return<
+    Operation extends string,
+    GeneratedOperations extends Record<string, { return: any }>,
+  > = Promise<ClientResponse<GeneratedOperations[Operation]["return"]>>;
 }
 
 export type { StorefrontQueries, StorefrontMutations, ValidVersion };
@@ -60,7 +65,7 @@ export const createStorefrontClient = <
       return {
         mutate: <const Mutation extends string>(
           mutation: Mutation,
-          options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
+          options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>
         ) =>
           Effect.runPromise(
             client.mutate(mutation, options).pipe(
@@ -76,7 +81,7 @@ export const createStorefrontClient = <
                   return Effect.fail(
                     new Error(error.message, {
                       cause: error.cause,
-                    }),
+                    })
                   );
                 }
 
@@ -84,29 +89,29 @@ export const createStorefrontClient = <
                   const reason = error.reason;
                   if (reason._tag === "JsonError") {
                     return Effect.fail(
-                      new Error("Failed to parse JSON response"),
+                      new Error("Failed to parse JSON response")
                     );
                   }
                   if (reason._tag === "SchemaError") {
                     return Effect.fail(
                       new Error(reason.error.message, {
                         cause: reason.error.cause,
-                      }),
+                      })
                     );
                   }
                 }
 
                 return Effect.fail(new Error("Something went horribly wrong!"));
-              }),
+              })
             ),
             {
               signal: options?.signal,
-            },
+            }
           ),
 
         query: <const Query extends string>(
           query: Query,
-          options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
+          options?: RequestOptions<GeneratedQueries[Query]["variables"]>
         ) =>
           Effect.runPromise(
             client.query(query, options).pipe(
@@ -122,7 +127,7 @@ export const createStorefrontClient = <
                   return Effect.fail(
                     new Error(error.message, {
                       cause: error.cause,
-                    }),
+                    })
                   );
                 }
 
@@ -130,26 +135,26 @@ export const createStorefrontClient = <
                   const reason = error.reason;
                   if (reason._tag === "JsonError") {
                     return Effect.fail(
-                      new Error("Failed to parse JSON response"),
+                      new Error("Failed to parse JSON response")
                     );
                   }
                   if (reason._tag === "SchemaError") {
                     return Effect.fail(
                       new Error(reason.error.message, {
                         cause: reason.error.cause,
-                      }),
+                      })
                     );
                   }
                 }
 
                 return Effect.fail(new Error("Something went horribly wrong!"));
-              }),
+              })
             ),
             {
               signal: options?.signal,
-            },
+            }
           ),
       };
-    }).pipe(Logger.withMinimumLogLevel(minimumLogLevel), Effect.provide(layer)),
+    }).pipe(Logger.withMinimumLogLevel(minimumLogLevel), Effect.provide(layer))
   );
 };

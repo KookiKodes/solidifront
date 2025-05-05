@@ -5,12 +5,7 @@ export type {
   MutationVariables,
 } from "./types";
 
-export {
-  createQueryCache,
-  createAsyncQuery,
-  createCombinedOperations,
-  createMutationAction,
-} from "./hooks.js";
+export { createQueryCache, createAsyncQuery } from "./hooks.js";
 export { createStorefrontClient } from "./client.js";
 export { storefront } from "./storefront.js";
 export {

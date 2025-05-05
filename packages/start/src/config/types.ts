@@ -4,6 +4,7 @@ import type {
 } from "@solidjs/start/config";
 import type generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import type { createSolidifrontConfig } from "@solidifront/codegen";
+import type { PluginOption } from "vite";
 
 export type SolidifrontConfig = SolidStartInlineConfig & {
   solidifront?: {
