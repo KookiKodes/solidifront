@@ -1,12 +1,12 @@
 {
-  "include": ["src", "*.config.ts", "storefrontapi.generated.d.ts"],
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "noEmit": true
-  }
+	"include": ["src", "*.config.ts", "storefrontapi.generated.d.ts"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"noEmit": true
+	}
 }

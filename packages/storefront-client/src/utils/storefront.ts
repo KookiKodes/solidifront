@@ -1,12 +1,12 @@
 import type { ClientOptions } from "../schemas";
 
 export const buildShopDomain = ({
-  storeName,
+	storeName,
 }: Pick<ClientOptions["Type"], "storeName">) =>
-  `https://${storeName}.myshopify.com`;
+	`https://${storeName}.myshopify.com`;
 
 export const buildStorefrontApiUrl = ({
-  apiVersion,
-  storeName,
+	apiVersion,
+	storeName,
 }: Pick<ClientOptions["Type"], "apiVersion" | "storeName">) =>
-  `${buildShopDomain({ storeName })}/api/${apiVersion}/graphql.json`;
+	`${buildShopDomain({ storeName })}/api/${apiVersion}/graphql.json`;

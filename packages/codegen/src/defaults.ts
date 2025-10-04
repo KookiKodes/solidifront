@@ -16,43 +16,43 @@ declare module '${moduleName}' {
 }`;
 
 function replacePlaceholders(
-  code: string,
-  queryType: string,
-  mutationType: string,
+	code: string,
+	queryType: string,
+	mutationType: string,
 ) {
-  return code
-    .replace(QUERIES_PLACEHOLDER, queryType)
-    .replace(MUTATIONS_PLACEHOLDER, mutationType);
+	return code
+		.replace(QUERIES_PLACEHOLDER, queryType)
+		.replace(MUTATIONS_PLACEHOLDER, mutationType);
 }
 
 type DefaultValues = {
-  importTypesFrom: string;
-  namespacedImportName: string;
-  interfaceExtensionCode: NonNullable<PresetConfig["interfaceExtension"]>;
+	importTypesFrom: string;
+	namespacedImportName: string;
+	interfaceExtensionCode: NonNullable<PresetConfig["interfaceExtension"]>;
 };
 
 export const sfapiDefaultValues = (
-  moduleName: string = "@solidifront/storefront-client",
+	moduleName: string = "@solidifront/storefront-client",
 ): DefaultValues => ({
-  importTypesFrom: "@solidifront/codegen/storefront-api-types",
-  namespacedImportName: "StorefrontAPI",
-  interfaceExtensionCode: ({ queryType, mutationType }) =>
-    replacePlaceholders(
-      sfapiDefaultInterfaceExtensionCode(moduleName),
-      queryType,
-      mutationType,
-    ),
+	importTypesFrom: "@solidifront/codegen/storefront-api-types",
+	namespacedImportName: "StorefrontAPI",
+	interfaceExtensionCode: ({ queryType, mutationType }) =>
+		replacePlaceholders(
+			sfapiDefaultInterfaceExtensionCode(moduleName),
+			queryType,
+			mutationType,
+		),
 });
 
 export const caapiDefaultValues = (
-  moduleName: string = "@solidifront/storefront-client",
+	moduleName: string = "@solidifront/storefront-client",
 ): DefaultValues => ({
-  importTypesFrom: "@solidifront/codegen/customer-account-api-types",
-  namespacedImportName: "CustomerAccountAPI",
-  interfaceExtensionCode: ({ queryType, mutationType }) =>
-    replacePlaceholders(
-      caapiDefaultInterfaceExtensionCode(moduleName),
-      queryType,
-      mutationType,
-    ),
+	importTypesFrom: "@solidifront/codegen/customer-account-api-types",
+	namespacedImportName: "CustomerAccountAPI",
+	interfaceExtensionCode: ({ queryType, mutationType }) =>
+		replacePlaceholders(
+			caapiDefaultInterfaceExtensionCode(moduleName),
+			queryType,
+			mutationType,
+		),
 });

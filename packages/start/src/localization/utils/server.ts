@@ -12,40 +12,40 @@ import { notFound } from "./notFound.js";
  * @returns The current locale as an `Accessor` object.
  */
 export const getLocale = query(
-  async (path: string, paramLocale?: string, notFoundRoute?: string) => {
-    "use server";
-    const locale = getRequestLocale();
+	async (path: string, paramLocale?: string, notFoundRoute?: string) => {
+		"use server";
+		const locale = getRequestLocale();
 
-    if (!locale) {
-      console.warn(
-        "To use 'LocaleProvider', make sure to setup the localization within your app config!",
-      );
-      return null;
-    }
+		if (!locale) {
+			console.warn(
+				"To use 'LocaleProvider', make sure to setup the localization within your app config!",
+			);
+			return null;
+		}
 
-    function notCorrectPathLocale() {
-      return (
-        !paramLocale &&
-        locale!.pathPrefix !== "" &&
-        !path.startsWith(locale!.pathPrefix)
-      );
-    }
+		function notCorrectPathLocale() {
+			return (
+				!paramLocale &&
+				locale!.pathPrefix !== "" &&
+				!path.startsWith(locale!.pathPrefix)
+			);
+		}
 
-    if (notCorrectPathLocale()) {
-      throw redirect(`${locale.pathPrefix}${path === "/" ? "" : path}`, {
-        statusText: "Redirecting to your preferred shop view",
-      });
-    }
-    if (
-      paramLocale &&
-      paramLocale.toLowerCase() !==
-        `${locale.language}-${locale.country}`.toLowerCase()
-    )
-      throw notFound(
-        notFoundRoute,
-        "404 not found! The locale is not supported!",
-      );
-    return locale;
-  },
-  "locale",
+		if (notCorrectPathLocale()) {
+			throw redirect(`${locale.pathPrefix}${path === "/" ? "" : path}`, {
+				statusText: "Redirecting to your preferred shop view",
+			});
+		}
+		if (
+			paramLocale &&
+			paramLocale.toLowerCase() !==
+				`${locale.language}-${locale.country}`.toLowerCase()
+		)
+			throw notFound(
+				notFoundRoute,
+				"404 not found! The locale is not supported!",
+			);
+		return locale;
+	},
+	"locale",
 );

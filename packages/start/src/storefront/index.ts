@@ -1,17 +1,17 @@
-export type {
-  StorefrontQueries,
-  StorefrontMutations,
-  QueryVariables,
-  MutationVariables,
-} from "./types";
-
-export { createQueryCache, createAsyncQuery } from "./hooks.js";
 export { createStorefrontClient } from "./client.js";
+
+export { createAsyncQuery, createQueryCache } from "./hooks.js";
 export { storefront } from "./storefront.js";
+export type {
+	MutationVariables,
+	QueryVariables,
+	StorefrontMutations,
+	StorefrontQueries,
+} from "./types";
 export {
-  extractOperationName,
-  buildShopDomain,
-  buildStorefrontApiUrl,
-  minifyOperation,
-  getStorefrontClient,
+	buildShopDomain,
+	buildStorefrontApiUrl,
+	extractOperationName,
+	getStorefrontClient,
+	minifyOperation,
 } from "./utils.js";

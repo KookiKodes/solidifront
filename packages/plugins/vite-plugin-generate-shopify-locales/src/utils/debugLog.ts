@@ -1,10 +1,10 @@
-const RESET = '\x1b[0m';
-const BRIGHT = '\x1b[1m';
-const DIM = '\x1b[2m';
-const FG_CYAN = '\x1b[36m';
+const RESET = "\x1b[0m";
+const BRIGHT = "\x1b[1m";
+const DIM = "\x1b[2m";
+const FG_CYAN = "\x1b[36m";
 
 export function debugLog(...args: unknown[]) {
-  const LOG_PREFIX =
-    `${FG_CYAN}${BRIGHT}VITE PLUGIN GENERATE SHOPIFY LOCALES${RESET} ` as const;
-  console.log(LOG_PREFIX, DIM, ...args, RESET);
+	const LOG_PREFIX =
+		`${FG_CYAN}${BRIGHT}VITE PLUGIN GENERATE SHOPIFY LOCALES${RESET} ` as const;
+	console.log(LOG_PREFIX, DIM, ...args, RESET);
 }

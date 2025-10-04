@@ -14,7 +14,7 @@ export type ShopQueryQueryVariables = StorefrontAPI.Exact<{
 }>;
 
 
-export type ShopQueryQuery = { shop: Pick<StorefrontAPI.Shop, 'name' | 'id'> };
+export type ShopQueryQuery = { shop: Pick<StorefrontAPI.Shop, 'name' | 'description' | 'shipsToCountries'> };
 
 export type CartQueryVariables = StorefrontAPI.Exact<{
   id: StorefrontAPI.Scalars['ID']['input'];
@@ -24,7 +24,7 @@ export type CartQueryVariables = StorefrontAPI.Exact<{
 export type CartQuery = { cart?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Cart, 'id'>> };
 
 interface GeneratedQueryTypes {
-  "#graphql\n    query ShopQuery($country: CountryCode, $language: LanguageCode) @inContext(country: $country, language: $language) {\n      shop {\n        name\n        id\n      }\n    }\n": {return: ShopQueryQuery, variables: ShopQueryQueryVariables},
+  "#graphql\n    query ShopQuery($country: CountryCode, $language: LanguageCode) @inContext(country: $country, language: $language) {\n      shop {\n        name\n        description\n        shipsToCountries\n      }\n    }\n": {return: ShopQueryQuery, variables: ShopQueryQueryVariables},
   "#graphql\n  query cart($id: ID!) {\n    cart(id: $id) {\n      id \n    }\n  }\n": {return: CartQuery, variables: CartQueryVariables},
 }
 

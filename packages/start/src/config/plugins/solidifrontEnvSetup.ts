@@ -1,174 +1,165 @@
-import type { SolidifrontConfig, VitePlugin } from "../types";
-import type { ValidVersion } from "@solidifront/storefront-client";
-
+import fs from "node:fs";
+import path from "node:path";
+import { validVersions } from "@solidifront/storefront-client";
+import {
+	type Project,
+	type PropertySignatureStructure,
+	StructureKind,
+} from "ts-morph";
+import { loadEnv } from "vite";
 import { z } from "zod";
 import { generateErrorMessage } from "zod-error";
-import { loadEnv } from "vite";
-import {
-  PropertySignatureStructure,
-  StructureKind,
-  type Project,
-} from "ts-morph";
+import type { SolidifrontConfig, VitePlugin } from "../types";
 
-import fs from "fs";
-import path from "path";
-
-const VALID_VERSIONS: ValidVersion[] = [
-  "2024-01",
-  "2024-04",
-  "2024-07",
-  "2024-10",
-  "2025-01",
-  "unstable",
-] as const;
+const VALID_VERSIONS = validVersions;
 
 const BASE_SCHEMA = z.object({});
 
 const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
-  SHOPIFY_PUBLIC_STORE_NAME: z.string({
-    message: "env 'SHOPIFY_PUBLIC_STORE_NAME' is required",
-  }),
-  SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS as any, {
-    message:
-      "env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: " +
-      VALID_VERSIONS.join(", "),
-  }),
-  SHOPIFY_PUBLIC_STOREFRONT_TOKEN: z.string({
-    message: "env 'SHOPIFY_PUBLIC_STOREFRONT_TOKEN' is required",
-  }),
+	SHOPIFY_PUBLIC_STORE_NAME: z.string({
+		message: "env 'SHOPIFY_PUBLIC_STORE_NAME' is required",
+	}),
+	SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS as any, {
+		message:
+			"env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: " +
+			VALID_VERSIONS.join(", "),
+	}),
+	SHOPIFY_PUBLIC_STOREFRONT_TOKEN: z.string({
+		message: "env 'SHOPIFY_PUBLIC_STOREFRONT_TOKEN' is required",
+	}),
 });
 
 const STOREFRONT_SCHEMA = LOCALIZATION_SCHEMA.extend({
-  SHOPIFY_PRIVATE_STOREFRONT_TOKEN: z
-    .string({
-      message: "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' is required",
-    })
-    .startsWith("shpat", {
-      message:
-        "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' should start with 'shpat'",
-    }),
+	SHOPIFY_PRIVATE_STOREFRONT_TOKEN: z
+		.string({
+			message: "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' is required",
+		})
+		.startsWith("shpat", {
+			message:
+				"env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' should start with 'shpat'",
+		}),
 });
 
 const ALL_PROPERTY_KEYS = Object.keys(STOREFRONT_SCHEMA.shape);
 
 type Schemas =
-  | typeof BASE_SCHEMA
-  | typeof LOCALIZATION_SCHEMA
-  | typeof STOREFRONT_SCHEMA;
+	| typeof BASE_SCHEMA
+	| typeof LOCALIZATION_SCHEMA
+	| typeof STOREFRONT_SCHEMA;
 
 export function solidifrontEnvSetup(
-  project: Project,
-  config: SolidifrontConfig["solidifront"],
+	project: Project,
+	config: SolidifrontConfig["solidifront"],
 ): VitePlugin {
-  const needsLocalization = Reflect.has(config || {}, "localization"),
-    needsStorefront = Reflect.has(config || {}, "storefront"),
-    // needsCustomer = Reflect.has(config || {}, "customer"),
-    absGlobalsPath = path.resolve("./src/global.d.ts");
+	const needsLocalization = Reflect.has(config || {}, "localization"),
+		needsStorefront = Reflect.has(config || {}, "storefront"),
+		// needsCustomer = Reflect.has(config || {}, "customer"),
+		absGlobalsPath = path.resolve("./src/global.d.ts");
 
-  let envSchema: Schemas = BASE_SCHEMA;
+	let envSchema: Schemas = BASE_SCHEMA;
 
-  if (needsLocalization) {
-    envSchema = envSchema.extend(LOCALIZATION_SCHEMA.shape);
-  }
+	if (needsLocalization) {
+		envSchema = envSchema.extend(LOCALIZATION_SCHEMA.shape);
+	}
 
-  if (needsStorefront) {
-    envSchema = envSchema.extend(STOREFRONT_SCHEMA.shape);
-  }
+	if (needsStorefront) {
+		envSchema = envSchema.extend(STOREFRONT_SCHEMA.shape);
+	}
 
-  return {
-    name: "vite-plugin-solidifront-codegen-setup",
-    enforce: "pre",
-    config() {
-      const env = loadEnv("all", process.cwd(), "SHOPIFY_");
-      const result = envSchema.safeParse(env);
-      if (!result.success) {
-        throw new Error(generateErrorMessage(result.error.issues), {
-          cause: result.error,
-        });
-      }
+	return {
+		name: "vite-plugin-solidifront-codegen-setup",
+		enforce: "pre",
+		config() {
+			const env = loadEnv("all", process.cwd(), "SHOPIFY_");
+			const result = envSchema.safeParse(env);
+			if (!result.success) {
+				throw new Error(generateErrorMessage(result.error.issues), {
+					cause: result.error,
+				});
+			}
 
-      if (!fs.existsSync(absGlobalsPath)) {
-        project.createSourceFile(
-          absGlobalsPath,
-          `/// <reference types="@solidjs/start/env" />`,
-          { overwrite: true },
-        );
-      } else {
-        project.createSourceFile(
-          absGlobalsPath,
-          fs.readFileSync(absGlobalsPath, { encoding: "utf-8" }),
-          { overwrite: true },
-        );
-      }
+			if (!fs.existsSync(absGlobalsPath)) {
+				project.createSourceFile(
+					absGlobalsPath,
+					`/// <reference types="@solidjs/start/env" />`,
+					{ overwrite: true },
+				);
+			} else {
+				project.createSourceFile(
+					absGlobalsPath,
+					fs.readFileSync(absGlobalsPath, { encoding: "utf-8" }),
+					{ overwrite: true },
+				);
+			}
 
-      const globalFile = project.getSourceFile(absGlobalsPath);
+			const globalFile = project.getSourceFile(absGlobalsPath);
 
-      const processEnvProperties: PropertySignatureStructure[] = [],
-        metaEnvProperties: PropertySignatureStructure[] = [];
+			const processEnvProperties: PropertySignatureStructure[] = [],
+				metaEnvProperties: PropertySignatureStructure[] = [];
 
-      const validKeys = Object.keys(result.data);
+			const validKeys = Object.keys(result.data);
 
-      validKeys.forEach((key) => {
-        if (key.startsWith("SHOPIFY_PUBLIC_")) {
-          metaEnvProperties.push({
-            kind: StructureKind.PropertySignature,
-            name: key,
-            type: "string",
-          });
-        }
-        processEnvProperties.push({
-          kind: StructureKind.PropertySignature,
-          name: key,
-          type: "string",
-        });
-      });
+			validKeys.forEach((key) => {
+				if (key.startsWith("SHOPIFY_PUBLIC_")) {
+					metaEnvProperties.push({
+						kind: StructureKind.PropertySignature,
+						name: key,
+						type: "string",
+					});
+				}
+				processEnvProperties.push({
+					kind: StructureKind.PropertySignature,
+					name: key,
+					type: "string",
+				});
+			});
 
-      if (globalFile?.getInterface("ImportMetaEnv")) {
-        const importMeta = globalFile?.getInterface("ImportMetaEnv")!;
-        ALL_PROPERTY_KEYS.forEach((key) => {
-          importMeta.getProperty(key)?.remove();
-        });
-        metaEnvProperties.forEach((property) => {
-          importMeta.addProperty(property);
-        });
-      } else {
-        globalFile?.addInterface({
-          name: "ImportMetaEnv",
-          properties: metaEnvProperties,
-        });
-      }
+			if (globalFile?.getInterface("ImportMetaEnv")) {
+				const importMeta = globalFile?.getInterface("ImportMetaEnv")!;
+				ALL_PROPERTY_KEYS.forEach((key) => {
+					importMeta.getProperty(key)?.remove();
+				});
+				metaEnvProperties.forEach((property) => {
+					importMeta.addProperty(property);
+				});
+			} else {
+				globalFile?.addInterface({
+					name: "ImportMetaEnv",
+					properties: metaEnvProperties,
+				});
+			}
 
-      if (globalFile?.getModule("NodeJS")?.getInterface("ProcessEnv")) {
-        const processEnv = globalFile
-          ?.getModule("NodeJS")
-          ?.getInterface("ProcessEnv")!;
-        ALL_PROPERTY_KEYS.forEach((key) => {
-          processEnv.getProperty(key)?.remove();
-        });
-        processEnvProperties.forEach((property) => {
-          processEnv.addProperty(property);
-        });
-      } else {
-        globalFile?.addModule({
-          name: "NodeJS",
-          hasDeclareKeyword: true,
-          statements: [
-            {
-              kind: StructureKind.Interface,
-              name: "ProcessEnv",
-              properties: processEnvProperties,
-            },
-          ],
-        });
-      }
+			if (globalFile?.getModule("NodeJS")?.getInterface("ProcessEnv")) {
+				const processEnv = globalFile
+					?.getModule("NodeJS")
+					?.getInterface("ProcessEnv")!;
+				ALL_PROPERTY_KEYS.forEach((key) => {
+					processEnv.getProperty(key)?.remove();
+				});
+				processEnvProperties.forEach((property) => {
+					processEnv.addProperty(property);
+				});
+			} else {
+				globalFile?.addModule({
+					name: "NodeJS",
+					hasDeclareKeyword: true,
+					statements: [
+						{
+							kind: StructureKind.Interface,
+							name: "ProcessEnv",
+							properties: processEnvProperties,
+						},
+					],
+				});
+			}
 
-      globalFile?.formatText({ indentSize: 2 });
+			globalFile?.formatText({ indentSize: 2 });
 
-      fs.writeFileSync(absGlobalsPath, globalFile?.getFullText() || "");
+			fs.writeFileSync(absGlobalsPath, globalFile?.getFullText() || "");
 
-      return {
-        envPrefix: "SHOPIFY_PUBLIC_",
-      };
-    },
-  };
+			return {
+				envPrefix: "SHOPIFY_PUBLIC_",
+			};
+		},
+	};
 }

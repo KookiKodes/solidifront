@@ -2,7 +2,8 @@ export const shopQuery = `#graphql
     query ShopQuery($country: CountryCode, $language: LanguageCode) @inContext(country: $country, language: $language) {
       shop {
         name
-        id
+        description
+        shipsToCountries
       }
     }
 ` as const;

@@ -1,21 +1,20 @@
-import type { I18nLocale } from "../../middleware/createLocaleMiddleware";
-
 import {
-  type AnchorProps,
-  A as RouterAnchor,
-  createAsync,
-  useLocation,
-  useParams,
+	type AnchorProps,
+	createAsync,
+	A as RouterAnchor,
+	useLocation,
+	useParams,
 } from "@solidjs/router";
 import {
-  createContext,
-  createMemo,
-  JSX,
-  Show,
-  splitProps,
-  useContext,
-  type Accessor,
+	type Accessor,
+	createContext,
+	createMemo,
+	type JSX,
+	Show,
+	splitProps,
+	useContext,
 } from "solid-js";
+import type { I18nLocale } from "../../middleware/createLocaleMiddleware";
 
 import { getLocale } from "../utils/server.js";
 
@@ -40,20 +39,20 @@ const LocaleContext = createContext<Accessor<I18nLocale | undefined>>();
  * @returns A `LocaleContext.Provider` component with the `locale` value set to the asynchronous `fetchLocale` result.
  */
 export const LocaleProvider = (props: {
-  children?: JSX.Element;
-  notFoundRoute?: string;
+	children?: JSX.Element;
+	notFoundRoute?: string;
 }) => {
-  const params = useParams();
-  const location = useLocation();
-  const locale = createAsync(async () =>
-    getLocale(location.pathname, params.locale, props.notFoundRoute),
-  );
-  return (
-    // @ts-expect-error
-    <LocaleContext.Provider value={locale}>
-      <LocaleProvider_>{props.children}</LocaleProvider_>
-    </LocaleContext.Provider>
-  );
+	const params = useParams();
+	const location = useLocation();
+	const locale = createAsync(async () =>
+		getLocale(location.pathname, params.locale, props.notFoundRoute),
+	);
+	return (
+		// @ts-expect-error
+		<LocaleContext.Provider value={locale}>
+			<LocaleProvider_>{props.children}</LocaleProvider_>
+		</LocaleContext.Provider>
+	);
 };
 
 /**
@@ -65,7 +64,7 @@ export const LocaleProvider = (props: {
  * @returns The current locale as an `Accessor` object.
  */
 export const useLocale = () => {
-  return useContext(LocaleContext)!;
+	return useContext(LocaleContext)!;
 };
 
 /**
@@ -79,12 +78,12 @@ export const useLocale = () => {
  * @returns A `Show` component with the `children` prop conditionally rendered based on whether the `locale` value is truthy.
  */
 function LocaleProvider_(props: { children?: JSX.Element }) {
-  const locale = useLocale();
+	const locale = useLocale();
 
-  if (locale() === null)
-    throw new Error("Localization not enabled through app config!");
+	if (locale() === null)
+		throw new Error("Localization not enabled through app config!");
 
-  return <Show when={locale()}>{props.children}</Show>;
+	return <Show when={locale()}>{props.children}</Show>;
 }
 
 /**
@@ -101,32 +100,32 @@ function LocaleProvider_(props: { children?: JSX.Element }) {
  * @returns - A RouterAnchor component with the appropriate href and hreflang attributes.
  */
 export const A = (props: AnchorProps) => {
-  // Get the current locale from the URL parameters
-  const params = useParams();
+	// Get the current locale from the URL parameters
+	const params = useParams();
 
-  // Split the properties into hrefProps, childrenProps, and restProps
-  const [hrefProps, childrenProps, restProps] = splitProps(
-    props,
-    ["href"],
-    ["children"],
-  );
+	// Split the properties into hrefProps, childrenProps, and restProps
+	const [hrefProps, childrenProps, restProps] = splitProps(
+		props,
+		["href"],
+		["children"],
+	);
 
-  // Create a memoized href attribute
-  const href = createMemo(() => {
-    // If the locale is not present in the URL, return the original href
-    if (!params.locale) return hrefProps.href;
+	// Create a memoized href attribute
+	const href = createMemo(() => {
+		// If the locale is not present in the URL, return the original href
+		if (!params.locale) return hrefProps.href;
 
-    // If the href already starts with the current locale, return the original href
-    if (hrefProps.href.startsWith(`/${params.locale}`)) return hrefProps.href;
+		// If the href already starts with the current locale, return the original href
+		if (hrefProps.href.startsWith(`/${params.locale}`)) return hrefProps.href;
 
-    // If the href does not start with the current locale, prepend it to the href
-    return `/${params.locale}${hrefProps.href === "/" ? "" : hrefProps.href}`;
-  });
+		// If the href does not start with the current locale, prepend it to the href
+		return `/${params.locale}${hrefProps.href === "/" ? "" : hrefProps.href}`;
+	});
 
-  // Return the RouterAnchor component with the appropriate href and hreflang attributes
-  return (
-    <RouterAnchor href={href()} hreflang={params.locale} {...restProps}>
-      {childrenProps.children}
-    </RouterAnchor>
-  );
+	// Return the RouterAnchor component with the appropriate href and hreflang attributes
+	return (
+		<RouterAnchor href={href()} hreflang={params.locale} {...restProps}>
+			{childrenProps.children}
+		</RouterAnchor>
+	);
 };

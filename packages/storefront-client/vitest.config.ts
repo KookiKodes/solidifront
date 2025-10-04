@@ -1,5 +1,5 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  envPrefix: "SHOPIFY_",
+	envPrefix: "SHOPIFY_",
 });

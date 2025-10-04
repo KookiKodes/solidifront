@@ -1,39 +1,37 @@
+import { createSolidifrontMiddleware } from "@solidifront/start/middleware:internal";
 import {
-  type RequestMiddleware,
-  type ResponseMiddleware,
-  createMiddleware as createSolidMiddleware,
+	createMiddleware as createSolidMiddleware,
+	type RequestMiddleware,
+	type ResponseMiddleware,
 } from "@solidjs/start/middleware";
-
 import {
-  createLocaleMiddleware,
-  type I18nLocale,
+	createLocaleMiddleware,
+	type I18nLocale,
 } from "./createLocaleMiddleware.js";
 import { createStorefrontMiddleware } from "./createStorefrontMiddleware.js";
-
-import { createSolidifrontMiddleware } from "@solidifront/start/middleware:internal";
 
 export { type I18nLocale, createLocaleMiddleware, createStorefrontMiddleware };
 
 export function createMiddleware({
-  onRequest,
-  onBeforeResponse,
+	onRequest,
+	onBeforeResponse,
 }: {
-  onRequest?: RequestMiddleware[] | RequestMiddleware | undefined;
-  onBeforeResponse?: ResponseMiddleware[] | ResponseMiddleware | undefined;
+	onRequest?: RequestMiddleware[] | RequestMiddleware | undefined;
+	onBeforeResponse?: ResponseMiddleware[] | ResponseMiddleware | undefined;
 } = {}): ReturnType<typeof createSolidMiddleware> {
-  const requestHandlers = onRequest
-      ? Array.isArray(onRequest)
-        ? [...onRequest]
-        : [onRequest]
-      : [],
-    responseHandlers = onBeforeResponse
-      ? Array.isArray(onBeforeResponse)
-        ? [...onBeforeResponse]
-        : [onBeforeResponse]
-      : [];
+	const requestHandlers = onRequest
+			? Array.isArray(onRequest)
+				? [...onRequest]
+				: [onRequest]
+			: [],
+		responseHandlers = onBeforeResponse
+			? Array.isArray(onBeforeResponse)
+				? [...onBeforeResponse]
+				: [onBeforeResponse]
+			: [];
 
-  return createSolidMiddleware({
-    onRequest: [...createSolidifrontMiddleware(), ...requestHandlers],
-    onBeforeResponse: [...responseHandlers],
-  });
+	return createSolidMiddleware({
+		onRequest: [...createSolidifrontMiddleware(), ...requestHandlers],
+		onBeforeResponse: [...responseHandlers],
+	});
 }

@@ -1,10 +1,10 @@
-import { createSolidifrontConfig } from '@solidifront/codegen';
+import { createSolidifrontConfig } from "@solidifront/codegen";
 
 export default createSolidifrontConfig({
-  generates: {
-    storefront: {
-      path: '.',
-      documents: ['src/utils/getShopLocalization.ts'],
-    },
-  },
+	generates: {
+		storefront: {
+			path: ".",
+			documents: ["src/utils/getShopLocalization.ts"],
+		},
+	},
 });

@@ -1,31 +1,29 @@
+import { createAsyncStore, query } from "@solidjs/router";
 import type { Accessor } from "solid-js";
-import type { QueryVariables, StorefrontQueries } from "./types";
-
-import { query, createAsyncStore } from "@solidjs/router";
-
 import { storefront } from "./storefront.js";
+import type { QueryVariables, StorefrontQueries } from "./types";
 import { extractOperationName } from "./utils.js";
 
 export function createQueryCache<
-  const Query extends string,
-  GeneratedQueries extends StorefrontQueries = StorefrontQueries,
+	const Query extends string,
+	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
 >(operation: Query) {
-  return query(
-    async (variables?: QueryVariables<Query>) =>
-      storefront.query<Query, GeneratedQueries>(operation, variables),
-    extractOperationName(operation)
-  );
+	return query(
+		async (variables?: QueryVariables<Query>) =>
+			storefront.query<Query, GeneratedQueries>(operation, variables),
+		extractOperationName(operation),
+	);
 }
 
 export function createAsyncQuery<Query extends string>(
-  query: Query,
-  variables?: QueryVariables<Query> | Accessor<QueryVariables<Query>>
+	query: Query,
+	variables?: QueryVariables<Query> | Accessor<QueryVariables<Query>>,
 ) {
-  const cachedQuery = createQueryCache<Query>(query);
-  return createAsyncStore(async () => {
-    const v = variables instanceof Function ? variables() : variables;
-    return cachedQuery(v);
-  });
+	const cachedQuery = createQueryCache<Query>(query);
+	return createAsyncStore(async () => {
+		const v = variables instanceof Function ? variables() : variables;
+		return cachedQuery(v);
+	});
 }
 
 // export function createMutationAction<

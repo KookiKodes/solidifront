@@ -1,67 +1,67 @@
 {
-  "name": "@solidifront/codegen",
-  "version": "1.0.8",
-  "description": "",
-  "type": "module",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
-  "private": false,
-  "exports": {
-    ".": {
-      "types": "./dist/esm/index.d.ts",
-      "require": "./dist/cjs/index.cjs",
-      "import": "./dist/esm/index.js",
-      "default": "./dist/esm/index.js"
-    },
-    "./package.json": "./package.json",
-    "./storefront.schema.json": "./dist/storefront.schema.json",
-    "./customer-account.schema.json": "./dist/customer-account.schema.json",
-    "./storefront-api-types": "./dist/storefront-api-types.d.ts",
-    "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
-  },
-  "typesVersions": {
-    "*": {
-      "storefront-api-types": [
-        "./dist/storefront-api-types.d.ts"
-      ],
-      "customer-account-api-types": [
-        "./dist/customer-account-api-types.d.ts"
-      ]
-    }
-  },
-  "keywords": [],
-  "author": "Solidifront",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/KookiKodes/solidifront.git",
-    "directory": "packages/codegen"
-  },
-  "scripts": {
-    "build": "tsup --clean",
-    "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit",
-    "copy-files": "copy-files-from-to --config copy-files.json --outdated"
-  },
-  "sideEffects": false,
-  "publishConfig": {
-    "access": "public",
-    "@shopify:registry": "https://registry.npmjs.org"
-  },
-  "files": [
-    "dist"
-  ],
-  "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.5",
-    "@graphql-codegen/plugin-helpers": "^5.1.0",
-    "@shopify/graphql-codegen": "^0.1.0",
-    "copy-files-from-to": "^3.11.0",
-    "dts-bundle-generator": "^9.5.1",
-    "tsup": "^8.2.4",
-    "type-fest": "^4.24.0"
-  },
-  "dependencies": {
-    "@shopify/hydrogen-codegen": "^0.3.2"
-  }
+	"name": "@solidifront/codegen",
+	"version": "1.0.8",
+	"description": "",
+	"type": "module",
+	"main": "dist/cjs/index.cjs",
+	"module": "dist/esm/index.js",
+	"types": "dist/esm/index.d.ts",
+	"private": false,
+	"exports": {
+		".": {
+			"types": "./dist/esm/index.d.ts",
+			"require": "./dist/cjs/index.cjs",
+			"import": "./dist/esm/index.js",
+			"default": "./dist/esm/index.js"
+		},
+		"./package.json": "./package.json",
+		"./storefront.schema.json": "./dist/storefront.schema.json",
+		"./customer-account.schema.json": "./dist/customer-account.schema.json",
+		"./storefront-api-types": "./dist/storefront-api-types.d.ts",
+		"./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
+	},
+	"typesVersions": {
+		"*": {
+			"storefront-api-types": [
+				"./dist/storefront-api-types.d.ts"
+			],
+			"customer-account-api-types": [
+				"./dist/customer-account-api-types.d.ts"
+			]
+		}
+	},
+	"keywords": [],
+	"author": "Solidifront",
+	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KookiKodes/solidifront.git",
+		"directory": "packages/codegen"
+	},
+	"scripts": {
+		"build": "tsup --clean",
+		"dev": "tsup --watch",
+		"typecheck": "tsc --noEmit",
+		"copy-files": "copy-files-from-to --config copy-files.json --outdated"
+	},
+	"sideEffects": false,
+	"publishConfig": {
+		"access": "public",
+		"@shopify:registry": "https://registry.npmjs.org"
+	},
+	"files": [
+		"dist"
+	],
+	"devDependencies": {
+		"@graphql-codegen/cli": "^5.0.5",
+		"@graphql-codegen/plugin-helpers": "^5.1.0",
+		"@shopify/graphql-codegen": "^0.1.0",
+		"copy-files-from-to": "^3.11.0",
+		"dts-bundle-generator": "^9.5.1",
+		"tsup": "^8.2.4",
+		"type-fest": "^4.24.0"
+	},
+	"dependencies": {
+		"@shopify/hydrogen-codegen": "^0.3.2"
+	}
 }
