@@ -2,7 +2,7 @@ import type {
 	CountryCode,
 	CurrencyCode,
 	LanguageCode,
-} from "@solidifront/codegen/storefront-api-types";
+} from "../storefront.types.d.ts";
 
 export type IsoCode = `${Lowercase<LanguageCode>}-${CountryCode}`;
 
@@ -11,8 +11,8 @@ export type Locale = {
 	currency: CurrencyCode;
 	isoCode: IsoCode;
 	label:
-		| `${string} (${CurrencyCode} ${string})`
-		| `${string} - ${string} (${CurrencyCode} ${string})`;
+	| `${string} (${CurrencyCode} ${string})`
+	| `${string} - ${string} (${CurrencyCode} ${string})`;
 	language: LanguageCode;
 	languageLabel: string;
 };

@@ -1,59 +1,60 @@
 {
-	"name": "@solidifront/vite-plugin-generate-shopify-locales",
-	"version": "1.1.20",
-	"description": "Zero-config vite plugin that fetches and generates you're Storefront's shop locales",
-	"license": "MIT",
-	"author": "Kooki-Kodes",
-	"private": false,
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/KookiKodes/solidifront.git",
-		"directory": "packages/plugins/vite-plugin-generate-shopify-locales"
-	},
-	"keywords": [
-		"shopify",
-		"locales",
-		"vite",
-		"vite-plugin",
-		"vite-plugin-generate-shopify-locales",
-		"solidify"
-	],
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/esm/index.js",
-			"require": "./dist/cjs/index.cjs"
-		},
-		"./locales": {
-			"types": "./dist/locales/index.d.ts",
-			"import": "./dist/locales/index.js",
-			"require": "./dist/locales/index.cjs"
-		}
-	},
-	"types": "./dist/index.d.ts",
-	"main": "./dist/esm/index.js",
-	"module": "./dist/esm/index.js",
-	"files": [
-		"dist"
-	],
-	"scripts": {
-		"build": "pnpm codegen && tsup --clean",
-		"dev": "tsup --watch",
-		"typecheck": "tsc --noEmit",
-		"codegen": "graphql-codegen"
-	},
-	"peerDependencies": {
-		"vite": "^6.3.0"
-	},
-	"dependencies": {
-		"@solidifront/storefront-client": "workspace:*",
-		"vite": "^6.3.4"
-	},
-	"devDependencies": {
-		"@graphql-codegen/cli": "^5.0.3",
-		"@solidifront/codegen": "workspace:*",
-		"tsup": "^8.2.4",
-		"typescript": "^5.4.5"
-	}
+  "name": "@solidifront/vite-plugin-generate-shopify-locales",
+  "version": "1.2.0",
+  "description": "Zero-config vite plugin that fetches and generates you're Storefront's shop locales",
+  "license": "MIT",
+  "author": "Kooki-Kodes",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KookiKodes/solidifront.git",
+    "directory": "packages/plugins/vite-plugin-generate-shopify-locales"
+  },
+  "keywords": [
+    "shopify",
+    "locales",
+    "vite",
+    "vite-plugin",
+    "vite-plugin-generate-shopify-locales",
+    "solidify"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./locales": {
+      "types": "./dist/locales/index.d.ts",
+      "import": "./dist/locales/index.js",
+      "require": "./dist/locales/index.cjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm codegen && tsup --clean",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "codegen": "graphql-codegen"
+  },
+  "peerDependencies": {
+    "vite": "^7.1.10"
+  },
+  "dependencies": {
+    "@solidifront/storefront-client": "workspace:*",
+    "vite": "^7.1.10"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.0",
+    "@shopify/api-codegen-preset": "^1.2.0",
+    "graphql-config": "^5.1.5",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  }
 }
