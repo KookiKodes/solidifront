@@ -6,13 +6,12 @@ import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
 import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
-import * as Function from "effect/Function";
+import { pipe } from "effect/Function";
 import * as Layer from "effect/Layer";
 import type { ParseError } from "effect/ParseResult";
 import * as Redacted from "effect/Redacted";
 import * as Schedule from "effect/Schedule";
 import * as Schema from "effect/Schema";
-import type { Scope } from "effect/Scope";
 import { RETRY_WAIT_TIME } from "../constants.js";
 import * as ClientResponse from "../data/ClientResponse.js";
 import * as ResponseErrors from "../data/ResponseErrors.js";
@@ -24,61 +23,70 @@ import {
 	PaymentRequiredStatusError,
 	RetriableStatusCodesError,
 	StorefrontServerStatusError,
+	type ExtractOperationNameError,
 } from "../errors.js";
-import { ClientOptions, GraphQLJsonBody, RequestOptions } from "../schemas.js";
+import {
+	type ClientOptions,
+	GraphQLJsonBody,
+	RequestOptions,
+	type CodegenOperations,
+	type StorefrontMutations,
+	type StorefrontQueries,
+} from "../schemas.js";
 
 import { buildStorefrontApiUrl } from "../utils/storefront.js";
+import * as DefaultClientOptions from "./DefaultClientOptions.js";
 import * as DefaultHeaders from "./DefaultHeaders.js";
-import * as PrivateHeaders from "./PrivateHeaders.js";
-import * as PublicHeaders from "./PublicHeaders.js";
+import * as GraphQLOperation from "./GraphQLOperation.js";
+import { withNamespacedLogSpan } from "../utils/logger.js";
 
-type MakeResult = Effect.Effect<
-	{
-		request: <
-			const Operation extends string,
-			TVariables extends {
-				[x: string]: never;
-			},
-			TData = any,
-		>(
-			operation: Operation,
-			options?: RequestOptions<TVariables>,
-		) => Effect.Effect<
-			ClientResponse.ClientResponse<TData>,
-			ParseError | HttpClientError | HttpBodyError,
-			Scope
-		>;
-	},
-	ParseError,
-	HttpClient.HttpClient
->;
+export interface StorefrontClientImpl {
+	query: <
+		const Query extends string,
+		GeneratedQueries extends CodegenOperations = StorefrontQueries,
+	>(
+		query: Query,
+		options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
+	) => Effect.Effect<
+		ClientResponse.ClientResponse<GeneratedQueries[Query]["return"]>,
+		ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError
+	>;
+	mutate: <
+		const Mutation extends string,
+		GeneratedMutations extends CodegenOperations = StorefrontMutations,
+	>(
+		query: Mutation,
+		options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
+	) => Effect.Effect<
+		ClientResponse.ClientResponse<GeneratedMutations[Mutation]["return"]>,
+		ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError
+	>;
+}
 
-export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
-	Effect.gen(function* () {
-		const defaultOptions = yield* Schema.decode(ClientOptions)(initOptions);
+export class StorefrontClient extends Context.Tag(
+	"@solidifront/storefront-client",
+)<StorefrontClient, StorefrontClientImpl>() { }
+
+export const make = <
+	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
+	GeneratedMutations extends StorefrontMutations = StorefrontMutations,
+>() =>
+	Effect.gen(function*() {
+		const defaultOptions = yield* DefaultClientOptions.DefaultClientOptions;
+		const defaultHeaders = yield* DefaultHeaders.DefaultHeaders;
+		const graphqlOperation = yield* GraphQLOperation.GraphQLOperation;
 		const defaultClient = yield* HttpClient.HttpClient;
 
-		const defaultEndpoint = buildStorefrontApiUrl({
-			apiVersion: defaultOptions.apiVersion,
-			storeName: defaultOptions.storeName,
-		});
+		yield* Effect.annotateLogsScoped(defaultOptions);
+		yield* Effect.log("Intializing storefront client...");
+
+		const defaultEndpoint = buildStorefrontApiUrl(defaultOptions);
+
+		const headers = yield* defaultHeaders.get();
 
 		const client = defaultClient.pipe(
 			HttpClient.mapRequestInput((request) =>
-				HttpClientRequest.setHeaders(request, {
-					...DefaultHeaders.makeFallback(request, {
-						contentType: defaultOptions.contentType,
-						apiVersion: defaultOptions.apiVersion,
-					}),
-					...PublicHeaders.makeFallback(request, {
-						publicAccessToken: defaultOptions.publicAccessToken,
-					}),
-					...PrivateHeaders.makeFallback(request, {
-						privateAccessToken: defaultOptions.privateAccessToken
-							? Redacted.value(defaultOptions.privateAccessToken)
-							: undefined,
-					}),
-				}),
+				request.pipe(HttpClientRequest.setHeaders(headers)),
 			),
 			HttpClient.transformResponse((response) =>
 				response.pipe(
@@ -123,14 +131,18 @@ export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
 			}),
 		);
 
-		const makeRequest = <
+		const executeRequest = <
 			const Operation extends string,
-			TVariables extends { [x: string]: any },
+			TVariables extends { [x: string]: never },
+			TData = any,
 		>(
 			operation: Operation,
 			options?: RequestOptions<TVariables>,
 		) =>
-			Effect.gen(function* () {
+			Effect.fn("executeRequest")(function*(
+				operation: Operation,
+				options?: RequestOptions<TVariables>,
+			) {
 				const validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
 					options || {},
 				);
@@ -142,43 +154,34 @@ export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
 						storeName: validatedOptions.storeName || defaultOptions.storeName,
 					});
 
-				const request = HttpClientRequest.post(endpoint).pipe(
-					HttpClientRequest.setHeaders({
-						...DefaultHeaders.make({
-							contentType: validatedOptions?.contentType,
-							apiVersion: validatedOptions?.apiVersion,
-						}),
-						...PublicHeaders.make({
-							publicAccessToken: validatedOptions?.publicAccessToken,
-						}),
-						...PrivateHeaders.make({
-							privateAccessToken: validatedOptions?.privateAccessToken
-								? Redacted.value(validatedOptions?.privateAccessToken)
-								: undefined,
-							buyerIp: validatedOptions?.buyerIp,
-						}),
-					}),
+				const headers = yield* defaultHeaders.combine({
+					...validatedOptions,
+					privateAccessToken: validatedOptions?.privateAccessToken
+						? Redacted.value(validatedOptions.privateAccessToken)
+						: undefined,
+				});
+
+				yield* Effect.annotateLogsScoped({
+					apiVersion: validatedOptions.apiVersion || defaultOptions.apiVersion,
+					storeName: validatedOptions.storeName || defaultOptions.storeName,
+					accessToken:
+						validatedOptions?.privateAccessToken ||
+						validatedOptions?.publicAccessToken ||
+						defaultOptions?.publicAccessToken ||
+						defaultOptions?.privateAccessToken,
+				});
+
+				const request = yield* HttpClientRequest.post(endpoint).pipe(
+					HttpClientRequest.setHeaders(headers),
 					HttpClientRequest.bodyJson({
 						query: operation,
 						variables: validatedOptions?.variables,
 					}),
 				);
-				return yield* request;
-			});
 
-		const executeRequest = <
-			const Operation extends string,
-			TVariables extends { [x: string]: never },
-			TData = any,
-		>(
-			operation: Operation,
-			options?: RequestOptions<TVariables>,
-		) =>
-			Effect.gen(function* () {
-				const request = yield* makeRequest(operation, options);
 				const response = yield* client.execute(request);
 
-				const json = yield* Function.pipe(
+				const json = yield* pipe(
 					response,
 					HttpClientResponse.schemaBodyJson(GraphQLJsonBody),
 				);
@@ -197,7 +200,7 @@ export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
 					data: json.data as TData,
 					extensions: json.extensions,
 				});
-			}).pipe(
+			})(operation, options).pipe(
 				Effect.catchAll((error) => {
 					if (
 						error._tag === "BadRequestStatusError" ||
@@ -220,23 +223,108 @@ export const make = (initOptions: ClientOptions["Encoded"]): MakeResult =>
 					}
 					return Effect.fail(error);
 				}),
-				Effect.tapError(Effect.logError),
 			);
 
-		return {
-			request: executeRequest,
-		};
-	}).pipe(Effect.tapError(Effect.logError));
+		const executeOperation = <
+			const Operation extends string,
+			OperationData extends { variables: any; return: any } = {
+				variables: any;
+				return: any;
+			},
+		>(
+			type: "query" | "mutate",
+			originalOperation: Operation,
+			options?: RequestOptions<OperationData["variables"]>,
+		) =>
+			Effect.gen(function*() {
+				const operation = yield* graphqlOperation.validate({
+					type,
+					operation: originalOperation,
+					variables: Reflect.get(options || {}, "variables"),
+				});
 
-export class StorefrontClient extends Context.Tag(
-	"@solidifront/storefront-client/StorefrontClient",
-)<StorefrontClient, typeof make>() {}
+				const operationName = yield* graphqlOperation.extractName(operation);
+				const minifiedOperation = yield* graphqlOperation.minify(operation);
 
-export const Default: Layer.Layer<
-	HttpClient.HttpClient | StorefrontClient,
-	never,
-	never
-> = Layer.mergeAll(
-	Layer.succeed(StorefrontClient, StorefrontClient.of(make)),
-	FetchHttpClient.layer,
-);
+				yield* Effect.annotateLogsScoped({
+					name: operationName,
+					operation: minifiedOperation,
+					variables: Reflect.get(options || {}, "variables"),
+				});
+
+				const response = yield* executeRequest<
+					Operation,
+					OperationData["variables"],
+					OperationData["return"]
+				>(operation, options);
+
+				yield* Effect.annotateLogsScoped({
+					extensions: response.extensions,
+				});
+
+				if (response?.errors) {
+					yield* Effect.annotateLogsScoped({
+						errors: response.errors,
+					});
+					yield* Effect.logError(response);
+				} else {
+					yield* Effect.annotateLogsScoped({
+						data: response.data,
+					});
+					yield* Effect.logInfo(response);
+				}
+
+				return response;
+			});
+
+		return StorefrontClient.of({
+			query: (query, options) =>
+				executeOperation("query", query, options).pipe(
+					withNamespacedLogSpan("Query"),
+					Effect.scoped,
+				),
+			mutate: (mutation, options) =>
+				executeOperation("mutate", mutation, options).pipe(
+					withNamespacedLogSpan("Mutation"),
+					Effect.scoped,
+				),
+		});
+	});
+
+export const layer = <
+	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
+	GeneratedMutations extends StorefrontMutations = StorefrontMutations,
+>(
+	options: ClientOptions["Encoded"],
+) =>
+	Layer.scoped(
+		StorefrontClient,
+		make<GeneratedQueries, GeneratedMutations>(),
+	).pipe(
+		Layer.provide(
+			Layer.mergeAll(
+				DefaultHeaders.layer,
+				GraphQLOperation.layer,
+				FetchHttpClient.layer,
+			),
+		),
+		Layer.provide(DefaultClientOptions.layer(options)),
+	);
+
+export const fromEnv = <
+	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
+	GeneratedMutations extends StorefrontMutations = StorefrontMutations,
+>() =>
+	Layer.effect(
+		StorefrontClient,
+		make<GeneratedQueries, GeneratedMutations>(),
+	).pipe(
+		Layer.provide(
+			Layer.mergeAll(
+				DefaultHeaders.layer,
+				GraphQLOperation.layer,
+				FetchHttpClient.layer,
+			),
+		),
+		Layer.provide(DefaultClientOptions.fromEnv),
+	);

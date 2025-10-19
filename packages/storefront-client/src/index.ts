@@ -1,7 +1,9 @@
 import * as Effect from "effect/Effect";
-import * as Layer from "effect/Layer";
 import * as Logger from "effect/Logger";
-import * as LogLevel from "effect/LogLevel";
+// import * as LogLevel from "effect/LogLevel";
+import * as Scope from "effect/Scope";
+import * as Layer from "effect/Layer";
+import type * as Context from "effect/Context";
 import type { ClientResponse } from "./data/ClientResponse";
 import {
 	type ClientOptions,
@@ -12,7 +14,7 @@ import {
 	type StorefrontQueries,
 	ValidVersion,
 } from "./schemas.js";
-import * as TypedStorefrontClient from "./services/TypedStorefrontClient.js";
+import * as StorefrontClient from "./services/StorefrontClient.js";
 
 export namespace createStorefrontClient {
 	export type Options = ClientOptions["Encoded"] & {
@@ -21,14 +23,14 @@ export namespace createStorefrontClient {
 	export type Variables<
 		Operation extends string,
 		GeneratedOperations extends CodegenOperations =
-			| StorefrontQueries
-			| StorefrontMutations,
+		| StorefrontQueries
+		| StorefrontMutations,
 	> = GeneratedOperations[Operation]["variables"];
 	export type ReturnData<
 		Operation extends string,
 		GeneratedOperations extends CodegenOperations =
-			| StorefrontMutations
-			| StorefrontMutations,
+		| StorefrontMutations
+		| StorefrontMutations,
 	> = GeneratedOperations[Operation]["return"];
 	export type Return<
 		Operation extends string,
@@ -48,116 +50,63 @@ export const createStorefrontClient = <
 	logger,
 	...initOptions
 }: createStorefrontClient.Options) => {
-	let layer = TypedStorefrontClient.Default;
-	let minimumLogLevel = LogLevel.None;
-	let loggerLayer = Logger.pretty;
+	let scope: Scope.Scope | null = null;
+	let memo: Layer.MemoMap | null = null;
+	let ctxPromise: Promise<
+		Context.Context<StorefrontClient.StorefrontClient>
+	> | null = null;
+	// let minimumLogLevel = LogLevel.None;
+	const loggerLayer = Logger.pretty;
 
-	if (logger) {
-		loggerLayer = Logger.replace(Logger.defaultLogger, Logger.make(logger));
-		layer = Layer.mergeAll(loggerLayer, layer);
-		minimumLogLevel = LogLevel.All;
-	}
+	// if (logger) {
+	// 	loggerLayer = Logger.replace(Logger.defaultLogger, Logger.make(logger));
+	// 	layer = Layer.mergeAll(loggerLayer, layer);
+	// 	minimumLogLevel = LogLevel.All;
+	// }
 
-	return Effect.runSync(
-		Effect.gen(function* () {
-			const client = yield* TypedStorefrontClient.make<
-				GeneratedQueries,
-				GeneratedMutations
-			>(initOptions);
-
-			return {
-				mutate: <const Mutation extends string>(
-					mutation: Mutation,
-					options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
-				) =>
-					Effect.runPromise(
-						client.mutate(mutation, options).pipe(
-							Logger.withMinimumLogLevel(minimumLogLevel),
-							Effect.provide(loggerLayer),
-							Effect.catchAll((error) => {
-								if (
-									error._tag === "ExtractOperationNameError" ||
-									error._tag === "ParseError" ||
-									error._tag === "RequestError" ||
-									error._tag === "ResponseError"
-								) {
-									return Effect.fail(
-										new Error(error.message, {
-											cause: error.cause,
-										}),
-									);
-								}
-
-								if (error._tag === "HttpBodyError") {
-									const reason = error.reason;
-									if (reason._tag === "JsonError") {
-										return Effect.fail(
-											new Error("Failed to parse JSON response"),
-										);
-									}
-									if (reason._tag === "SchemaError") {
-										return Effect.fail(
-											new Error(reason.error.message, {
-												cause: reason.error.cause,
-											}),
-										);
-									}
-								}
-
-								return Effect.fail(new Error("Something went horribly wrong!"));
-							}),
-						),
-						{
-							signal: options?.signal,
-						},
+	const ensureContext = () => {
+		if (ctxPromise) return ctxPromise;
+		ctxPromise = (async () => {
+			scope = await Effect.runPromise(Scope.make());
+			memo = await Effect.runPromise(Layer.makeMemoMap);
+			return await Effect.runPromise(
+				Layer.buildWithMemoMap(
+					Layer.mergeAll(StorefrontClient.layer(initOptions), loggerLayer).pipe(
+						Layer.provide(loggerLayer),
 					),
+					memo,
+					scope,
+				),
+			);
+		})();
+		return ctxPromise;
+	};
 
-				query: <const Query extends string>(
-					query: Query,
-					options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
-				) =>
-					Effect.runPromise(
-						client.query(query, options).pipe(
-							Logger.withMinimumLogLevel(minimumLogLevel),
-							Effect.provide(loggerLayer),
-							Effect.catchAll((error) => {
-								if (
-									error._tag === "ExtractOperationNameError" ||
-									error._tag === "ParseError" ||
-									error._tag === "RequestError" ||
-									error._tag === "ResponseError"
-								) {
-									return Effect.fail(
-										new Error(error.message, {
-											cause: error.cause,
-										}),
-									);
-								}
+	type Requirements = StorefrontClient.StorefrontClient;
 
-								if (error._tag === "HttpBodyError") {
-									const reason = error.reason;
-									if (reason._tag === "JsonError") {
-										return Effect.fail(
-											new Error("Failed to parse JSON response"),
-										);
-									}
-									if (reason._tag === "SchemaError") {
-										return Effect.fail(
-											new Error(reason.error.message, {
-												cause: reason.error.cause,
-											}),
-										);
-									}
-								}
+	const run = async <A, E>(fx: Effect.Effect<A, E, Requirements>) => {
+		const ctx = await ensureContext();
+		return Effect.runPromise(Effect.provide(fx, ctx));
+	};
 
-								return Effect.fail(new Error("Something went horribly wrong!"));
-							}),
-						),
-						{
-							signal: options?.signal,
-						},
-					),
-			};
-		}).pipe(Logger.withMinimumLogLevel(minimumLogLevel), Effect.provide(layer)),
-	);
+	return {
+		mutate: <const Mutation extends string>(
+			mutation: Mutation,
+			options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
+		) =>
+			run(
+				Effect.flatMap(StorefrontClient.StorefrontClient, (client) =>
+					client.mutate(mutation, options),
+				),
+			),
+		query: <const Query extends string>(
+			query: Query,
+			options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
+		) =>
+			run(
+				Effect.flatMap(StorefrontClient.StorefrontClient, (client) =>
+					client.query(query, options),
+				),
+			),
+	};
 };

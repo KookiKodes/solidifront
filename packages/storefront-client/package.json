@@ -1,6 +1,6 @@
 {
 	"name": "@solidifront/storefront-client",
-	"version": "0.3.12",
+	"version": "0.4.0",
 	"description": "",
 	"type": "module",
 	"types": "./dist/esm/index.d.ts",
@@ -44,13 +44,13 @@
 	"dependencies": {
 		"@effect/platform": "^0.92.1",
 		"effect": "^3.18.2",
-		"typescript": "^5.8.2"
+		"typescript": "^5.9.3"
 	},
 	"devDependencies": {
 		"dts-bundle-generator": "^9.5.1",
-		"tsup": "^8.2.4",
+		"tsup": "^8.5.0",
 		"tsx": "^4.19.1",
-		"vite": "^6.3.4",
+		"vite": "^6.4.0",
 		"vitest": "^2.1.4"
 	}
 }
