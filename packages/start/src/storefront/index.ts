@@ -9,9 +9,6 @@ export type {
 	StorefrontQueries,
 } from "./types";
 export {
-	buildShopDomain,
-	buildStorefrontApiUrl,
 	extractOperationName,
 	getStorefrontClient,
-	minifyOperation,
 } from "./utils.js";
