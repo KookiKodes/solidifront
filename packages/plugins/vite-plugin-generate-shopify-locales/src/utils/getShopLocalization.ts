@@ -39,6 +39,5 @@ export async function getShopLocalization({
     publicAccessToken: accessToken,
   });
   const response = await client.query(GetShopLocalization);
-  console.log(response.errors?.graphQLErrors);
   return response.data!.localization!;
 }
