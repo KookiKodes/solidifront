@@ -1,8 +1,8 @@
 import type { createStorefrontClient } from "@solidifront/storefront-client";
-
 import { getRequestEvent } from "solid-js/web";
 import type { StorefrontMutations, StorefrontQueries } from "./types";
 
+export { extractOperationName } from "@solidifront/storefront-client/utils";
 export function getStorefrontClient<
 	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
 	GeneratedMutations extends StorefrontMutations = StorefrontMutations,

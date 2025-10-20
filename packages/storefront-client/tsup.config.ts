@@ -32,9 +32,15 @@ export default defineConfig([
 					filePath: path.resolve("./src/effect.ts"),
 				},
 			]);
+			const [utilsDts] = generateDtsBundle([
+				{
+					filePath: path.resolve("./src/utils.ts"),
+				},
+			]);
 
 			await fs.writeFile(path.resolve(outDir, "esm", "index.d.ts"), indexDts);
 			await fs.writeFile(path.resolve(outDir, "esm", "effect.d.ts"), effectDts);
+			await fs.writeFile(path.resolve(outDir, "esm", "utils.d.ts"), utilsDts);
 		},
 	},
 	{

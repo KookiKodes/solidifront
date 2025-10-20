@@ -17,6 +17,11 @@
       "types": "./dist/esm/effect.d.ts",
       "require": "./dist/cjs/effect.cjs",
       "import": "./dist/esm/effect.js"
+    },
+    "./utils": {
+      "types": "./dist/esm/utils.d.ts",
+      "require": "./dist/cjs/utils.cjs",
+      "import": "./dist/esm/utils.js"
     }
   },
   "scripts": {
