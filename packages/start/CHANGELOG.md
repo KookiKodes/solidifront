@@ -1,5 +1,11 @@
 # @solidifront/start
 
+## 0.4.1
+
+### Patch Changes
+
+- Minor bug fixes and info logs removed from production
+
 ## 0.4.0
 
 ### Minor Changes

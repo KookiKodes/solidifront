@@ -45,7 +45,7 @@ const withLocaleVariables = <V extends Record<string, any>>(
 	variables: V,
 	locale: I18nLocale,
 ) =>
-	Effect.gen(function*() {
+	Effect.gen(function* () {
 		(variables = yield* withCountryCode(operation, variables, locale)),
 			(variables = yield* withLanguageCode(operation, variables, locale));
 
@@ -78,7 +78,7 @@ export function createStorefrontMiddleware(
 	const operationFactory =
 		(operationType: "query" | "mutate") =>
 			(event: FetchEvent, operation: string, options?: any) =>
-				Effect.gen(function*() {
+				Effect.gen(function* () {
 					const client = yield* StorefrontClient.StorefrontClient;
 
 					const locale = event.locals.locale as I18nLocale;
@@ -93,8 +93,11 @@ export function createStorefrontMiddleware(
 
 					return yield* client[operationType](operation, options);
 				}).pipe(
-					Logger.withMinimumLogLevel(minimumLogLevel),
-					Effect.provide(mainLayer),
+					Effect.provide(
+						mainLayer.pipe(
+							Layer.provide(Logger.minimumLogLevel(minimumLogLevel)),
+						),
+					),
 				);
 
 	const queryEffect = operationFactory("query"),

@@ -74,6 +74,8 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
 			codegen({
 				configFilePathOverride: path.resolve(".graphqlrc.ts"),
 				throwOnStart: false,
+				runOnBuild: true,
+				throwOnBuild: false,
 			}) as VitePlugin,
 		]);
 	}
