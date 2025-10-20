@@ -1,10 +1,4 @@
 import type { createStorefrontClient } from "@solidifront/storefront-client";
-import {
-	buildShopDomain,
-	buildStorefrontApiUrl,
-	extractOperationName,
-	minifyOperation,
-} from "@solidifront/storefront-client/utils";
 
 import { getRequestEvent } from "solid-js/web";
 import type { StorefrontMutations, StorefrontQueries } from "./types";
@@ -19,10 +13,3 @@ export function getStorefrontClient<
 		typeof createStorefrontClient<GeneratedQueries, GeneratedMutations>
 	>;
 }
-
-export {
-	extractOperationName,
-	buildShopDomain,
-	buildStorefrontApiUrl,
-	minifyOperation,
-};
