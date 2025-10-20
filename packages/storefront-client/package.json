@@ -1,56 +1,51 @@
 {
-	"name": "@solidifront/storefront-client",
-	"version": "0.4.1",
-	"description": "",
-	"type": "module",
-	"types": "./dist/esm/index.d.ts",
-	"main": "./dist/cjs/index.js",
-	"module": "./dist/esm/index.js",
-	"private": false,
-	"exports": {
-		".": {
-			"types": "./dist/esm/index.d.ts",
-			"require": "./dist/cjs/index.cjs",
-			"import": "./dist/esm/index.js"
-		},
-		"./effect": {
-			"types": "./dist/esm/effect.d.ts",
-			"require": "./dist/cjs/effect.cjs",
-			"import": "./dist/esm/effect.js"
-		},
-		"./utils": {
-			"types": "./dist/esm/utils.d.ts",
-			"require": "./dist/cjs/utils.cjs",
-			"import": "./dist/esm/utils.js"
-		}
-	},
-	"scripts": {
-		"build": "tsup --clean",
-		"dev": "tsx src/index.ts",
-		"typecheck": "tsc --noEmit",
-		"test": "vitest"
-	},
-	"keywords": [],
-	"author": "Solidifront",
-	"license": "ISC",
-	"files": [
-		"dist"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/KookiKodes/solidifront.git",
-		"directory": "packages/storefront-client"
-	},
-	"dependencies": {
-		"@effect/platform": "^0.92.1",
-		"effect": "^3.18.4",
-		"typescript": "^5.9.3"
-	},
-	"devDependencies": {
-		"dts-bundle-generator": "^9.5.1",
-		"tsup": "^8.5.0",
-		"tsx": "^4.19.1",
-		"vite": "^6.4.0",
-		"vitest": "^2.1.4"
-	}
+  "name": "@solidifront/storefront-client",
+  "version": "0.4.1",
+  "description": "",
+  "type": "module",
+  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.js"
+    },
+    "./effect": {
+      "types": "./dist/esm/effect.d.ts",
+      "require": "./dist/cjs/effect.cjs",
+      "import": "./dist/esm/effect.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup --clean",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "Solidifront",
+  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KookiKodes/solidifront.git",
+    "directory": "packages/storefront-client"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.92.1",
+    "effect": "^3.18.4",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "dts-bundle-generator": "^9.5.1",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.1",
+    "vite": "^6.4.0",
+    "vitest": "^2.1.4"
+  }
 }
