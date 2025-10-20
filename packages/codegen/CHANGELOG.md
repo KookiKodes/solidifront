@@ -1,5 +1,11 @@
 # @solidifront/codegen
 
+## 2.0.0
+
+### Major Changes
+
+- Deprecating
+
 ## 1.0.8
 
 ### Patch Changes

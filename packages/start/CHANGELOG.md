@@ -1,5 +1,34 @@
 # @solidifront/start
 
+## 0.4.0
+
+### Minor Changes
+
+- Use '.graphqlrc.ts' for lsp auto complete and overhaul of codegen
+
+## 0.3.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.4.1
+  - @solidifront/vite-plugin-generate-shopify-locales@1.2.2
+
+## 0.3.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.4.0
+  - @solidifront/vite-plugin-generate-shopify-locales@1.2.1
+
+## 0.3.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/vite-plugin-generate-shopify-locales@1.2.0
+
 ## 0.3.21
 
 ### Patch Changes

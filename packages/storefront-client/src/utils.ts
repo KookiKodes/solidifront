@@ -1,5 +1,5 @@
 import * as Effect from "effect/Effect";
-import * as StorefrontOperation from "./services/StorefrontOperation.js";
+import * as StorefrontOperation from "./archived_services/StorefrontOperation.js";
 
 export { buildShopDomain, buildStorefrontApiUrl } from "./utils/storefront.js";
 

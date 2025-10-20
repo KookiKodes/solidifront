@@ -1,5 +1,5 @@
-import type { createSolidifrontConfig } from "@solidifront/codegen";
 import type generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
+import type { ShopifyApiProjectOptions } from "@shopify/api-codegen-preset";
 import type {
 	SolidStartInlineConfig,
 	ViteCustomizableConfig,
@@ -12,15 +12,12 @@ export type SolidifrontConfig = SolidStartInlineConfig & {
 			"debug" | "namespace"
 		> & {};
 		storefront?: {
-			codegen?: NonNullable<
-				createSolidifrontConfig.Options["generates"]
-			>["storefront"];
+			codegen?: Omit<
+				ShopifyApiProjectOptions,
+				"apiType" | "module" | "apiVersion" | "apiKey"
+			>;
 		};
-		customer?: {
-			codegen?: NonNullable<
-				createSolidifrontConfig.Options["generates"]
-			>["customer"];
-		};
+		customer?: {};
 	};
 };
 

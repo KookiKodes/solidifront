@@ -1,12 +1,15 @@
 import * as Effect from "effect/Effect";
+import * as Context from "effect/Context";
+import * as Scope from "effect/Scope";
 import * as LogLevel from "effect/LogLevel";
+import * as Layer from "effect/Layer";
 import {
 	AssertMutationError,
 	AssertQueryError,
 	ExtractOperationNameError,
 } from "../errors.js";
 import { isMutation, isQuery } from "../predicates.js";
-import * as LoggerUtils from "./LoggerUtils.js";
+import { filterLevelOrNever } from "../utils/logger.js";
 
 export interface Options<Operation extends string> {
 	type: "query" | "mutate";
@@ -21,7 +24,39 @@ export type ExtractOperationName<T extends string> =
 			? Name
 			: never;
 
-export const minify = <const Operation extends string>(operation: Operation) =>
+export interface GraphQLOperationImpl {
+	minify: <const Operation extends string>(
+		operation: Operation,
+	) => Effect.Effect<Operation>;
+	extractName: <const Operation extends string>(
+		operation: Operation,
+	) => Effect.Effect<
+		ExtractOperationName<Operation>,
+		ExtractOperationNameError
+	>;
+	assert: <
+		const Operation extends string,
+		Type extends "query" | "mutate",
+	>(options: {
+		type: Type;
+		operation: Operation;
+	}) => Effect.Effect<
+		Operation,
+		Type extends "query" ? AssertQueryError : AssertMutationError
+	>;
+	annotate: <const Operation extends string>(
+		options: Options<Operation>,
+	) => Effect.Effect<void, ExtractOperationNameError, Scope.Scope>;
+	validate: <const Operation extends string>(
+		options: Options<Operation>,
+	) => Effect.Effect<Operation, ExtractOperationNameError, Scope.Scope>;
+}
+
+export class GraphQLOperation extends Context.Tag(
+	"@solidifront/storefront-client/GraphQLOperation",
+)<GraphQLOperation, GraphQLOperationImpl>() {}
+
+const minify = <const Operation extends string>(operation: Operation) =>
 	Effect.succeed(
 		operation
 			.replace(/\s*#.*$/gm, "") // Remove GQL comments
@@ -29,9 +64,7 @@ export const minify = <const Operation extends string>(operation: Operation) =>
 			.trim() as Operation,
 	);
 
-export const extractName = <const Operation extends string>(
-	operation: Operation,
-) =>
+const extractName = <const Operation extends string>(operation: Operation) =>
 	Effect.succeed(operation).pipe(
 		Effect.filterOrFail(
 			(operation) => {
@@ -46,7 +79,7 @@ export const extractName = <const Operation extends string>(
 		}),
 	);
 
-export const assert = <const Operation extends string>({
+const assert = <const Operation extends string>({
 	type,
 	operation,
 }: {
@@ -61,7 +94,7 @@ export const assert = <const Operation extends string>({
 		),
 	);
 
-export const annotate = <const Operation extends string>({
+const annotate = <const Operation extends string>({
 	type,
 	operation: o,
 	variables,
@@ -70,7 +103,7 @@ export const annotate = <const Operation extends string>({
 	operation: Operation;
 	variables?: any;
 }) =>
-	LoggerUtils.filterLevelOrNever(
+	filterLevelOrNever(
 		LogLevel.None,
 		Effect.gen(function* () {
 			const name = yield* extractName(o);
@@ -83,7 +116,7 @@ export const annotate = <const Operation extends string>({
 		}),
 	);
 
-export const validate = <const Operation extends string>({
+const validate = <const Operation extends string>({
 	type,
 	operation,
 	variables,
@@ -98,3 +131,13 @@ export const validate = <const Operation extends string>({
 		});
 		return minifiedOperation;
 	});
+
+export const make = GraphQLOperation.of({
+	minify,
+	extractName,
+	annotate,
+	assert,
+	validate,
+});
+
+export const layer = Layer.succeed(GraphQLOperation, make);

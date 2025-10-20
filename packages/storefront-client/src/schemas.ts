@@ -140,8 +140,6 @@ const TokenFields = S.Struct({
 	S.filter((fields) => {
 		if (hasPublicAccessToken(fields) && hasPrivateAccessToken(fields))
 			return "only provide either a public or private access token";
-		if (!hasPublicAccessToken(fields) && !hasPrivateAccessToken(fields))
-			return "a public or private access token must be provided";
 		return true;
 	}),
 	S.annotations({

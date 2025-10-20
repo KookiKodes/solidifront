@@ -1,5 +1,17 @@
 # @solidifront/storefront-client
 
+## 0.4.1
+
+### Patch Changes
+
+- Fixed logging issues and log scoping
+
+## 0.4.0
+
+### Minor Changes
+
+- Rewrote storefront typed client
+
 ## 0.3.12
 
 ### Patch Changes

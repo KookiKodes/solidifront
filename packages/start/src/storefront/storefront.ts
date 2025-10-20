@@ -33,7 +33,7 @@ export const storefront: Storefront = {
 			StorefrontMutations
 		>();
 		if (!client) throw new Error("Storefront client not found!");
-		return client.query<Query>(query, { variables } as any);
+		return client.query(query, { variables } as any);
 	},
 	mutate: async <
 		const Mutation extends string,
@@ -46,6 +46,6 @@ export const storefront: Storefront = {
 		"use server";
 		const client = getStorefrontClient<GeneratedQueries, GeneratedMutations>();
 		if (!client) throw new Error("Storefront client not found!");
-		return client.mutate<Mutation>(mutation, { variables } as any);
+		return client.mutate(mutation, { variables } as any);
 	},
 } as const;

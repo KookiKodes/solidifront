@@ -13,7 +13,7 @@ const withCountryCode = <Variables extends Record<string, any>>(
 	variables: Variables,
 	locale: I18nLocale,
 ) =>
-	Effect.gen(function* () {
+	Effect.sync(() => {
 		if (!variables.country && /\$country/.test(operation)) {
 			return {
 				...variables,
@@ -29,7 +29,7 @@ const withLanguageCode = <Variables extends Record<string, any>>(
 	variables: Variables,
 	locale: I18nLocale,
 ) =>
-	Effect.gen(function* () {
+	Effect.sync(() => {
 		if (!variables.language && /\$language/.test(operation)) {
 			return {
 				...variables,
@@ -45,7 +45,7 @@ const withLocaleVariables = <V extends Record<string, any>>(
 	variables: V,
 	locale: I18nLocale,
 ) =>
-	Effect.gen(function* () {
+	Effect.gen(function*() {
 		(variables = yield* withCountryCode(operation, variables, locale)),
 			(variables = yield* withLanguageCode(operation, variables, locale));
 
@@ -63,39 +63,39 @@ export namespace createStorefrontMiddleware {
 export function createStorefrontMiddleware(
 	config: createStorefrontMiddleware.Config,
 ) {
-	let mainLayer = StorefrontClient.Default;
-	let minimumLogLevel = LogLevel.None;
+	let mainLayer = StorefrontClient.layer({
+		storeName: config.storeName,
+		apiVersion: config.apiVersion,
+		privateAccessToken: config.privateAccessToken,
+	});
+	let minimumLogLevel = LogLevel.Error;
 
 	if (import.meta.env.DEV) {
 		minimumLogLevel = LogLevel.All;
-		mainLayer = Layer.merge(Logger.pretty, mainLayer);
+		mainLayer = mainLayer.pipe(Layer.provide(Logger.pretty));
 	}
 
 	const operationFactory =
 		(operationType: "query" | "mutate") =>
-		(event: FetchEvent, operation: string, options?: any) =>
-			Effect.gen(function* () {
-				const client = yield* StorefrontClient.make({
-					storeName: config.storeName,
-					apiVersion: config.apiVersion,
-					privateAccessToken: config.privateAccessToken,
-				});
+			(event: FetchEvent, operation: string, options?: any) =>
+				Effect.gen(function*() {
+					const client = yield* StorefrontClient.StorefrontClient;
 
-				const locale = event.locals.locale as I18nLocale;
+					const locale = event.locals.locale as I18nLocale;
 
-				if (locale && options) {
-					options.variables = yield* withLocaleVariables(
-						operation,
-						options?.variables ?? {},
-						locale,
-					);
-				}
+					if (locale && options) {
+						options.variables = yield* withLocaleVariables(
+							operation,
+							options?.variables ?? {},
+							locale,
+						);
+					}
 
-				return yield* client[operationType](operation, options);
-			}).pipe(
-				Logger.withMinimumLogLevel(minimumLogLevel),
-				Effect.provide(mainLayer),
-			);
+					return yield* client[operationType](operation, options);
+				}).pipe(
+					Logger.withMinimumLogLevel(minimumLogLevel),
+					Effect.provide(mainLayer),
+				);
 
 	const queryEffect = operationFactory("query"),
 		mutateEffect = operationFactory("mutate");
