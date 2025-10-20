@@ -77,12 +77,21 @@ export const make = <
 		const graphqlOperation = yield* GraphQLOperation.GraphQLOperation;
 		const defaultClient = yield* HttpClient.HttpClient;
 
-		yield* Effect.annotateLogsScoped(defaultOptions);
-		yield* Effect.log("Intializing storefront client...");
-
 		const defaultEndpoint = buildStorefrontApiUrl(defaultOptions);
 
 		const headers = yield* defaultHeaders.get();
+
+		yield* Effect.annotateLogs(Effect.log("Intializing storefront client..."), {
+			...defaultOptions,
+			headers: Reflect.has(headers, "shopify-storefront-private-token")
+				? {
+					...headers,
+					"shopify-storefront-private-token": Redacted.make(
+						headers["shopify-storefront-private-token"],
+					),
+				}
+				: headers,
+		});
 
 		const client = defaultClient.pipe(
 			HttpClient.mapRequestInput((request) =>
@@ -266,12 +275,12 @@ export const make = <
 					yield* Effect.annotateLogsScoped({
 						errors: response.errors,
 					});
-					yield* Effect.logError(response);
+					yield* Effect.logError("Request failed with errors...");
 				} else {
 					yield* Effect.annotateLogsScoped({
 						data: response.data,
 					});
-					yield* Effect.logInfo(response);
+					yield* Effect.logInfo("Request completed successfully...");
 				}
 
 				return response;

@@ -4,7 +4,7 @@ import * as Context from "effect/Context";
 import * as Redacted from "effect/Redacted";
 import * as DefaultClientOptions from "./DefaultClientOptions.js";
 
-import { RequestOptions } from "../schemas.js";
+import type { RequestOptions } from "../schemas.js";
 
 export interface DefaultHeadersImpl {
 	get: () => Effect.Effect<Record<string, string>>;
@@ -15,9 +15,9 @@ export interface DefaultHeadersImpl {
 
 export class DefaultHeaders extends Context.Tag(
 	"@solidifront/storefront-client/DefaultHeaders",
-)<DefaultHeaders, DefaultHeadersImpl>() {}
+)<DefaultHeaders, DefaultHeadersImpl>() { }
 
-export const make = Effect.gen(function* () {
+export const make = Effect.gen(function*() {
 	const defaultClientOptions = yield* DefaultClientOptions.DefaultClientOptions;
 
 	const defaultHeaders: Record<string, string> = {
@@ -27,7 +27,10 @@ export const make = Effect.gen(function* () {
 	};
 
 	if (defaultClientOptions.contentType) {
-		defaultHeaders["content-type"] = defaultClientOptions.contentType;
+		defaultHeaders["content-type"] =
+			defaultClientOptions.contentType === "json"
+				? "application/json"
+				: "application/graphql";
 	}
 
 	if (defaultClientOptions.apiVersion) {

@@ -15,6 +15,7 @@ import {
 	ValidVersion,
 } from "./schemas.js";
 import * as StorefrontClient from "./services/StorefrontClient.js";
+import { LogLevel } from "effect/index";
 
 export namespace createStorefrontClient {
 	export type Options = ClientOptions["Encoded"] & {
@@ -56,7 +57,7 @@ export const createStorefrontClient = <
 		Context.Context<StorefrontClient.StorefrontClient>
 	> | null = null;
 	// let minimumLogLevel = LogLevel.None;
-	const loggerLayer = Logger.pretty;
+	// const loggerLayer = Logger.pretty;
 
 	// if (logger) {
 	// 	loggerLayer = Logger.replace(Logger.defaultLogger, Logger.make(logger));
@@ -71,8 +72,8 @@ export const createStorefrontClient = <
 			memo = await Effect.runPromise(Layer.makeMemoMap);
 			return await Effect.runPromise(
 				Layer.buildWithMemoMap(
-					Layer.mergeAll(StorefrontClient.layer(initOptions), loggerLayer).pipe(
-						Layer.provide(loggerLayer),
+					StorefrontClient.layer(initOptions).pipe(
+						Layer.provide(Logger.minimumLogLevel(LogLevel.Error)),
 					),
 					memo,
 					scope,
@@ -86,7 +87,9 @@ export const createStorefrontClient = <
 
 	const run = async <A, E>(fx: Effect.Effect<A, E, Requirements>) => {
 		const ctx = await ensureContext();
-		return Effect.runPromise(Effect.provide(fx, ctx));
+		return Effect.runPromise(
+			Effect.provide(fx, ctx).pipe(Logger.withMinimumLogLevel(LogLevel.Error)),
+		);
 	};
 
 	return {
