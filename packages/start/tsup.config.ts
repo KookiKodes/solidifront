@@ -60,7 +60,7 @@ export default defineConfig(async (config) => {
 			format: ["esm"],
 			sourcemap: false,
 			dts: {
-				resolve: ["@solidifront/codegen", "@solidjs/start/config"],
+				resolve: ["@solidjs/start/config"],
 			},
 			outDir: path.resolve(outDir, "config"),
 			bundle: false,
@@ -71,20 +71,9 @@ export default defineConfig(async (config) => {
 			format: ["esm"],
 			sourcemap: false,
 			dts: {
-				resolve: ["@solidifront/codegen", "@solidjs/start/middleware"],
+				resolve: ["@solidjs/start/middleware"],
 			},
 			outDir: path.resolve(outDir, "middleware"),
-			bundle: false,
-			minify: false,
-		},
-		{
-			entry: ["src/codegen/**/*.ts"],
-			format: ["esm"],
-			sourcemap: false,
-			dts: {
-				resolve: ["@solidifront/codegen"],
-			},
-			outDir: path.resolve(outDir, "codegen"),
 			bundle: false,
 			minify: false,
 		},

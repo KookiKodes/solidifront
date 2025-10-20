@@ -7,45 +7,54 @@ import {
 	StructureKind,
 } from "ts-morph";
 import { loadEnv } from "vite";
-import { z } from "zod";
-import { generateErrorMessage } from "zod-error";
 import type { SolidifrontConfig, VitePlugin } from "../types";
+import * as Schema from "effect/Schema";
+import * as Effect from "effect/Effect";
+import * as Logger from "effect/Logger";
 
 const VALID_VERSIONS = validVersions;
 
-const BASE_SCHEMA = z.object({});
+const BASE_FIELDS = {} as const;
 
-const LOCALIZATION_SCHEMA = BASE_SCHEMA.extend({
-	SHOPIFY_PUBLIC_STORE_NAME: z.string({
-		message: "env 'SHOPIFY_PUBLIC_STORE_NAME' is required",
+const LOCALIZATION_FIELDS = {
+	SHOPIFY_PUBLIC_STORE_NAME: Schema.NonEmptyString.annotations({
+		message: () => "env 'SHOPIFY_PUBLIC_STORE_NAME' is required",
 	}),
-	SHOPIFY_PUBLIC_STOREFRONT_VERSION: z.enum(VALID_VERSIONS as any, {
-		message:
-			"env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: " +
-			VALID_VERSIONS.join(", "),
+	SHOPIFY_PUBLIC_STOREFRONT_VERSION: Schema.Literal(
+		...VALID_VERSIONS,
+	).annotations({
+		message: () =>
+			`env 'SHOPIFY_PUBLIC_STOREFRONT_VERSION' should be one of: ${VALID_VERSIONS.join(", ")}`,
 	}),
-	SHOPIFY_PUBLIC_STOREFRONT_TOKEN: z.string({
-		message: "env 'SHOPIFY_PUBLIC_STOREFRONT_TOKEN' is required",
+	SHOPIFY_PUBLIC_STOREFRONT_TOKEN: Schema.NonEmptyString.annotations({
+		message: () => "env 'SHOPIFY_PUBLIC_STOREFRONT_TOKEN' is required",
 	}),
-});
+} as const;
 
-const STOREFRONT_SCHEMA = LOCALIZATION_SCHEMA.extend({
-	SHOPIFY_PRIVATE_STOREFRONT_TOKEN: z
-		.string({
-			message: "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' is required",
-		})
-		.startsWith("shpat", {
-			message:
+const STOREFRONT_FIELDS = {
+	SHOPIFY_PRIVATE_STOREFRONT_TOKEN: Schema.NonEmptyString.annotations({
+		message: () => "env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' is required",
+	}).pipe(
+		Schema.startsWith("shpat", {
+			message: () =>
 				"env 'SHOPIFY_PRIVATE_STOREFRONT_TOKEN' should start with 'shpat'",
 		}),
-});
+	),
+} as const;
 
-const ALL_PROPERTY_KEYS = Object.keys(STOREFRONT_SCHEMA.shape);
+type Fields = Record<
+	string,
+	| (typeof STOREFRONT_FIELDS)[keyof typeof STOREFRONT_FIELDS]
+	| (typeof LOCALIZATION_FIELDS)[keyof typeof LOCALIZATION_FIELDS]
+>;
 
-type Schemas =
-	| typeof BASE_SCHEMA
-	| typeof LOCALIZATION_SCHEMA
-	| typeof STOREFRONT_SCHEMA;
+function mergeFields<const T extends readonly Fields[]>(...parts: T): Fields {
+	return Object.assign({}, ...parts);
+}
+
+const ALL_PROPERTY_KEYS = Object.keys(
+	mergeFields(BASE_FIELDS, LOCALIZATION_FIELDS, STOREFRONT_FIELDS),
+);
 
 export function solidifrontEnvSetup(
 	project: Project,
@@ -55,28 +64,25 @@ export function solidifrontEnvSetup(
 		needsStorefront = Reflect.has(config || {}, "storefront"),
 		// needsCustomer = Reflect.has(config || {}, "customer"),
 		absGlobalsPath = path.resolve("./src/global.d.ts");
+	const envFields = mergeFields(
+		BASE_FIELDS,
+		needsLocalization ? LOCALIZATION_FIELDS : {},
+		needsStorefront ? { ...LOCALIZATION_FIELDS, ...STOREFRONT_FIELDS } : {},
+	);
 
-	let envSchema: Schemas = BASE_SCHEMA;
-
-	if (needsLocalization) {
-		envSchema = envSchema.extend(LOCALIZATION_SCHEMA.shape);
-	}
-
-	if (needsStorefront) {
-		envSchema = envSchema.extend(STOREFRONT_SCHEMA.shape);
-	}
+	const envSchema = Schema.Struct(envFields);
 
 	return {
 		name: "vite-plugin-solidifront-codegen-setup",
 		enforce: "pre",
 		config() {
 			const env = loadEnv("all", process.cwd(), "SHOPIFY_");
-			const result = envSchema.safeParse(env);
-			if (!result.success) {
-				throw new Error(generateErrorMessage(result.error.issues), {
-					cause: result.error,
-				});
-			}
+			const result = Effect.runSync(
+				Schema.decodeUnknown(envSchema)(env).pipe(
+					Effect.tapError((error) => Effect.logError(error.message)),
+					Effect.provide(Logger.pretty),
+				),
+			);
 
 			if (!fs.existsSync(absGlobalsPath)) {
 				project.createSourceFile(
@@ -97,7 +103,7 @@ export function solidifrontEnvSetup(
 			const processEnvProperties: PropertySignatureStructure[] = [],
 				metaEnvProperties: PropertySignatureStructure[] = [];
 
-			const validKeys = Object.keys(result.data);
+			const validKeys = Object.keys(result);
 
 			validKeys.forEach((key) => {
 				if (key.startsWith("SHOPIFY_PUBLIC_")) {
@@ -155,7 +161,7 @@ export function solidifrontEnvSetup(
 
 			globalFile?.formatText({ indentSize: 2 });
 
-			fs.writeFileSync(absGlobalsPath, globalFile?.getFullText() || "");
+			project.saveSync();
 
 			return {
 				envPrefix: "SHOPIFY_PUBLIC_",

@@ -4,7 +4,7 @@ import {
 	type SolidStartInlineConfig,
 } from "@solidjs/start/config";
 import defu from "defu";
-import path from "path";
+import path from "node:path";
 import { Project } from "ts-morph";
 import codegen from "vite-plugin-graphql-codegen";
 import {
@@ -72,7 +72,7 @@ export function defineConfig(baseConfig: defineConfig.Config = {}) {
 	if (needsCodegen) {
 		vite = attachPlugins(vite, [
 			codegen({
-				configFilePathOverride: path.resolve("./.solidifront/codegen.ts"),
+				configFilePathOverride: path.resolve(".graphqlrc.ts"),
 				throwOnStart: false,
 			}) as VitePlugin,
 		]);
