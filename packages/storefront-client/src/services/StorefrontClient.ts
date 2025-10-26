@@ -39,6 +39,9 @@ import * as DefaultClientOptions from "./DefaultClientOptions.js";
 import * as DefaultHeaders from "./DefaultHeaders.js";
 import * as GraphQLOperation from "./GraphQLOperation.js";
 import { withNamespacedLogSpan } from "../utils/logger.js";
+import * as InContext from "./InContext.js";
+import * as Option from "effect/Option";
+import { isServer } from "../predicates.js";
 
 export interface StorefrontClientImpl {
 	query: <
@@ -49,7 +52,11 @@ export interface StorefrontClientImpl {
 		options?: RequestOptions<GeneratedQueries[Query]["variables"]>,
 	) => Effect.Effect<
 		ClientResponse.ClientResponse<GeneratedQueries[Query]["return"]>,
-		ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError
+		| ParseError
+		| HttpClientError
+		| InContext.InContextError
+		| ExtractOperationNameError
+		| HttpBodyError
 	>;
 	mutate: <
 		const Mutation extends string,
@@ -59,7 +66,11 @@ export interface StorefrontClientImpl {
 		options?: RequestOptions<GeneratedMutations[Mutation]["variables"]>,
 	) => Effect.Effect<
 		ClientResponse.ClientResponse<GeneratedMutations[Mutation]["return"]>,
-		ParseError | HttpClientError | ExtractOperationNameError | HttpBodyError
+		| ParseError
+		| HttpClientError
+		| InContext.InContextError
+		| ExtractOperationNameError
+		| HttpBodyError
 	>;
 }
 
@@ -152,7 +163,7 @@ export const make = <
 				operation: Operation,
 				options?: RequestOptions<TVariables>,
 			) {
-				const validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
+				let validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
 					options || {},
 				);
 				let endpoint = defaultEndpoint;
@@ -243,22 +254,107 @@ export const make = <
 		>(
 			type: "query" | "mutate",
 			originalOperation: Operation,
-			options?: RequestOptions<OperationData["variables"]>,
+			options: RequestOptions<
+				OperationData["variables"]
+			> = {} as RequestOptions<OperationData["variables"]>,
 		) =>
 			Effect.gen(function*() {
-				const operation = yield* graphqlOperation.validate({
+				let operation = yield* graphqlOperation.validate({
 					type,
 					operation: originalOperation,
 					variables: Reflect.get(options || {}, "variables"),
 				});
 
 				const operationName = yield* graphqlOperation.extractName(operation);
+
+				const buyerIdentity = yield* Effect.serviceOption(
+					InContext.InContext,
+				).pipe(
+					Effect.flatMap(
+						Option.match({
+							onNone: () => Effect.succeed(null),
+							onSome: (inContext) =>
+								inContext.getBuyerIdentity?.() ?? Effect.succeed(null),
+						}),
+					),
+				);
+
+				const locale = yield* Effect.serviceOption(InContext.InContext).pipe(
+					Effect.flatMap(
+						Option.match({
+							onNone: () => Effect.succeed(null),
+							onSome: (inContext) =>
+								inContext.getLocale?.() || Effect.succeed(null),
+						}),
+					),
+				);
+
+				const visitorConsent = yield* Effect.serviceOption(
+					InContext.InContext,
+				).pipe(
+					Effect.flatMap(
+						Option.match({
+							onNone: () => Effect.succeed(null),
+							onSome: (inContext) =>
+								inContext.getVisitorConsent?.() ?? Effect.succeed(null),
+						}),
+					),
+				);
+
+				if (buyerIdentity) {
+					const result = yield* Effect.sync(() =>
+						InContext.InContext.injectBuyerIdentity(operation, buyerIdentity),
+					);
+
+					operation = result.operation as Operation;
+
+					Reflect.set(options, "variables", {
+						...Reflect.get(options, "variables", {}),
+						...result.variables,
+					});
+				}
+
+				if (locale) {
+					const result = yield* Effect.sync(() =>
+						InContext.InContext.injectLocale(operation, locale),
+					);
+					operation = result.operation as Operation;
+					Reflect.set(options, "variables", {
+						...Reflect.get(options, "variables", {}),
+						...result.variables,
+					});
+				}
+
+				if (visitorConsent) {
+					const result = yield* Effect.sync(() =>
+						InContext.InContext.injectVisitorConsent(operation, visitorConsent),
+					);
+					operation = result.operation as Operation;
+					Reflect.set(options, "variables", {
+						...Reflect.get(options, "variables", {}),
+						...result.variables,
+					});
+				}
+
 				const minifiedOperation = yield* graphqlOperation.minify(operation);
 
 				yield* Effect.annotateLogsScoped({
 					name: operationName,
 					operation: minifiedOperation,
-					variables: Reflect.get(options || {}, "variables"),
+					variables: isServer()
+						? Reflect.get(options, "variables")
+						: Reflect.has(options, "variables") &&
+							Reflect.has(Reflect.get(options, "variables") as any, "buyer")
+							? {
+								...Reflect.get(options, "variables"),
+								buyer: Redacted.make(
+									Reflect.get(
+										Reflect.get(options, "variables") as any,
+										"buyer",
+									),
+								),
+							}
+							: Reflect.get(options, "variables"),
 				});
 
 				const response = yield* executeRequest<

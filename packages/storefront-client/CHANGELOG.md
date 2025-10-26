@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.5.0
+
+### Minor Changes
+
+- Auto inject localization into any query/mutation if the locale cookie exists. Allow custom solution for providing buyer identity and customer consent auto injection methods as well
+
 ## 0.4.1
 
 ### Patch Changes
