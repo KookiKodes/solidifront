@@ -207,6 +207,9 @@ importers:
       effect:
         specifier: ^3.18.4
         version: 3.18.4
+      graphql:
+        specifier: ^16.11.0
+        version: 16.11.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

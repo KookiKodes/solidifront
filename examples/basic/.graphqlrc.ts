@@ -8,7 +8,8 @@ const config: IGraphQLConfig = {
                 apiVersion: "unstable",
                 module: "@solidifront/start/storefront",
             })
-    },
+    }
+    ,
 };
 
 export default config;
