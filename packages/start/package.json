@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/start",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "",
   "main": "./dist/server.js",
   "module": "./dist/server.js",
@@ -98,11 +98,7 @@
       "import": "./dist/locales.js",
       "types": "./dist/locales.d.ts"
     },
-    "./package.json": "./package.json",
-    "./storefront.schema.json": "./dist/storefront.schema.json",
-    "./customer-account.schema.json": "./dist/customer-account.schema.json",
-    "./storefront-api-types": "./dist/storefront-api-types.d.ts",
-    "./customer-account-api-types": "./dist/customer-account-api-types.d.ts"
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {

@@ -1,5 +1,17 @@
 # @solidifront/start
 
+## 0.5.0
+
+### Minor Changes
+
+- Auto inject localization into any query/mutation if the locale cookie exists. Allow custom solution for providing buyer identity and customer consent auto injection methods as well
+
+### Patch Changes
+
+- Updated dependencies
+  - @solidifront/storefront-client@0.5.0
+  - @solidifront/vite-plugin-generate-shopify-locales@1.2.3
+
 ## 0.4.1
 
 ### Patch Changes
