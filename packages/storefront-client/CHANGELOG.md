@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.5.1
+
+### Patch Changes
+
+- Minor bug fix for InContext operation injection
+
 ## 0.5.0
 
 ### Minor Changes

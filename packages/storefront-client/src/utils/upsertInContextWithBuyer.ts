@@ -24,7 +24,7 @@ const namedType = (name: string): TypeNode => ({
 const buyerVarDef: VariableDefinitionNode = {
   kind: Kind.VARIABLE_DEFINITION,
   variable: varNode("buyer"),
-  type: namedType("BuyerIdentity"),
+  type: namedType("BuyerInput"),
 };
 
 const buyerArg: ArgumentNode = {
