@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/storefront-client",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "",
   "type": "module",
   "types": "./dist/esm/index.d.ts",
@@ -42,8 +42,8 @@
     "directory": "packages/storefront-client"
   },
   "dependencies": {
-    "@effect/platform": "^0.92.1",
-    "effect": "^3.18.4",
+    "@effect/platform": "^0.93.3",
+    "effect": "^3.19.4",
     "graphql": "^16.11.0",
     "typescript": "^5.9.3"
   },

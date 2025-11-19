@@ -1,5 +1,11 @@
 # @solidifront/storefront-client
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated effect versions
+
 ## 0.5.1
 
 ### Patch Changes
