@@ -1,6 +1,6 @@
 {
   "name": "@solidifront/start",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "",
   "main": "./dist/server.js",
   "module": "./dist/server.js",
@@ -144,7 +144,7 @@
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.2.0",
     "defu": "^6.1.4",
-    "effect": "^3.19.6",
+    "effect": "^3.19.8",
     "esbuild-plugin-solid": "^0.6.0",
     "isomorphic-fetch": "^3.0.0",
     "resolve-accept-language": "^3.1.13",
