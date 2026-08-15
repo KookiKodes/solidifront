@@ -3,12 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "THROWAWAY PROTOTYPE — answers wayfinder ticket #8. Not production code.",
+  "description": "THROWAWAY PROTOTYPE — answers wayfinder tickets #8, #20, #22. Not production code.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "probe:node": "node --experimental-strip-types src/run-node.ts",
+    "probe:memo": "node --experimental-strip-types src/run-memo.ts",
+    "probe:hydration": "node run-hydration.mjs"
   },
   "devDependencies": {
+    "@solidjs/vite-plugin": "3.0.0-next.28",
+    "@solidjs/web": "2.0.0-rc.0",
+    "playwright-core": "^1.56.0",
     "vite": "^7.1.10",
     "vite-plugin-singlefile": "^2.3.3"
   },

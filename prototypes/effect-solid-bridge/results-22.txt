@@ -1,0 +1,193 @@
+
+=== S1 ===
+  --- SSR (server render) ---
+  [S1] createEffect COMPUTE ran
+  [S1] createRenderEffect COMPUTE ran
+  [S1] createRenderEffect EFFECT PHASE ran (v=1)
+  [S1] a forked Effect ran (no Solid involvement)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [S1] createEffect COMPUTE ran
+  [S1] createRenderEffect COMPUTE ran
+  [S1] createRenderEffect EFFECT PHASE ran (v=1)
+  [S1] a forked Effect ran (no Solid involvement)
+  [S1] createEffect EFFECT PHASE ran (v=1)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [dom] #marker = "rendered"
+
+=== H0 ===
+  --- SSR (server render) ---
+  [component-body] writing a signal from the component body
+  [component-body] write returned NORMALLY (guard did NOT fire)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [component-body] writing a signal from the component body
+  [component-body] write THREW: Error: [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned scope (component, computation
+    ---------- hydrateThrew ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics ---
+  [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned scope (component, computation) is not allowed. Move the write outside or set the `ownedW
+  [REACTIVITY_HALTED] An uncaught error halted the reactive system. No further updates will be processed. Handle errors with createErrorBoundary/<Errore
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+    error: [REACTIVITY_HALTED] An uncaught error halted the reactive system. No further updates will be processed. Handle errors with createErrorBoundary/<Errored> or treat this as a crash. Erro
+    error: [REACTIVITY_HALTED] Update ignored: the reactive system was halted by an earlier uncaught error.
+    warning: Hydration completed with 1 unclaimed server-rendered node(s):
+  <main _hk="10"><h1>H0 — control: owned-scope write from a component body</h1><button id="bump" type=
+  [interactivity] after a component-body write: clicks 0 -> 0, ticks=1 — FROZEN (reactivity dead)
+
+=== H0B ===
+  --- SSR (server render) ---
+  [compute] writing a signal from the COMPUTE phase
+  [compute] write returned NORMALLY (guard did NOT fire)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [compute] writing a signal from the COMPUTE phase
+  [compute] write THREW: Error: [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned scope (component, computation
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics ---
+  [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned scope (component, computation) is not allowed. Move the write outside or set the `ownedW
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+    error: Error: [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned scope (component, computation) is not allowed. Move the write outside or set the `ownedWrite` option i
+  [interactivity] after a compute-phase write: clicks 0 -> 1, ticks=1 — STILL REACTIVE
+
+=== H1 ===
+  --- SSR (server render) ---
+  [compute] H1 compute phase ran
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [compute] H1 compute phase ran
+  [effect-phase] H1 effect phase, clicks=0 — writing ticks
+  [effect-phase] write returned NORMALLY (no throw)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [interactivity] after the mid-hydration violation: clicks 0 -> 1, ticks=2 — STILL REACTIVE
+
+=== H1B ===
+  --- SSR (server render) ---
+    (nothing logged server-side)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [effect-phase] H1B first run — deliberately writes nothing
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [driver] clicking #bump — this is the run that writes
+  [interactivity] the violating click: clicks 0 -> 1, ticks=1 — STILL REACTIVE
+  [interactivity] the click after it: clicks 1 -> 2, ticks=2 — STILL REACTIVE
+  [verdict] post-hydration violation left the app reactive (first click registered: true)
+
+=== H2 ===
+  --- SSR (server render) ---
+    (nothing logged server-side)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [effect-phase] H2 effect phase, clicks=0 — sync write
+  [effect-phase] sync ownedWrite returned normally
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  [async-write] fiber settled — writing from the observer
+  [async-write] async ownedWrite returned normally
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [dom] ticks=1 async="resolved@run0"
+  [interactivity] after the sanctioned writes: clicks 0 -> 1, ticks=2 — STILL REACTIVE
+
+=== H4 ===
+  --- SSR (server render) ---
+    (nothing logged server-side)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [effect-phase] H4 sync write, no ownedWrite (clicks=0)
+  [effect-phase] sync write returned NORMALLY
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  [async-write] fiber observer writing, no ownedWrite
+  [async-write] async write returned NORMALLY
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [dom] ticks=1 async="resolved@run0"
+  [interactivity] after unowned writes: clicks 0 -> 1, ticks=2 — STILL REACTIVE
+
+=== H3 ===
+  --- SSR (server render) ---
+  [fiber] forked in the component body, sleeping 400ms
+  [solid-cleanup] A — registered FIRST
+  [solid-cleanup] B — registered SECOND
+  [interrupt] onCleanup interrupting the in-flight fiber
+  [effect-finalizer] B — registered SECOND
+  [effect-finalizer] A — registered FIRST
+  [fiber] exit: Failure (interrupted or failed)
+  [solid-cleanup] C — registered LAST
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+  [fiber] forked in the component body, sleeping 400ms
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+  [driver] queueMicrotask after hydrate() — disposing now
+  [action] disposing the hydrating subtree
+  [solid-cleanup] A — registered FIRST
+  [solid-cleanup] B — registered SECOND
+  [interrupt] onCleanup interrupting the in-flight fiber
+  [effect-finalizer] B — registered SECOND
+  [effect-finalizer] A — registered FIRST
+  [fiber] exit: Failure (interrupted or failed)
+  [solid-cleanup] C — registered LAST
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [dom] #child present after disposal: false
+  --- log after the fiber's sleep would have elapsed ---
+    ---------- hydrateStart ----------
+  [fiber] forked in the component body, sleeping 400ms
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+  [driver] queueMicrotask after hydrate() — disposing now
+  [action] disposing the hydrating subtree
+  [solid-cleanup] A — registered FIRST
+  [solid-cleanup] B — registered SECOND
+  [interrupt] onCleanup interrupting the in-flight fiber
+  [effect-finalizer] B — registered SECOND
+  [effect-finalizer] A — registered FIRST
+  [fiber] exit: Failure (interrupted or failed)
+  [solid-cleanup] C — registered LAST
+    ---------- macrotask ----------
+
+=== F1 — flush() called INSIDE createRoot's body (what #8's harness did) ===
+  [F1] effect-phase write THREW: Error: [REACTIVE_WRITE_IN_OWNED_SCOPE] Writing to reactive state inside an owned
+
+=== F2 — flush() called AFTER createRoot returns (owner off the stack) ===
+  [F2] effect-phase write returned NORMALLY
+
+=== F3 — no explicit flush; the scheduler's own microtask runs it ===
+  [F3] effect-phase write returned NORMALLY
+  [VERDICT] if F1 throws and F2/F3 do not, the guard tracks the flusher's owner, not the effect phase — and #8's rule is an artifact of its harness
