@@ -1,0 +1,16 @@
+[submodule "references/alchemy"]
+	path = references/alchemy
+	url = https://github.com/alchemy-run/alchemy
+	branch = main
+[submodule "references/solid"]
+	path = references/solid
+	url = https://github.com/solidjs/solid
+	branch = next
+[submodule "references/effect"]
+	path = references/effect
+	url = https://github.com/Effect-TS/effect
+	branch = main
+[submodule "references/hydrogen"]
+	path = references/hydrogen
+	url = https://github.com/Shopify/hydrogen
+	branch = preview
