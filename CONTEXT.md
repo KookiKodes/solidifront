@@ -22,6 +22,14 @@ _Avoid_: widget, block
 The server-only surface — middleware, request context, and `"use server"` wiring.
 _Avoid_: adapter, start, runtime
 
+**App layer**:
+The merged Effect layer for one environment. It holds everything that lives for the whole process; request-scoped values are never part of it.
+_Avoid_: runtime, container, root layer
+
+**Runtime**:
+An Effect `ManagedRuntime` built from an app layer, one per environment, for the life of the process. The word is reserved for this and nothing else — not the server integration surface, and not Solid's server-function machinery.
+_Avoid_: container, executor, effect runtime
+
 ### Commerce domain
 
 **Storefront client**:
