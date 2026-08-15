@@ -1,21 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
-	type CodeBlockWriter,
-	type Project,
-	type SourceFile,
-	StructureKind,
-	VariableDeclarationKind,
-	type ObjectLiteralExpression,
-	SyntaxKind,
-	Node,
-} from "ts-morph";
-import type { SolidifrontConfig, VitePlugin } from "../types";
-import { loadEnv } from "vite";
-import {
 	ApiType,
 	type ShopifyApiProjectOptions,
 } from "@shopify/api-codegen-preset";
+import {
+	type CodeBlockWriter,
+	Node,
+	type ObjectLiteralExpression,
+	type Project,
+	type SourceFile,
+	StructureKind,
+	SyntaxKind,
+	VariableDeclarationKind,
+} from "ts-morph";
+import { loadEnv } from "vite";
+import type { SolidifrontConfig, VitePlugin } from "../types";
 
 function ensureImportType(source: SourceFile, specifier: string, name: string) {
 	const imp = source

@@ -8,6 +8,7 @@ import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import { pipe } from "effect/Function";
 import * as Layer from "effect/Layer";
+import * as Option from "effect/Option";
 import type { ParseError } from "effect/ParseResult";
 import * as Redacted from "effect/Redacted";
 import * as Schedule from "effect/Schedule";
@@ -17,31 +18,29 @@ import * as ClientResponse from "../data/ClientResponse.js";
 import * as ResponseErrors from "../data/ResponseErrors.js";
 import {
 	BadRequestStatusError,
+	type ExtractOperationNameError,
 	ForbiddenStatusError,
 	LockedStatusError,
 	NotFoundStatusError,
 	PaymentRequiredStatusError,
 	RetriableStatusCodesError,
 	StorefrontServerStatusError,
-	type ExtractOperationNameError,
 } from "../errors.js";
+import { isServer } from "../predicates.js";
 import {
 	type ClientOptions,
+	type CodegenOperations,
 	GraphQLJsonBody,
 	RequestOptions,
-	type CodegenOperations,
 	type StorefrontMutations,
 	type StorefrontQueries,
 } from "../schemas.js";
-
+import { withNamespacedLogSpan } from "../utils/logger.js";
 import { buildStorefrontApiUrl } from "../utils/storefront.js";
 import * as DefaultClientOptions from "./DefaultClientOptions.js";
 import * as DefaultHeaders from "./DefaultHeaders.js";
 import * as GraphQLOperation from "./GraphQLOperation.js";
-import { withNamespacedLogSpan } from "../utils/logger.js";
 import * as InContext from "./InContext.js";
-import * as Option from "effect/Option";
-import { isServer } from "../predicates.js";
 
 export interface StorefrontClientImpl {
 	query: <
@@ -76,13 +75,13 @@ export interface StorefrontClientImpl {
 
 export class StorefrontClient extends Context.Tag(
 	"@solidifront/storefront-client",
-)<StorefrontClient, StorefrontClientImpl>() { }
+)<StorefrontClient, StorefrontClientImpl>() {}
 
 export const make = <
 	GeneratedQueries extends StorefrontQueries = StorefrontQueries,
 	GeneratedMutations extends StorefrontMutations = StorefrontMutations,
 >() =>
-	Effect.gen(function*() {
+	Effect.gen(function* () {
 		const defaultOptions = yield* DefaultClientOptions.DefaultClientOptions;
 		const defaultHeaders = yield* DefaultHeaders.DefaultHeaders;
 		const graphqlOperation = yield* GraphQLOperation.GraphQLOperation;
@@ -96,11 +95,11 @@ export const make = <
 			...defaultOptions,
 			headers: Reflect.has(headers, "shopify-storefront-private-token")
 				? {
-					...headers,
-					"shopify-storefront-private-token": Redacted.make(
-						headers["shopify-storefront-private-token"],
-					),
-				}
+						...headers,
+						"shopify-storefront-private-token": Redacted.make(
+							headers["shopify-storefront-private-token"],
+						),
+					}
 				: headers,
 		});
 
@@ -159,11 +158,11 @@ export const make = <
 			operation: Operation,
 			options?: RequestOptions<TVariables>,
 		) =>
-			Effect.fn("executeRequest")(function*(
+			Effect.fn("executeRequest")(function* (
 				operation: Operation,
 				options?: RequestOptions<TVariables>,
 			) {
-				let validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
+				const validatedOptions = yield* Schema.decodeUnknown(RequestOptions)(
 					options || {},
 				);
 				let endpoint = defaultEndpoint;
@@ -258,7 +257,7 @@ export const make = <
 				OperationData["variables"]
 			> = {} as RequestOptions<OperationData["variables"]>,
 		) =>
-			Effect.gen(function*() {
+			Effect.gen(function* () {
 				let operation = yield* graphqlOperation.validate({
 					type,
 					operation: originalOperation,
@@ -344,16 +343,16 @@ export const make = <
 					variables: isServer()
 						? Reflect.get(options, "variables")
 						: Reflect.has(options, "variables") &&
-							Reflect.has(Reflect.get(options, "variables") as any, "buyer")
+								Reflect.has(Reflect.get(options, "variables") as any, "buyer")
 							? {
-								...Reflect.get(options, "variables"),
-								buyer: Redacted.make(
-									Reflect.get(
-										Reflect.get(options, "variables") as any,
-										"buyer",
+									...Reflect.get(options, "variables"),
+									buyer: Redacted.make(
+										Reflect.get(
+											Reflect.get(options, "variables") as any,
+											"buyer",
+										),
 									),
-								),
-							}
+								}
 							: Reflect.get(options, "variables"),
 				});
 

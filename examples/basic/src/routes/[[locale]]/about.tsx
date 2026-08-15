@@ -1,6 +1,6 @@
+import { createQueryCache } from "@solidifront/start/storefront";
 import { Title } from "@solidjs/meta";
 import { createAsync } from "@solidjs/router";
-import { createQueryCache } from "@solidifront/start/storefront";
 import { shopQuery } from "~/graphql/storefront/queries";
 
 const cachedShopQuery = createQueryCache(shopQuery);

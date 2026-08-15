@@ -8,13 +8,13 @@ import { ClientOptions } from "../schemas.js";
 
 type DefaultClientOptionsType = ClientOptions["Type"];
 
-export interface DefaultClientOptionsImpl extends DefaultClientOptionsType { }
+export interface DefaultClientOptionsImpl extends DefaultClientOptionsType {}
 
 export class DefaultClientOptions extends Context.Tag(
 	"@solidifront/storefront-client/DefaultClientOptions",
-)<DefaultClientOptions, DefaultClientOptionsImpl>() { }
+)<DefaultClientOptions, DefaultClientOptionsImpl>() {}
 
-export const make = Effect.fnUntraced(function*(options: unknown) {
+export const make = Effect.fnUntraced(function* (options: unknown) {
 	const clientOptions = yield* Schema.decodeUnknown(ClientOptions)(options);
 	return DefaultClientOptions.of(clientOptions);
 });
@@ -24,7 +24,7 @@ export const layer = (options: ClientOptions["Encoded"]) =>
 
 export const fromEnv = Layer.effect(
 	DefaultClientOptions,
-	Effect.gen(function*() {
+	Effect.gen(function* () {
 		const privateAccessToken = yield* Config.string(
 			"SHOPIFY_PRIVATE_STOREFRONT_TOKEN",
 		);

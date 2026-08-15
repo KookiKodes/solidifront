@@ -11,8 +11,8 @@ export type Locale = {
 	currency: CurrencyCode;
 	isoCode: IsoCode;
 	label:
-	| `${string} (${CurrencyCode} ${string})`
-	| `${string} - ${string} (${CurrencyCode} ${string})`;
+		| `${string} (${CurrencyCode} ${string})`
+		| `${string} - ${string} (${CurrencyCode} ${string})`;
 	language: LanguageCode;
 	languageLabel: string;
 };

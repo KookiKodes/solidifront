@@ -9,9 +9,7 @@
  *   node --experimental-strip-types src/run-memo.ts
  *   node --conditions=development --experimental-strip-types src/run-memo.ts
  */
-import * as Effect from "effect/Effect";
-import * as Exit from "effect/Exit";
-import * as Fiber from "effect/Fiber";
+
 import {
 	createMemo,
 	createRoot,
@@ -21,6 +19,9 @@ import {
 	latest,
 	resolve,
 } from "@solidjs/signals";
+import * as Effect from "effect/Effect";
+import * as Exit from "effect/Exit";
+import * as Fiber from "effect/Fiber";
 
 const lines: string[] = [];
 const log = (c: string, m: string) => lines.push(`  [${c}] ${m}`);
@@ -32,9 +33,7 @@ const OWNED = { ownedWrite: true } as const;
 function tracked(label: string, ms: number, value: string) {
 	return Effect.gen(function* () {
 		yield* Effect.onExit(Effect.sleep(`${ms} millis`), (exit) =>
-			Effect.sync(() =>
-				log("fiber", `${label} exited: ${exit._tag}`),
-			),
+			Effect.sync(() => log("fiber", `${label} exited: ${exit._tag}`)),
 		);
 		return value;
 	});
@@ -71,7 +70,9 @@ async function main() {
 		const good = createMemo(async () => {
 			goodRuns++;
 			const input = id(); // BEFORE await
-			return await Effect.runPromise(tracked(`good#${goodRuns}`, 10, `g(${input})`));
+			return await Effect.runPromise(
+				tracked(`good#${goodRuns}`, 10, `g(${input})`),
+			);
 		});
 		const bad = createMemo(async () => {
 			badRuns++;
@@ -97,13 +98,17 @@ async function main() {
 	});
 
 	// ------------------------------------------------------------------ A3
-	banner("A3 — does Solid drop stale results by itself? (is the #8 generation counter redundant?)");
+	banner(
+		"A3 — does Solid drop stale results by itself? (is the #8 generation counter redundant?)",
+	);
 	await createRoot(async (dispose) => {
 		const [id, setId] = createSignal(1, OWNED);
 		// earlier ids resolve LATER — the out-of-order race
 		const data = createMemo(async () => {
 			const n = id();
-			return await Effect.runPromise(tracked(`race#${n}`, 120 - n * 40, `result(${n})`));
+			return await Effect.runPromise(
+				tracked(`race#${n}`, 120 - n * 40, `result(${n})`),
+			);
 		});
 		await resolve(() => data());
 		setId(2);
@@ -123,12 +128,16 @@ async function main() {
 	});
 
 	// ------------------------------------------------------------------ A4
-	banner("A4 — cancellation: does a re-running memo interrupt the previous fiber?");
+	banner(
+		"A4 — cancellation: does a re-running memo interrupt the previous fiber?",
+	);
 	await createRoot(async (dispose) => {
 		const [id, setId] = createSignal(1, OWNED);
 		const data = createMemo(async () => {
 			const n = id();
-			return await Effect.runPromise(tracked(`cancel#${n}`, 200, `result(${n})`));
+			return await Effect.runPromise(
+				tracked(`cancel#${n}`, 200, `result(${n})`),
+			);
 		});
 		void resolve(() => data());
 		await sleep(30);
@@ -167,16 +176,27 @@ async function main() {
 		const [id, setId] = createSignal(1, OWNED);
 		const data = createMemo(async () => {
 			const n = id();
-			return await Effect.runPromise(tracked(`pending#${n}`, 80, `result(${n})`));
+			return await Effect.runPromise(
+				tracked(`pending#${n}`, 80, `result(${n})`),
+			);
 		});
 		await resolve(() => data());
-		log("state", `settled: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`);
+		log(
+			"state",
+			`settled: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`,
+		);
 		setId(2);
 		flush();
 		await sleep(20);
-		log("state", `in-flight: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`);
+		log(
+			"state",
+			`in-flight: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`,
+		);
 		await sleep(120);
-		log("state", `resettled: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`);
+		log(
+			"state",
+			`resettled: isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`,
+		);
 		dispose();
 	});
 
@@ -192,20 +212,29 @@ async function main() {
 		const data = createMemo(async () => {
 			const n = id(); // tracked read, before any await
 			inFlight?.interrupt();
-			const fiber = Effect.runFork(tracked(`wrapped#${n}`, 200, `result(${n})`));
-			inFlight = { interrupt: () => void Effect.runFork(Fiber.interrupt(fiber)) };
+			const fiber = Effect.runFork(
+				tracked(`wrapped#${n}`, 200, `result(${n})`),
+			);
+			inFlight = {
+				interrupt: () => void Effect.runFork(Fiber.interrupt(fiber)),
+			};
 			const exit = await Effect.runPromise(Fiber.await(fiber));
 			if (Exit.isSuccess(exit)) return exit.value;
 			throw new Error(`interrupted-or-failed(${n})`);
 		});
 
-		void resolve(() => data()).catch((e) => log("caught", (e as Error).message));
+		void resolve(() => data()).catch((e) =>
+			log("caught", (e as Error).message),
+		);
 		await sleep(30);
 		log("action", "setId(2) while run #1 is in flight");
 		setId(2);
 		flush();
 		await sleep(300);
-		log("state", `isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`);
+		log(
+			"state",
+			`isPending=${isPending(data)} latest=${JSON.stringify(latest(data))}`,
+		);
 		log(
 			"NOTE",
 			"wrapped#1 should now exit Failure (interrupted) instead of Success",

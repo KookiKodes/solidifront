@@ -14,7 +14,12 @@
  *
  *   node --conditions=development --experimental-strip-types src/run-flush-owner.ts
  */
-import { createEffect, createRoot, createSignal, flush } from "@solidjs/signals";
+import {
+	createEffect,
+	createRoot,
+	createSignal,
+	flush,
+} from "@solidjs/signals";
 
 const lines: string[] = [];
 const log = (c: string, m: string) => lines.push(`  [${c}] ${m}`);
@@ -40,7 +45,9 @@ function effectThatWrites(label: string) {
 
 async function main() {
 	// ------------------------------------------------------------------- F1
-	banner("F1 — flush() called INSIDE createRoot's body (what #8's harness did)");
+	banner(
+		"F1 — flush() called INSIDE createRoot's body (what #8's harness did)",
+	);
 	createRoot((dispose) => {
 		effectThatWrites("F1");
 		flush(); // context is still the root owner here

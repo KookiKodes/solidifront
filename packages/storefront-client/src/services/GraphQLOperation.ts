@@ -1,8 +1,8 @@
-import * as Effect from "effect/Effect";
 import * as Context from "effect/Context";
-import * as Scope from "effect/Scope";
-import * as LogLevel from "effect/LogLevel";
+import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
+import * as LogLevel from "effect/LogLevel";
+import type * as Scope from "effect/Scope";
 import {
 	AssertMutationError,
 	AssertQueryError,
@@ -18,9 +18,9 @@ export interface Options<Operation extends string> {
 }
 
 export type ExtractOperationName<T extends string> =
-	T extends `${infer _}${"query" | "mutation"} ${infer Name}(${infer _}) {${infer _}`
+	T extends `${infer _Lead}${"query" | "mutation"} ${infer Name}(${infer _Args}) {${infer _Body}`
 		? Name
-		: T extends `${infer _}${"query" | "mutation"} ${infer Name} {${infer _}`
+		: T extends `${infer _Lead2}${"query" | "mutation"} ${infer Name} {${infer _Body2}`
 			? Name
 			: never;
 

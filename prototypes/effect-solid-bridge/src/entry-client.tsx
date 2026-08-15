@@ -5,8 +5,9 @@
  * so the hydrate call itself sits between two stamped marks. Everything the
  * driver reads back lives on `window.__PROBE`.
  */
-import { DEV } from "solid-js";
+
 import { hydrate } from "@solidjs/web";
+import { DEV } from "solid-js";
 import App from "./App.tsx";
 import Document from "./Document.tsx";
 import { log, mark, probe } from "./probe-log.ts";
@@ -21,7 +22,11 @@ p.devBuild = DEV !== undefined;
 // Solid's structured diagnostic channel — more precise than scraping console,
 // and it fires for events that never reach console at all.
 DEV?.diagnostics.subscribe((e) =>
-	p.diagnostics.push({ code: e.code, severity: e.severity, message: e.message }),
+	p.diagnostics.push({
+		code: e.code,
+		severity: e.severity,
+		message: e.message,
+	}),
 );
 
 for (const level of ["log", "warn", "error"] as const) {

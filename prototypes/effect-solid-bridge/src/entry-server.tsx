@@ -7,9 +7,10 @@
  * out `start.setup`, the probe selection lives here; `entry-client.tsx` makes
  * the identical choice from `location.href` so the two sides agree.
  */
-import { renderToStream } from "@solidjs/web";
-// biome-ignore lint/correctness/noUnresolvedImports: virtual module from @solidjs/vite-plugin
+
+// Virtual module supplied by @solidjs/vite-plugin at build time.
 import manifest from "virtual:solid-manifest";
+import { renderToStream } from "@solidjs/web";
 import App from "./App.tsx";
 import Document from "./Document.tsx";
 import { pickProbe } from "./registry.ts";

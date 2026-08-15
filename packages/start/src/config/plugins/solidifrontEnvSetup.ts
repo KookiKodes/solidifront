@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { validVersions } from "@solidifront/storefront-client";
+import * as Effect from "effect/Effect";
+import * as Logger from "effect/Logger";
+import * as Schema from "effect/Schema";
 import {
 	type Project,
 	type PropertySignatureStructure,
@@ -8,9 +11,6 @@ import {
 } from "ts-morph";
 import { loadEnv } from "vite";
 import type { SolidifrontConfig, VitePlugin } from "../types";
-import * as Schema from "effect/Schema";
-import * as Effect from "effect/Effect";
-import * as Logger from "effect/Logger";
 
 const VALID_VERSIONS = validVersions;
 

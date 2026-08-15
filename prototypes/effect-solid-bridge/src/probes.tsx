@@ -340,7 +340,10 @@ function H3Child() {
 		),
 	);
 	fiber.addObserver((exit) =>
-		log("fiber", `exit: ${exit._tag}${Exit.isSuccess(exit) ? "" : " (interrupted or failed)"}`),
+		log(
+			"fiber",
+			`exit: ${exit._tag}${Exit.isSuccess(exit) ? "" : " (interrupted or failed)"}`,
+		),
 	);
 
 	onCleanup(() => {

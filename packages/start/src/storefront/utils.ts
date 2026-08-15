@@ -1,7 +1,7 @@
 import type {
 	createStorefrontClient,
-	StorefrontQueries,
 	StorefrontMutations,
+	StorefrontQueries,
 } from "@solidifront/storefront-client";
 import { getRequestEvent } from "solid-js/web";
 

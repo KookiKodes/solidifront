@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**/src/**/*.{ts,tsx}", "!references"]
+		"includes": ["**/src/**/*.{ts,tsx}", "!references", "!**/global.d.ts"]
 	},
 	"formatter": {
 		"enabled": true,

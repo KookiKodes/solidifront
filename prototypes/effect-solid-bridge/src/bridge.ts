@@ -13,9 +13,6 @@
  * Reading a signal inside `effectFn` is the bug, and it is invisible at runtime.
  */
 
-import * as Effect from "effect/Effect";
-import * as Exit from "effect/Exit";
-import * as Fiber from "effect/Fiber";
 import {
 	createEffect,
 	createSignal,
@@ -23,6 +20,9 @@ import {
 	isDisposed,
 	onCleanup,
 } from "@solidjs/signals";
+import * as Effect from "effect/Effect";
+import * as Exit from "effect/Exit";
+import * as Fiber from "effect/Fiber";
 
 /**
  * FINDING: Solid 2's dev build raises [REACTIVE_WRITE_IN_OWNED_SCOPE] and then
@@ -109,7 +109,10 @@ export function createEffectResource<Input, A, E>(
 					return;
 				}
 				if (owner && isDisposed(owner)) {
-					log("disposed", `run #${mine} finished after owner disposal — dropped`);
+					log(
+						"disposed",
+						`run #${mine} finished after owner disposal — dropped`,
+					);
 					return;
 				}
 				setPending(false);
@@ -121,7 +124,6 @@ export function createEffectResource<Input, A, E>(
 					log("reject", `run #${mine} failed or was interrupted`);
 				}
 			});
-
 		},
 	);
 
@@ -155,7 +157,10 @@ export function createEffectResourceNaive<A, E>(
 				Effect.gen(function* () {
 					yield* Effect.sleep("10 millis"); // the async gap
 					const late = readSignalInsideEffect(); // too late to be tracked
-					log("track-late", `read signal AFTER the gap: ${JSON.stringify(late)}`);
+					log(
+						"track-late",
+						`read signal AFTER the gap: ${JSON.stringify(late)}`,
+					);
 					const a = yield* make(late);
 					setValue(() => a);
 					log("resolve", `naive run → ${JSON.stringify(a)}`);

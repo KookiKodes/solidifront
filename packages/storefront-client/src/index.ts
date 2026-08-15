@@ -1,9 +1,10 @@
+import type * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
+import { LogLevel } from "effect/index";
+import * as Layer from "effect/Layer";
 import * as Logger from "effect/Logger";
 // import * as LogLevel from "effect/LogLevel";
 import * as Scope from "effect/Scope";
-import * as Layer from "effect/Layer";
-import type * as Context from "effect/Context";
 import type { ClientResponse } from "./data/ClientResponse";
 import {
 	type ClientOptions,
@@ -15,7 +16,6 @@ import {
 	ValidVersion,
 } from "./schemas.js";
 import * as StorefrontClient from "./services/StorefrontClient.js";
-import { LogLevel } from "effect/index";
 
 export namespace createStorefrontClient {
 	export type Options = ClientOptions["Encoded"] & {
@@ -24,14 +24,14 @@ export namespace createStorefrontClient {
 	export type Variables<
 		Operation extends string,
 		GeneratedOperations extends CodegenOperations =
-		| StorefrontQueries
-		| StorefrontMutations,
+			| StorefrontQueries
+			| StorefrontMutations,
 	> = GeneratedOperations[Operation]["variables"];
 	export type ReturnData<
 		Operation extends string,
 		GeneratedOperations extends CodegenOperations =
-		| StorefrontMutations
-		| StorefrontMutations,
+			| StorefrontMutations
+			| StorefrontMutations,
 	> = GeneratedOperations[Operation]["return"];
 	export type Return<
 		Operation extends string,

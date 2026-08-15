@@ -1,10 +1,10 @@
+import path from "node:path";
 import generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import {
 	defineConfig as defineSolidConfig,
 	type SolidStartInlineConfig,
 } from "@solidjs/start/config";
 import defu from "defu";
-import path from "node:path";
 import { Project } from "ts-morph";
 import codegen from "vite-plugin-graphql-codegen";
 import {

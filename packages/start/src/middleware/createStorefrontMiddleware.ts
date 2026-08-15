@@ -1,7 +1,7 @@
 import type { ValidVersion } from "@solidifront/storefront-client";
 import {
-	StorefrontClient,
 	InContext,
+	StorefrontClient,
 } from "@solidifront/storefront-client/effect";
 import type { FetchEvent } from "@solidjs/start/server";
 
@@ -10,8 +10,8 @@ import * as Layer from "effect/Layer";
 import * as Logger from "effect/Logger";
 import * as LogLevel from "effect/LogLevel";
 import * as ManagedRuntime from "effect/ManagedRuntime";
-import { Runtime } from "./Runtime.js";
 import { getCookie } from "vinxi/http";
+import { Runtime } from "./Runtime.js";
 
 export namespace createStorefrontMiddleware {
 	export interface Config {
@@ -60,7 +60,7 @@ export function createStorefrontMiddleware(
 
 	const operationFactory =
 		(operationType: "query" | "mutate") => (operation: string, options?: any) =>
-			Effect.gen(function*() {
+			Effect.gen(function* () {
 				const client = yield* StorefrontClient.StorefrontClient;
 				return yield* client[operationType](operation, options);
 			});

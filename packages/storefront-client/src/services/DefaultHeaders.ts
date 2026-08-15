@@ -1,10 +1,9 @@
+import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
-import * as Context from "effect/Context";
 import * as Redacted from "effect/Redacted";
-import * as DefaultClientOptions from "./DefaultClientOptions.js";
-
 import type { RequestOptions } from "../schemas.js";
+import * as DefaultClientOptions from "./DefaultClientOptions.js";
 
 export interface DefaultHeadersImpl {
 	get: () => Effect.Effect<Record<string, string>>;
@@ -15,9 +14,9 @@ export interface DefaultHeadersImpl {
 
 export class DefaultHeaders extends Context.Tag(
 	"@solidifront/storefront-client/DefaultHeaders",
-)<DefaultHeaders, DefaultHeadersImpl>() { }
+)<DefaultHeaders, DefaultHeadersImpl>() {}
 
-export const make = Effect.gen(function*() {
+export const make = Effect.gen(function* () {
 	const defaultClientOptions = yield* DefaultClientOptions.DefaultClientOptions;
 
 	const defaultHeaders: Record<string, string> = {

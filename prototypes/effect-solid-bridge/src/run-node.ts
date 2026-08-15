@@ -1,5 +1,5 @@
 /** THROWAWAY PROTOTYPE — headless validation of src/bridge.ts. */
-import * as Effect from "effect/Effect";
+
 import {
 	createRoot,
 	createSignal,
@@ -8,6 +8,7 @@ import {
 	isDisposed,
 	onCleanup,
 } from "@solidjs/signals";
+import * as Effect from "effect/Effect";
 import { createEffectResource, createEffectResourceNaive } from "./bridge.ts";
 
 const lines: string[] = [];
@@ -131,7 +132,9 @@ async function main() {
 	});
 
 	// ---------------------------------------------------------------- S5
-	banner("S5 — rapid input changes: can a stale response overwrite a newer one?");
+	banner(
+		"S5 — rapid input changes: can a stale response overwrite a newer one?",
+	);
 	await createRoot(async (dispose) => {
 		const [id, setId] = createSignal(1, { ownedWrite: true });
 		// Earlier ids resolve LATER — the classic out-of-order race.
@@ -161,9 +164,15 @@ async function main() {
 	banner("S6 — isDisposed as the late-work guard");
 	createRoot((dispose) => {
 		const owner = getOwner();
-		log("state", `before dispose: isDisposed=${owner ? isDisposed(owner) : "?"}`);
+		log(
+			"state",
+			`before dispose: isDisposed=${owner ? isDisposed(owner) : "?"}`,
+		);
 		dispose();
-		log("state", `after dispose:  isDisposed=${owner ? isDisposed(owner) : "?"}`);
+		log(
+			"state",
+			`after dispose:  isDisposed=${owner ? isDisposed(owner) : "?"}`,
+		);
 	});
 
 	console.log(lines.join("\n"));

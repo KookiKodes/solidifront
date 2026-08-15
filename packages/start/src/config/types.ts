@@ -1,5 +1,5 @@
-import type generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import type { ShopifyApiProjectOptions } from "@shopify/api-codegen-preset";
+import type generateShopifyLocalesPlugin from "@solidifront/vite-plugin-generate-shopify-locales";
 import type {
 	SolidStartInlineConfig,
 	ViteCustomizableConfig,
