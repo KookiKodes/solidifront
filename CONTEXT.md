@@ -55,3 +55,15 @@ _Avoid_: opt-in, GDPR flag, tracking permission
 **Cart**:
 The Shopify-owned collection of lines a buyer intends to purchase. Checkout is off-domain — it happens on Shopify, not in a solidifront storefront.
 _Avoid_: basket, order, bag
+
+**Storefront passthrough**:
+The same-origin endpoint that relays to the Storefront API. It exists solely so Shopify's browser scripts get an origin-exempt, cookie-bearing Storefront API; solidifront's own data path never uses it.
+_Avoid_: proxy, storefront proxy, SFAPI proxy
+
+**Tracking headers**:
+The response headers that must land on the document for Shopify's browser scripts to establish visitor identity. Read back via the Performance API, not from `document.cookie`.
+_Avoid_: analytics cookies, tracking cookies
+
+**Minted tracking tokens**:
+Tracking token values solidifront generates itself when the visitor has no Shopify cookie yet, as opposed to _captured_ ones, which come back from a real Storefront API response. Minted values are a floor, never an upgrade.
+_Avoid_: fallback tokens, generated tokens, fake tokens
