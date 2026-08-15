@@ -9,6 +9,14 @@
 		"lint": {
 			"dependsOn": ["^lint"]
 		},
+		"typecheck": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+		},
+		"test": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", "vitest.config.*"]
+		},
 		"dev": {
 			"cache": false,
 			"persistent": true

@@ -28,7 +28,7 @@
     "build": "tsup --clean",
     "dev": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test:live": "vitest"
   },
   "keywords": [],
   "author": "Solidifront",

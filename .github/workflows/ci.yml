@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, next]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # Turbo's TUI renderer expects a TTY; CI needs the stream renderer.
+  TURBO_UI: false
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      # `submodules` is deliberately omitted. references/ holds ~196 MB of
+      # read-only upstream checkouts (solid, effect, hydrogen, alchemy) that no
+      # CI job reads. Checking them out would dominate every run.
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      # Biome is the single formatter and linter. `biome ci` fails on errors and
+      # reports warnings without failing, which is the right gate while the
+      # doomed packages are still in the tree.
+      - run: pnpm lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      # QUARANTINE: @solidifront/start is excluded by the root `typecheck`
+      # script. It fails on vite 6-vs-7 duplicate type instances, a missing
+      # `webpack` type dep behind webpack-virtual-modules, and an unresolvable
+      # @solidifront/codegen/storefront-api-types. All are vinxi-era problems in
+      # the package the restructure deletes outright — there is no SolidStart
+      # for Solid 2.0. Drop the filter when the package goes.
+      - run: pnpm typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      # Workspace packages resolve through their published `exports` to dist/,
+      # so the suite needs built dependencies.
+      - run: pnpm turbo build
+      - run: pnpm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm turbo build
