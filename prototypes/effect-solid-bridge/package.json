@@ -1,0 +1,20 @@
+{
+  "name": "@solidifront-prototype/effect-solid-bridge",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "THROWAWAY PROTOTYPE — answers wayfinder ticket #8. Not production code.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^7.1.10",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "dependencies": {
+    "solid-js": "2.0.0-rc.0",
+    "@solidjs/signals": "2.0.0-rc.0",
+    "effect": "4.0.0-rc.109"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "ESNext", "module": "ESNext", "moduleResolution": "bundler",
+    "jsx": "preserve", "jsxImportSource": "@solidjs/web",
+    "declaration": true, "outDir": "dist", "strict": true, "skipLibCheck": true
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@recipe/consumer", "private": true, "version": "0.0.0", "type": "module",
+  "scripts": { "build:client": "vite build", "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr" },
+  "dependencies": { "@recipe/lib-jsx": "workspace:*", "@recipe/lib-plain": "workspace:*" },
+  "devDependencies": {
+    "@solidjs/vite-plugin": "3.0.0-next.28", "@solidjs/web": "2.0.0-rc.0",
+    "solid-js": "2.0.0-rc.0", "vite": "^7.1.10"
+  }
+}
