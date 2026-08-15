@@ -23,6 +23,15 @@ The root installs **TypeScript 7** (native) plus `@effect/tsgo`, which supplies 
 - `pnpm prepare` runs `effect-tsgo patch --typescript --no-oxlint`; it re-runs on every install.
 - CLI check: `pnpm exec effect-tsgo diagnostics --project "$PWD/<pkg>/tsconfig.json" --format pretty`.
 - In VS Code / Cursor, install the TypeScript 7 extension — `.vscode/settings.json` already points the tsdk at `./node_modules/typescript/bin`.
+- **The 7/5.9 split does not hold by itself.** The root `typescript@7.0.2` package exports only `version` and `versionMajorMinor` — no compiler API — and pnpm linked it to `dts-bundle-generator`'s `typescript` peer, which broke `build` in every package that uses it. A root `pnpm.overrides` entry (`"dts-bundle-generator>typescript": "5.9.3"`) pins that peer back to 5.9. Any other tool that consumes the TypeScript compiler API needs the same treatment.
+- `moduleResolution` is **`Bundler`**. `Node` (node10) cannot resolve Effect 4's subpath `exports` (`effect/unstable/http/...`) at all.
+
+## CI, formatting, and tests
+
+- **CI** is `.github/workflows/ci.yml` — `lint`, `typecheck`, `test`, `build` on every PR and on pushes to `main`/`next`, sharing `.github/actions/setup`. It deliberately does **not** check out `references/`.
+- **Biome is the single linter and formatter** for TS/TSX/JSON; prettier is retained for Markdown only. `pnpm format` runs both, `pnpm lint` runs `biome ci .` (fails on errors, reports warnings).
+- **Tests** run from one root Vitest config using `projects` (`workspace` is deprecated). `pnpm test` is the single entry point. `resolve.conditions` includes `development` on purpose — Solid compiles its correctness diagnostics out of the production build, so a prod-condition suite cannot see them.
+- **Two quarantines**, both keyed to packages the restructure deletes: `@solidifront/start` is filtered out of `pnpm typecheck`, and `@solidifront/storefront-client`'s live-API suite is excluded from the Vitest projects and renamed to `test:live`. Remove both when those packages go.
 
 ## Agent skills
 
