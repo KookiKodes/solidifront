@@ -23,7 +23,7 @@
     "types": [
       "node"
     ],
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "declaration": true,
