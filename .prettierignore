@@ -1,0 +1,10 @@
+# Read-only reference checkouts (git submodules) — never format vendored source
+references/
+
+# Build outputs and caches
+dist
+build
+.turbo
+.cache
+node_modules
+pnpm-lock.yaml

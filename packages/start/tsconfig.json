@@ -12,6 +12,11 @@
 		"noEmit": true,
 		"types": ["node", "./virtual.d.ts"],
 		"isolatedModules": true,
-		"declaration": true
+		"declaration": true,
+		"plugins": [
+			{
+				"name": "@effect/language-service"
+			}
+		]
 	}
 }

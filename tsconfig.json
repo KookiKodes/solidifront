@@ -1,11 +1,28 @@
 {
-  "include": ["**/*.ts", "packages/start/src/index.tsx"],
-  "exclude": ["dist", "node_modules", ".turbo", ".cache"],
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "include": [
+    "**/*.ts",
+    "packages/start/src/index.tsx"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".turbo",
+    ".cache",
+    "references",
+    "prototypes"
+  ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "target": "ESNext",
     "module": "ESNext",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -16,6 +33,11 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
   }
 }

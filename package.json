@@ -7,16 +7,18 @@
 		"lint": "turbo lint",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
 		"version-packages": "changeset version",
-		"release": "turbo build && changeset publish"
+		"release": "turbo build && changeset publish",
+		"prepare": "effect-tsgo patch --typescript --no-oxlint"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.5",
 		"@changesets/cli": "^2.27.9",
+		"@effect/tsgo": "0.36.4",
 		"@types/node": "^22.7.4",
 		"prettier": "^3.3.3",
 		"turbo": "^2.1.2",
 		"turbo-ignore": "^2.1.2",
-		"typescript": "^5.9.3"
+		"typescript": "^7.0.2"
 	},
 	"packageManager": "pnpm@9.1.2",
 	"engines": {
