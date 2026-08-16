@@ -31,7 +31,10 @@ The root installs **TypeScript 7** (native) plus `@effect/tsgo`, which supplies 
 - **CI** is `.github/workflows/ci.yml` — `lint`, `typecheck`, `test`, `build` on every PR and on pushes to `main`/`next`, sharing `.github/actions/setup`. It deliberately does **not** check out `references/`.
 - **Biome is the single linter and formatter** for TS/TSX/JSON; prettier is retained for Markdown only. `pnpm format` runs both, `pnpm lint` runs `biome ci .` (fails on errors, reports warnings).
 - **Tests** run from one root Vitest config using `projects` (`workspace` is deprecated). `pnpm test` is the single entry point. `resolve.conditions` includes `development` on purpose — Solid compiles its correctness diagnostics out of the production build, so a prod-condition suite cannot see them.
-- **Two quarantines**, both keyed to packages the restructure deletes: `@solidifront/start` is filtered out of `pnpm typecheck`, and `@solidifront/storefront-client`'s live-API suite is excluded from the Vitest projects and renamed to `test:live`. Remove both when those packages go.
+- **Three quarantines**, all keyed to code the restructure replaces. Remove each when its target goes.
+  - `@solidifront/start` is filtered out of `pnpm typecheck`.
+  - `@solidifront/storefront-client`'s live-API suite is excluded from the Vitest projects and renamed to `test:live`.
+  - `example-basic` is filtered out of the **CI** build (`BUILD_FILTER` in `ci.yml`). It validates `SHOPIFY_PUBLIC_STORE_NAME` and three siblings at Vite config time, so it cannot build without live credentials — `pnpm turbo build` is 8/8 locally with `examples/basic/.env` present and 7/8 without it. **The per-PR gate is credential-free by design**; secrets belong to the nightly. Watch for this shape: a local green that a clean checkout cannot reproduce.
 
 ## Agent skills
 

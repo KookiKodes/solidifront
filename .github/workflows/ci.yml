@@ -12,6 +12,14 @@ concurrency:
 env:
   # Turbo's TUI renderer expects a TTY; CI needs the stream renderer.
   TURBO_UI: false
+  # QUARANTINE: example-basic validates SHOPIFY_PUBLIC_STORE_NAME and three
+  # sibling vars at Vite config time (packages/start solidifrontEnvSetup), so it
+  # cannot build without live Shopify credentials. The per-PR gate is
+  # credential-free by design — secrets belong to the nightly (#12) — and the
+  # example is slated for a rewrite regardless: it currently imports
+  # createMutationAction, which exists only as commented-out code. Drop the
+  # filter when it is rewritten against the new packages.
+  BUILD_FILTER: "--filter=!example-basic"
 
 jobs:
   lint:
@@ -50,7 +58,7 @@ jobs:
       - uses: ./.github/actions/setup
       # Workspace packages resolve through their published `exports` to dist/,
       # so the suite needs built dependencies.
-      - run: pnpm turbo build
+      - run: pnpm turbo build $BUILD_FILTER
       - run: pnpm test
 
   build:
@@ -59,4 +67,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpm turbo build
+      - run: pnpm turbo build $BUILD_FILTER
