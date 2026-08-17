@@ -648,6 +648,20 @@ A tokenless `publicApiVersions` query against mock.shop returns, today:
 
 **This one query is a free, credential-free nightly canary for version drift.** Wire it up.
 
+#### 8.4.1 Fall-forward is observable — correcting "silently" (verified 2026-08-16)
+
+`current-state-audit.md` §3, `README.md` and [#12](https://github.com/KookiKodes/solidifront/issues/12) all state that users are **silently** falling forward to a version they did not request. That is wrong: Shopify echoes the version it actually served in **`x-shopify-api-version`** on every response. Verified tokenless against `checkout.hydrogen.shop`:
+
+| requested | status | `x-shopify-api-version` |
+|---|---|---|
+| `2026-07` | 200 | `2026-07` |
+| `2025-04` (solidifront's default) | 200 | **`2025-10`** |
+| `2024-01` | 200 | **`2025-10`** |
+
+Fall-forward is silent only because nothing reads the header. Two consequences: solidifront warns on mismatch at runtime (#12), and **L2/L4 can assert the client is talking to the version it claims** — a one-header check, no fixtures.
+
+Note the header is absent from `mock.shop/api`, which carries no version segment. Version-echo assertions need a versioned endpoint.
+
 ### 8.5 Development stores
 
 Per [shopify.dev/docs/apps/build/dev-dashboard/stores/development-stores](https://shopify.dev/docs/apps/build/dev-dashboard/stores/development-stores): free, owned and controlled by you, require a Partner account or merchant store with developer permissions; test orders via the Bogus gateway; **"You can't remove the password page"** — a real E2E obstacle, since every request needs the storefront password or a bypass; and they can't be transferred to a client.

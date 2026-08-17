@@ -105,7 +105,7 @@ This is not a one-file problem. `packages/start/src/config/plugins/solidifrontEn
  {"handle":"unstable","supported":false}]
 ```
 
-**Four supported versions; latest is `2026-07`. `ValidVersion` can express exactly one of them — `2025-10` — and that one expires 2026-10-16.** The default, `2025-04`, is served only by Shopify's fall-forward behaviour ("When a version is retired, Shopify falls forward and responds using the oldest accessible stable version" — https://shopify.dev/docs/api/usage/versioning), which means solidifront users are silently getting a different API version than they asked for.
+**Four supported versions; latest is `2026-07`. `ValidVersion` can express exactly one of them — `2025-10` — and that one expires 2026-10-16.** The default, `2025-04`, is served only by Shopify's fall-forward behaviour ("When a version is retired, Shopify falls forward and responds using the oldest accessible stable version" — https://shopify.dev/docs/api/usage/versioning), which means solidifront users are getting a different API version than they asked for. *(Corrected 2026-08-16: not silently — `x-shopify-api-version` echoes the version actually served, so this is detectable on every response and is now checked at runtime. See `otel-and-testing.md` §8.4.1, [#12](https://github.com/KookiKodes/solidifront/issues/12), ADR-0005.)*
 
 That same query is free, needs no credentials, and should become a nightly canary. See `docs/research/otel-and-testing.md` §8.4.
 

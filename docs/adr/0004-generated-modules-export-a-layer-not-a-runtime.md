@@ -18,6 +18,8 @@ export const appLayer = Layer.mergeAll(baseServerLayer, userLayer);
 
 The client half is the same shape at `@solidifront/solid/internal/layer`, minus `server-only` and minus anything credentialed. There are exactly two; there is no shared isomorphic third.
 
+> **Amended by [ADR-0005](./0005-the-api-version-type-is-open-and-narrowed-by-codegen.md).** "No isomorphic third" governs **layers**, which is what this ADR is about. A generated module carrying only the pinned API version — a string — is *data*, and the same code/data distinction that splits the two config files below admits it. The API version ships as one isomorphic subpath. Nothing about the layer modules changes.
+
 ## Why a layer, not a runtime
 
 Constructing the runtime carries two rules that are easy to get wrong and invisible when they are: it must be created **detached** (`runWithOwner(null, …)` — Solid 2's `createRoot` is parent-owned by default, so a runtime built under an active owner is finalized when that subtree disposes) and it must be a **process-lifetime singleton**. Generated code is the one place a consumer cannot set a breakpoint or read the source on GitHub, and it is the worst possible home for both.
