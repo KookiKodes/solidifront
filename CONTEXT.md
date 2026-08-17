@@ -40,6 +40,14 @@ _Avoid_: API client, fetcher, SDK
 A single GraphQL query or mutation sent to a Shopify API.
 _Avoid_: request, call
 
+**Document**:
+The GraphQL text a developer writes for one operation.
+_Avoid_: query string, gql, tag
+
+**Generated operation**:
+What codegen produces from a document — the document after in-context injection, its schema, and its types, as one module. The only thing a storefront client accepts.
+_Avoid_: typed document, document node, artifact
+
 **Pinned API version**:
 The Shopify API version a storefront is built against. It fixes both the URL an operation is sent to and the schema its types are generated from — the two can never drift apart.
 _Avoid_: apiVersion, API level, target version
@@ -49,7 +57,7 @@ Shopify serving an operation against a version other than the one requested, bec
 _Avoid_: version fallback, downgrade, version drift
 
 **In-context injection**:
-Adding the `@inContext` directive and its variables to an operation at build time, so every operation carries country, language, and buyer identity.
+Adding the `@inContext` directive and its variables to a document at build time, so every operation carries the locale, buyer identity and consent of the request that runs it. Which arguments exist is a property of the pinned API version, never a fixed list.
 _Avoid_: localization middleware, context decoration
 
 **Locale**:
