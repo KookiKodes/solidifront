@@ -1,0 +1,26 @@
+query DeepCollection($handle: String!) {
+  collection(handle: $handle) {
+    id
+    title
+    products(first: 2) {
+      edges {
+        node {
+          id
+          title
+          variants(first: 2) {
+            edges {
+              node {
+                id
+                title
+                price { amount currencyCode }
+                selectedOptions { name value }
+                product { id handle collections(first: 1) { edges { node { id title } } } }
+              }
+            }
+          }
+          images(first: 2) { edges { node { url altText width height } } }
+        }
+      }
+    }
+  }
+}

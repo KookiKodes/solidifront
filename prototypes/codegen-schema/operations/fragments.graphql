@@ -1,0 +1,23 @@
+query FragmentComposition($handle: String!) {
+  product(handle: $handle) {
+    ...ProductFields
+    variants(first: 2) { edges { node { ...VariantFields } } }
+  }
+}
+
+fragment ProductFields on Product {
+  id
+  title
+  vendor
+}
+
+fragment VariantFields on ProductVariant {
+  id
+  title
+  price { ...MoneyFields }
+}
+
+fragment MoneyFields on MoneyV2 {
+  amount
+  currencyCode
+}

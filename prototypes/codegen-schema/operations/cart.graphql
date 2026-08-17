@@ -1,0 +1,19 @@
+mutation CartCreate($input: CartInput!) {
+  cartCreate(input: $input) {
+    cart {
+      id
+      totalQuantity
+      lines(first: 10) {
+        edges {
+          node {
+            id
+            quantity
+            ... on CartLine { merchandise { ... on ProductVariant { id title } } }
+            ... on ComponentizableCartLine { lineComponents { id quantity } }
+          }
+        }
+      }
+    }
+    userErrors { field message }
+  }
+}

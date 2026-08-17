@@ -1,0 +1,10 @@
+query DeferredProduct($handle: String!) {
+  product(handle: $handle) {
+    id
+    title
+    ... @defer(label: "slow") {
+      description
+      productType
+    }
+  }
+}

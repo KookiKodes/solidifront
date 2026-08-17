@@ -1,0 +1,14 @@
+
+--graphql
+Content-Type: application/json
+Content-Length: 151
+
+{"data":{"product":{"id":"gid://shopify/Product/7982902771734","title":"Men's T-shirt"}},"extensions":{"cost":{"requestedQueryCost":1}},"hasNext":true}
+
+--graphql
+Content-Type: application/json
+Content-Length: 271
+
+{"incremental":[{"path":["product"],"label":"slow","data":{"description":"Crafted from organic cotton, this classic T-shirt features a relaxed fit, crew neckline and timeless look. Enjoy the breathable comfort of 100% organic cotton.","productType":""}}],"hasNext":false}
+
+--graphql--

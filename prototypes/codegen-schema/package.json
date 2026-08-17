@@ -1,0 +1,23 @@
+{
+	"name": "@solidifront-prototype/codegen-schema",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"description": "THROWAWAY PROTOTYPE — answers wayfinder ticket #35. Not production code.",
+	"scripts": {
+		"capture": "node --experimental-strip-types src/capture.ts",
+		"gen": "node --experimental-strip-types src/generate.ts",
+		"probe:decode": "node --experimental-strip-types src/probe-decode.ts",
+		"probe:arity": "node --experimental-strip-types src/probe-arity.ts",
+		"probe:defer": "node --experimental-strip-types src/probe-defer.ts",
+		"probe:types": "node --experimental-strip-types src/probe-types.ts",
+		"probe:all": "pnpm gen && pnpm probe:decode && pnpm probe:arity && pnpm probe:defer && pnpm probe:types"
+	},
+	"dependencies": {
+		"effect": "4.0.0-rc.109",
+		"graphql": "^16.9.0"
+	},
+	"devDependencies": {
+		"typescript": "5.9.3"
+	}
+}

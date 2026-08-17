@@ -1,0 +1,12 @@
+query ProductConditional($handle: String!, $withDescription: Boolean!, $skipVendor: Boolean!) {
+  product(handle: $handle) {
+    id
+    title
+    description @include(if: $withDescription)
+    vendor @skip(if: $skipVendor)
+    ... @include(if: $withDescription) {
+      productType
+      tags
+    }
+  }
+}

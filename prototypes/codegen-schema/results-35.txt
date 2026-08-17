@@ -1,0 +1,157 @@
+# #35 prototype — captured output
+# Run: pnpm capture && pnpm probe:all
+# Endpoint: https://mock.shop/api (tokenless, credential-free)
+# effect 4.0.0-rc.109, graphql 16.12.0, typescript 5.9.3, node v22.20.0
+
+############ pnpm gen ############
+
+=== generated (fallback=expand) ===
+┌─────────┬───────────────────────┬───────┬─────────┬────────┬─────────┬──────────────┬──────────┬──────────────────┬───────┐
+│ (index) │ operation             │ depth │ structs │ unions │ members │ optionalKeys │ deferred │ typenameInjected │ bytes │
+├─────────┼───────────────────────┼───────┼─────────┼────────┼─────────┼──────────────┼──────────┼──────────────────┼───────┤
+│ 0       │ 'CartCreate'          │ 7     │ 10      │ 2      │ '1/2'   │ 0            │ 0        │ 3                │ 2273  │
+│ 1       │ 'ProductConditional'  │ 2     │ 2       │ 0      │ '-'     │ 4            │ 0        │ 0                │ 989   │
+│ 2       │ 'DeepCollection'      │ 12    │ 17      │ 0      │ '-'     │ 0            │ 0        │ 0                │ 4123  │
+│ 3       │ 'DeferredProduct'     │ 2     │ 2       │ 0      │ '-'     │ 2            │ 1        │ 0                │ 731   │
+│ 4       │ 'FragmentComposition' │ 6     │ 6       │ 0      │ '-'     │ 0            │ 0        │ 0                │ 2411  │
+│ 5       │ 'Menu'                │ 4     │ 10      │ 1      │ '7'     │ 0            │ 0        │ 7                │ 1737  │
+│ 6       │ 'NodeById'            │ 2     │ 38      │ 1      │ '37'    │ 0            │ 0        │ 37               │ 5168  │
+│ 7       │ 'Search'              │ 4     │ 6       │ 1      │ '3'     │ 0            │ 0        │ 3                │ 1382  │
+└─────────┴───────────────────────┴───────┴─────────┴────────┴─────────┴──────────────┴──────────┴──────────────────┴───────┘
+
+=== emitted sizes ===
+┌─────────┬───────────────────────────────────┬───────┐
+│ (index) │ file                              │ bytes │
+├─────────┼───────────────────────────────────┼───────┤
+│ 0       │ 'NodeById.expand.ts'              │ 5168  │
+│ 1       │ 'DeepCollection.catchall.ts'      │ 4123  │
+│ 2       │ 'DeepCollection.expand.ts'        │ 4123  │
+│ 3       │ 'FragmentComposition.catchall.ts' │ 2411  │
+│ 4       │ 'FragmentComposition.expand.ts'   │ 2411  │
+│ 5       │ 'CartCreate.catchall.ts'          │ 2273  │
+│ 6       │ 'CartCreate.expand.ts'            │ 2273  │
+│ 7       │ 'Menu.expand.ts'                  │ 1737  │
+│ 8       │ 'NodeById.catchall.ts'            │ 1601  │
+│ 9       │ 'Menu.catchall.ts'                │ 1554  │
+└─────────┴───────────────────────────────────┴───────┘
+
+############ pnpm probe:decode ############
+
+=== 1+2. decode real responses, and check identity ===
+┌─────────┬───────────────────────┬────────────┬────────────────┬──────────┬─────────────────────────────────────┐
+│ (index) │ op                    │ fallback   │ decodes        │ identity │ detail                              │
+├─────────┼───────────────────────┼────────────┼────────────────┼──────────┼─────────────────────────────────────┤
+│ 0       │ 'Search'              │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 1       │ 'Search'              │ 'catchall' │ 'ok'           │ 'exact'  │ ''                                  │
+│ 2       │ 'Menu'                │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 3       │ 'Menu'                │ 'catchall' │ 'MODULE THREW' │ '-'      │ 'No literal or unique symbol found' │
+│ 4       │ 'NodeById'            │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 5       │ 'NodeById'            │ 'catchall' │ 'MODULE THREW' │ '-'      │ 'No literal or unique symbol found' │
+│ 6       │ 'DeepCollection'      │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 7       │ 'DeepCollection'      │ 'catchall' │ 'ok'           │ 'exact'  │ ''                                  │
+│ 8       │ 'FragmentComposition' │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 9       │ 'FragmentComposition' │ 'catchall' │ 'ok'           │ 'exact'  │ ''                                  │
+│ 10      │ 'ProductConditional'  │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 11      │ 'ProductConditional'  │ 'catchall' │ 'ok'           │ 'exact'  │ ''                                  │
+│ 12      │ 'CartCreate'          │ 'expand'   │ 'ok'           │ 'exact'  │ ''                                  │
+│ 13      │ 'CartCreate'          │ 'catchall' │ 'ok'           │ 'exact'  │ ''                                  │
+└─────────┴───────────────────────┴────────────┴────────────────┴──────────┴─────────────────────────────────────┘
+
+=== 3. error on an unknown __typename ===
+
+--- Search.expand (patched=true) ---
+Cause([Fail(SchemaError(Expected { readonly "__typename": "Article", ... } | { readonly "__typename": "Page", ... } | { readonly "__typename": "Product", ... }
+  at ["search"]["edges"][0]["node"]))])
+[error length: 199 chars, 2 lines]
+
+--- NodeById.expand (patched=true) ---
+Cause([Fail(SchemaError(Expected { readonly "__typename": "Collection", ... } | { readonly "__typename": "Product", ... } | { readonly "__typename": "AppliedGiftCard", ... } | { readonly "__typename": "Article", ... } | { readonly "__typename": "Blog", ... } | { readonly "__typename": "Cart", ... } | { readonly "__typename": "CartLine", ... } | { readonly "__typename": "Comment", ... } | { readonly "__typename": "Company", ... } | { readonly "__typename": "CompanyContact", ... } | { readonly "__typename": "CompanyLocation", ... } | { readonly "__typename": "ComponentizableCartLine", ... } | { readonly "__typename": "ExternalVideo", ... } | { readonly "__typename": "GenericFile", ... } | { readonly "__typename": "Location", ... } | { readonly "__typename": "MailingAddress", ... } | { readonly "__typename": "Market", ... } | { readonly "__typename": "MediaImage", ... } | { readonly "__typename": "MediaPresentation", ... } | { readonly "__typename": "Menu", ... } | { readonly "__typename": "MenuItem", ... } | { readonly "__typename": "Metafield", ... } | { readonly "__typename": "Metaobject", ... } | { readonly "__typename": "Model3d", ... } | { readonly "__typename": "Order", ... } | { readonly "__typename": "Page", ... } | { readonly "__typename": "ProductOption", ... } | { readonly "__typename": "ProductOptionValue", ... } | { readonly "__typename": "ProductVariant", ... } | { readonly "__typename": "Shop", ... } | { readonly "__typename": "ShopPayInstallmentsFinancingPlan", ... } | { readonly "__typename": "ShopPayInstallmentsFinancingPlanTerm", ... } | { readonly "__typename": "ShopPayInstallmentsProductVariantPricing", ... } | { readonly "__typename": "ShopPolicy", ... } | { readonly "__typename": "TaxonomyCategory", ... } | { readonly "__typename": "UrlRedirect", ... } | { readonly "__typename": "Video", ... }
+  at ["node"]))])
+[error length: 1863 chars, 2 lines]
+NodeById.catchall: module threw, skipped
+
+=== 4. excess wire keys ===
+decoded to {"id":"x"} — excess keys DROPPED
+
+=== 5. branded scalar is runtime-identity ===
+"gid://x/1" -> "gid://x/1" (typeof string)
+
+############ pnpm probe:arity ############
+
+=== decode cost vs union arity (worst-case member: the last) ===
+20000 iterations, ns/op
+┌────────────────────────────────────────────────┬────────┬────────┬────────┬─────────┬─────────┬─────────┬──────────┐
+│ (index)                                        │ n=2    │ n=4    │ n=8    │ n=16    │ n=37    │ n=64    │ n=128    │
+├────────────────────────────────────────────────┼────────┼────────┼────────┼─────────┼─────────┼─────────┼──────────┤
+│ literal __typename (what codegen emits)        │ '4031' │ '1823' │ '1737' │ '1655'  │ '1453'  │ '1348'  │ '1453'   │
+│ NullOr(Union(...)) — a nullable abstract field │ '1938' │ '1723' │ '1655' │ '1637'  │ '1760'  │ '1563'  │ '1670'   │
+│ optionalKey __typename — sentinel LOST         │ '3493' │ '3593' │ '6180' │ '12782' │ '28734' │ '50608' │ '106038' │
+│ no __typename at all — structural only         │ '3002' │ '4103' │ '6988' │ '12752' │ '29264' │ '54752' │ '106319' │
+└────────────────────────────────────────────────┴────────┴────────┴────────┴─────────┴─────────┴─────────┴──────────┘
+
+=== toTaggedUnion at arity ===
+n=2: built ok, 2 discriminants, 2 guards, construction 0.18756ms (2)
+n=37: built ok, 37 discriminants, 37 guards, construction 1.336002ms (37)
+n=128: built ok, 128 discriminants, 128 guards, construction 3.586119ms (128)
+
+=== toTaggedUnion with a Literals() catch-all member (the `catchall` emission) ===
+THREW: No literal or unique symbol found
+
+=== expand vs catchall: cost of the two fallback emissions at n=37 ===
+  expand, hits explicit member : 1371 ns/op
+  expand, hits generated member: 1430 ns/op
+  catchall, hits explicit      : 2765 ns/op
+  catchall, hits Literals bucket: 2466 ns/op
+
+=== plain Union (no toTaggedUnion) with a Literals() catch-all ===
+  __typename=T1: ok {"__typename":"T1","id":"x","f1":"v"}
+  __typename=T3: ok {"__typename":"T3","id":"x"}
+  __typename=Nope: fail (73 chars)
+
+############ pnpm probe:defer ############
+=== what the server does ===
+  with    @defer: 200 multipart/mixed; boundary=graphql
+  without @defer: 200 application/json; charset=utf-8
+
+=== 2 chunks ===
+  chunk 0: keys=[data, extensions, hasNext] hasNext=true
+  chunk 1: keys=[incremental, hasNext] hasNext=false
+
+=== decoding chunk 0 (the initial payload) against the operation schema ===
+  wire: {"product":{"id":"gid://shopify/Product/7982902771734","title":"Men's T-shirt"}}
+  ✅ decodes: {"product":{"id":"gid://shopify/Product/7982902771734","title":"Men's T-shirt"}}
+     the @defer'd keys are ABSENT, and optionalKey models exactly that
+
+=== decoding chunk 1 (the incremental payload) against the same schema ===
+  wire: {"incremental":[{"path":["product"],"label":"slow","data":{"description":"Crafted from organic cotton, this classic T-shirt features a relaxed fit, crew neckline and timeless look. Enjoy the breathable comfort of 100% or
+  ❌ rejected: Cause([Fail(SchemaError(Missing key at ["product"]))])
+     the incremental chunk's `data` is the FRAGMENT's shape at path [product],
+     not the operation's — so a per-operation schema cannot decode it.
+
+=== decode after merging every chunk ===
+  merged wire: {"product":{"id":"gid://shopify/Product/7982902771734","title":"Men's T-shirt","description":"Crafted from organic cotton, this classic T-shirt features a relaxed fit, crew neckline and timeless look.
+  ✅ decodes, identity=exact
+
+=== is the deferred field distinguishable from a null one? ===
+  absent (deferred) : ok {"product":{"id":"gid://x/1","title":"t"}}
+  null              : rejected (Cause([Fail(SchemaError(Expected string at ["product"]["description"]))]))
+
+############ pnpm probe:types ############
+
+=== A+B. identity-typedness, narrowing, optional keys ===
+✅ all type assertions hold
+   instantiations=27165 types=7410 check=390ms
+
+=== C. depth: selection-set nesting vs tsc ===
+┌─────────┬────────┬────────────────┬─────────┬───────┬────────┬────────────────┬───────┬─────────┐
+│ (index) │ cycles │ selectionDepth │ structs │ bytes │ status │ instantiations │ types │ checkMs │
+├─────────┼────────┼────────────────┼─────────┼───────┼────────┼────────────────┼───────┼─────────┤
+│ 0       │ 1      │ 12             │ 12      │ 1034  │ 'ok'   │ 5288           │ 3038  │ '170'   │
+│ 1       │ 2      │ 22             │ 22      │ 1936  │ 'ok'   │ 5715           │ 3159  │ '170'   │
+│ 2       │ 4      │ 42             │ 42      │ 4460  │ 'ok'   │ 6569           │ 3401  │ '200'   │
+│ 3       │ 8      │ 82             │ 82      │ 12388 │ 'ok'   │ 8277           │ 3885  │ '250'   │
+│ 4       │ 12     │ 122            │ 122     │ 24156 │ 'ok'   │ 9985           │ 4369  │ '260'   │
+└─────────┴────────┴────────────────┴─────────┴───────┴────────┴────────────────┴───────┴─────────┘
+
+=== D. a realistic operation set, compiled together ===
+  all 16 generated modules: ok instantiations=36194 types=10207 check=510ms

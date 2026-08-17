@@ -1,0 +1,11 @@
+query Search($q: String!) {
+  search(query: $q, first: 3) {
+    edges {
+      node {
+        ... on Product { id title vendor }
+        ... on Article { id title excerpt }
+        ... on Page { id title handle }
+      }
+    }
+  }
+}

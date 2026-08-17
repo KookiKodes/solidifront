@@ -1,0 +1,15 @@
+query Menu($handle: String!) {
+  menu(handle: $handle) {
+    id
+    title
+    items {
+      id
+      title
+      resource {
+        ... on Collection { id title }
+        ... on Product { id title }
+        ... on Blog { id title }
+      }
+    }
+  }
+}
