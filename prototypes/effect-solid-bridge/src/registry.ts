@@ -17,6 +17,18 @@ import {
 	ProbeH4,
 	ProbeS1,
 } from "./probes.tsx";
+import {
+	ProbeE1,
+	ProbeE2,
+	ProbeE2Plain,
+	ProbeE2Transparent,
+	ProbeE3,
+	ProbeE3Control,
+	ProbeE3PlainOnly,
+	ProbeE3Unread,
+	ProbeE4,
+	ProbeE5,
+} from "./probes-30.tsx";
 
 export const PROBES: Record<string, Component> = {
 	H0: ProbeH0,
@@ -27,6 +39,17 @@ export const PROBES: Record<string, Component> = {
 	H3: ProbeH3,
 	H4: ProbeH4,
 	S1: ProbeS1,
+	// #30 — the server-side effect phase
+	E1: ProbeE1,
+	E2: ProbeE2,
+	E2P: ProbeE2Plain,
+	E2T: ProbeE2Transparent,
+	E3: ProbeE3,
+	E3C: ProbeE3Control,
+	E3B: ProbeE3PlainOnly,
+	E3D: ProbeE3Unread,
+	E4: ProbeE4,
+	E5: ProbeE5,
 };
 
 export function pickProbe(url: string): Component | undefined {

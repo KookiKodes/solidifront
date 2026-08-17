@@ -1,0 +1,313 @@
+
+=== E1 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E1] [body] component body — before any effect is created
+    +0ms [E1] createEffect COMPUTE
+    +0ms [E1] createRenderEffect COMPUTE
+    +0ms [E1] createRenderEffect EFFECT PHASE (v=1)
+    +0ms [E1] createRenderEffect+defer COMPUTE
+    +0ms [E1] createRenderEffect+transparent COMPUTE
+    +0ms [E1] createRenderEffect+transparent EFFECT PHASE (v=1)
+    +0ms [E1] [body] component body — after all six are created
+    +0ms [E1] [jsx] children evaluating (render continues)
+  --- stream timing (E1) ---
+    headers at        535ms
+    chunks            1 — 536ms/1930B
+    id="marker" at    536ms
+    body complete at  536ms (1928B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E1] [body] component body — before any effect is created
+    +0ms [E1] createEffect COMPUTE
+    +0ms [E1] createRenderEffect COMPUTE
+    +0ms [E1] createRenderEffect EFFECT PHASE (v=1)
+    +0ms [E1] createRenderEffect+defer COMPUTE
+    +0ms [E1] createRenderEffect+transparent COMPUTE
+    +0ms [E1] createRenderEffect+transparent EFFECT PHASE (v=1)
+    +0ms [E1] [body] component body — after all six are created
+    +0ms [E1] [jsx] children evaluating (render continues)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E1] [body] component body — before any effect is created
+    [E1] createEffect COMPUTE
+    [E1] createRenderEffect COMPUTE
+    [E1] createRenderEffect EFFECT PHASE (v=1)
+    [E1] createRenderEffect+defer COMPUTE
+    [E1] createRenderEffect+transparent COMPUTE
+    [E1] createRenderEffect+transparent EFFECT PHASE (v=1)
+    [E1] [body] component body — after all six are created
+    [E1] [jsx] children evaluating (render continues)
+    [E1] createEffect+ssrSource:client COMPUTE
+    [E1] createRenderEffect+ssrSource:client COMPUTE
+    [E1] createRenderEffect+ssrSource:client EFFECT PHASE (v=1)
+    [E1] createEffect EFFECT PHASE (v=1)
+    [E1] createEffect+ssrSource:client EFFECT PHASE (v=1)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+    warning: Hydration completed with 1 unclaimed server-rendered node(s):
+  <main _hk="16"><h1>E1 — which primitive/option runs an effect phase under SSR</h1><!--$--><!--/--><p
+
+=== E2 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E2] plain renderEffect FIRED — run #1 (clicks=0)
+    +0ms [E2] transparent renderEffect FIRED — run #1 (clicks=0)
+  --- stream timing (E2) ---
+    headers at        10ms
+    chunks            1 — 11ms/1996B
+    id="marker" at    11ms
+    body complete at  11ms (1994B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E2] plain renderEffect FIRED — run #2 (clicks=0)
+    +0ms [E2] transparent renderEffect FIRED — run #2 (clicks=0)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E2] plain renderEffect FIRED — run #1 (clicks=0)
+    [E2] transparent renderEffect FIRED — run #1 (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+    warning: Hydration completed with 1 unclaimed server-rendered node(s):
+  <main _hk="12"><h1>E2 — does one event fire twice across SSR + hydration?</h1><button id="bump" type
+  --- E2: clicking #bump twice (client-only re-runs) ---
+    ---------- hydrateStart ----------
+    [E2] plain renderEffect FIRED — run #1 (clicks=0)
+    [E2] transparent renderEffect FIRED — run #1 (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+
+=== E2P ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E2P] EFFECT PHASE FIRED (clicks=0)
+  --- stream timing (E2P) ---
+    headers at        4ms
+    chunks            1 — 4ms/1943B
+    id="marker" at    4ms
+    body complete at  4ms (1943B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E2P] EFFECT PHASE FIRED (clicks=0)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E2P] EFFECT PHASE FIRED (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== E2T ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E2T] EFFECT PHASE FIRED (clicks=0)
+  --- stream timing (E2T) ---
+    headers at        4ms
+    chunks            1 — 4ms/1943B
+    id="marker" at    4ms
+    body complete at  4ms (1943B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E2T] EFFECT PHASE FIRED (clicks=0)
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E2T] EFFECT PHASE FIRED (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+    warning: Hydration completed with 1 unclaimed server-rendered node(s):
+  <main _hk="11"><h1>E2T</h1><button id="bump" type="button">bump</button><p>clicks: <span id="clicks"
+
+=== E3C ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E3C] renderEffect EFFECT PHASE — value=sync
+  --- stream timing (E3C) ---
+    headers at        18ms
+    chunks            1 — 18ms/1886B
+    id="marker" at    18ms
+    body complete at  18ms (1884B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E3C] renderEffect EFFECT PHASE — value=sync
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E3C] renderEffect EFFECT PHASE — value=sync
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== E3D ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E3D] async memo BODY starting — nobody reads this
+  --- stream timing (E3D) ---
+    headers at        6ms
+    chunks            2 — 6ms/2052B, 154ms/73B
+    id="marker" at    6ms
+    body complete at  154ms (2123B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E3D] async memo BODY starting — nobody reads this
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E3D] async memo BODY starting — nobody reads this
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== E3B ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E3B] async memo BODY starting
+    +0ms [E3B] plain createEffect COMPUTE attempt #1
+  --- stream timing (E3B) ---
+    headers at        3ms
+    chunks            2 — 3ms/2069B, 154ms/75B
+    id="marker" at    3ms
+    body complete at  154ms (2142B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E3B] async memo BODY starting
+    +1ms [E3B] plain createEffect COMPUTE attempt #1
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E3B] async memo BODY starting
+    [E3B] plain createEffect COMPUTE attempt #1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [E3B] plain createEffect COMPUTE attempt #2
+    [E3B] plain createEffect COMPUTE READ THROUGH: resolved
+    [E3B] plain createEffect EFFECT PHASE — value=resolved
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== E3 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E3] async memo BODY starting (will resolve in 150ms)
+    +0ms [E3] renderEffect COMPUTE attempt #1 — reading
+    +0ms [E3] plain createEffect COMPUTE attempt #1
+    +151ms [E3] renderEffect COMPUTE attempt #2 — reading
+    +151ms [E3] renderEffect COMPUTE #2 READ THROUGH: resolved
+    +151ms [E3] renderEffect EFFECT PHASE #1 — value=resolved
+  --- stream timing (E3) ---
+    headers at        155ms
+    chunks            1 — 155ms/2128B
+    id="marker" at    155ms
+    body complete at  155ms (2126B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E3] async memo BODY starting (will resolve in 150ms)
+    +0ms [E3] renderEffect COMPUTE attempt #1 — reading
+    +0ms [E3] plain createEffect COMPUTE attempt #1
+    +151ms [E3] renderEffect COMPUTE attempt #2 — reading
+    +151ms [E3] renderEffect COMPUTE #2 READ THROUGH: resolved
+    +151ms [E3] renderEffect EFFECT PHASE #1 — value=resolved
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E3] async memo BODY starting (will resolve in 150ms)
+    [E3] renderEffect COMPUTE attempt #1 — reading
+    [E3] renderEffect COMPUTE #1 READ THROUGH: resolved
+    [E3] renderEffect EFFECT PHASE #1 — value=resolved
+    [E3] plain createEffect COMPUTE attempt #1
+    [E3] plain createEffect COMPUTE READ THROUGH: resolved
+    [E3] plain createEffect EFFECT PHASE — value=resolved
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== E3 vs E3C — the price of a pending read in a render-effect compute ===
+  E3C nothing pending      headers 18ms  marker 18ms  done 18ms
+  E3D memo, unread         headers 6ms  marker 6ms  done 154ms
+  E3B read by createEffect headers 3ms  marker 3ms  done 154ms
+  E3  read by renderEffect headers 155ms  marker 155ms  done 155ms
+  delta    headers +137ms  marker +137ms  done +137ms   (the pending source sleeps 150ms)
+
+=== E4 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E4] child renderEffect COMPUTE — reading the pending memo
+    +150ms [E4] child renderEffect COMPUTE — reading the pending memo
+    +150ms [E4] child renderEffect EFFECT PHASE — value=child-data
+  --- stream timing (E4) ---
+    headers at        157ms
+    chunks            1 — 157ms/2254B
+    id="marker" at    157ms
+    body complete at  157ms (2252B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E4] child renderEffect COMPUTE — reading the pending memo
+    +151ms [E4] child renderEffect COMPUTE — reading the pending memo
+    +151ms [E4] child renderEffect EFFECT PHASE — value=child-data
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E4] child renderEffect COMPUTE — reading the pending memo
+    [E4] child renderEffect EFFECT PHASE — value=child-data
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  [stream] fallback shipped: false — child in first body: true
+  [dom] #child after settle = "child: child-data"
+
+=== E5 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [E5] effect phase entered (v=1)
+    +1ms [E5] (a) SYNC effect ran to completion
+    +202ms [E5] (b) ASYNC body COMPLETED after 200ms
+    +202ms [E5] (b) finalizer ran — exit=Success
+    +202ms [E5] (b) observer — exit=Success
+  --- stream timing (E5) ---
+    headers at        6ms
+    chunks            1 — 6ms/1927B
+    id="marker" at    6ms
+    body complete at  6ms (1925B)
+  --- SSR (browser pass — same render, second request) ---
+    +0ms [E5] effect phase entered (v=1)
+    +0ms [E5] (a) SYNC effect ran to completion
+    +201ms [E5] (b) ASYNC body COMPLETED after 200ms
+    +201ms [E5] (b) finalizer ran — exit=Success
+    +201ms [E5] (b) observer — exit=Success
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [E5] effect phase entered (v=1)
+    [E5] (a) SYNC effect ran to completion
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [E5] (b) ASYNC body COMPLETED after 200ms
+    [E5] (b) finalizer ran — exit=Success
+    [E5] (b) observer — exit=Success
+  --- Solid diagnostics: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- E5: waiting past the 200ms async body, re-reading ---
+    ---------- hydrateStart ----------
+    [E5] effect phase entered (v=1)
+    [E5] (a) SYNC effect ran to completion
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [E5] (b) ASYNC body COMPLETED after 200ms
+    [E5] (b) finalizer ran — exit=Success
+    [E5] (b) observer — exit=Success
