@@ -2,8 +2,9 @@
 
 Answers wayfinder tickets [#8](https://github.com/KookiKodes/solidifront/issues/8),
 [#20](https://github.com/KookiKodes/solidifront/issues/20),
-[#22](https://github.com/KookiKodes/solidifront/issues/22) and
-[#30](https://github.com/KookiKodes/solidifront/issues/30). Not production code.
+[#22](https://github.com/KookiKodes/solidifront/issues/22),
+[#30](https://github.com/KookiKodes/solidifront/issues/30) and
+[#37](https://github.com/KookiKodes/solidifront/issues/37). Not production code.
 Nothing here is meant to survive; the decisions it produced are what survive.
 
 ## The harnesses
@@ -14,6 +15,7 @@ Nothing here is meant to survive; the decisions it produced are what survive.
 | `pnpm probe:memo`                                                                 | `createMemo(async …)` — the data-layer primitive                      | #20    |
 | `pnpm probe:hydration`                                                            | **Real streaming SSR + real hydration in chrome-headless-shell**      | #22    |
 | `pnpm probe:ssr-effect`                                                           | Which primitive has a **server-side effect phase**, and what it costs | #30    |
+| `pnpm probe:dedup`                                                               | Cross-environment dedup of the server-running boundary                | #37    |
 | `node --conditions=development --experimental-strip-types src/run-flush-owner.ts` | why #8 and #22 disagreed                                              | #22    |
 
 `probe:hydration` hosts a Vite dev server (`@solidjs/vite-plugin` SSR start
@@ -122,3 +124,64 @@ Captured output: [`results-30.txt`](./results-30.txt).
    finalizer reports `Success`, not an interrupt — unlike #22's component-body
    fiber. **Not measured: a serverless runtime that freezes the process after the
    response**, where this would not hold.
+
+## The #37 probes — `pnpm probe:dedup`
+
+`run-37.mjs` is the #30 driver plus two things #37 needs: it scrapes the raw
+HTML for `_$HY.r` writes (so "did the marker reach the wire" is answerable
+without a browser, and independently of whether the client half read it), and
+it clicks every probe twice after settling — the whole point of
+suppress-**once** over suppress-always is that runs #2 and #3 still fire, so a
+probe that only reports run #1 has not been measured.
+
+| Probe   | Question                                                                        |
+| ------- | ------------------------------------------------------------------------------- |
+| `D0`    | Control: the #30 double-fire, with ids logged                                   |
+| `D1`    | Is there a stable key across environments, and where can it be read?            |
+| `D2`    | **Candidate 1** — `createUniqueId()`-keyed marker through `_$HY.r`              |
+| `D3`    | **Candidate 2** — consumer-supplied literal key, same channel                   |
+| `D3B`   | Two instances of each in one document                                           |
+| `D4`    | A boundary the server never rendered, mounted after hydration                   |
+| `D5`    | **Candidate 3** — no dedup; the client effect phase is suppressed permanently   |
+| `D6`/`D6S` | Candidate 1′ — `ssrSource: "server"`, the compute's own serialized value     |
+| `D7`    | Does a marker written after the shell flush still reach the client?             |
+
+Captured output: [`results-37.txt`](./results-37.txt).
+
+### What it found
+
+1. **There is a stable, symmetric key, and it is `createUniqueId()`.** In both
+   builds it is the same allocator hydration ids come from — `D1` mints `10`,
+   `11`, `13` identically server-side and client-side, with the effect's own
+   owner id `12` in between. No effect id has to be read for this.
+2. **The key must be minted at creation, not inside the effect phase.**
+   `getOwner()` inside the effect fn is the flusher's owner (`1` during
+   hydration, `(none)` afterwards) — #22's "the effect phase establishes no
+   owner", now confirmed on this path.
+3. **The marker channel works, both halves are reachable, and it is the one
+   Solid uses itself.** `sharedConfig.context.serialize(key, value)` on the
+   server lands as `_$HY.r["<key>"]` in the document; `sharedConfig.has(key)` /
+   `.load(key)` read it back during hydration. `D2` fires once server-side,
+   suppresses run #1 client-side, and still fires runs #2 and #3. No
+   diagnostics, no unclaimed nodes — the id scheme is **not** perturbed, unlike
+   `transparent: true` (#30, `E2T`).
+4. **The key may be any string** — `D3`'s `"solidifront:page-view"` round-trips
+   exactly like an id-derived one. So candidate 2 is implementable; it just
+   isn't safe (5).
+5. **A boundary mounted after hydration cannot collide with a serialized key.**
+   `createUniqueId()` returns `cl-<n>` once `sharedConfig.hydrating` is false —
+   a disjoint namespace. `D4`'s late boundary gets `cl-0`, reads `false`, and
+   fires. The **same** late boundary keyed by a literal reads the eager
+   boundary's marker and **suppresses a run that never had a server
+   counterpart** — the false positive, reproduced.
+6. **Candidate 3 works and is a different primitive.** `D5`'s compute keeps
+   running on every click (3 computes) while the effect phase never fires
+   again. Cheap, correct, and useless for anything that must re-fire.
+7. **Candidate 1′ is dead.** With a sync compute (`D6S`) `ssrSource: "server"`
+   serializes nothing and the client compute runs — no signal to read. With a
+   promise-returning compute (`D6`) the marker exists but the boundary
+   **breaks**: computes #2 and #3 run and the effect phase never fires again.
+8. **A late marker still lands.** `D7` writes at +152ms, well past the shell
+   flush, and the client reads it — the serializer streams its own script tags,
+   unlike the response headers #27 found commit at flush. It pays #30's `E3`
+   hold for it (TTFB 162ms).

@@ -10,7 +10,8 @@
     "probe:node": "node --experimental-strip-types src/run-node.ts",
     "probe:memo": "node --experimental-strip-types src/run-memo.ts",
     "probe:hydration": "node run-hydration.mjs",
-    "probe:ssr-effect": "node run-30.mjs"
+    "probe:ssr-effect": "node run-30.mjs",
+    "probe:dedup": "node run-37.mjs"
   },
   "devDependencies": {
     "@solidjs/vite-plugin": "3.0.0-next.28",

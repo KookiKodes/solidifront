@@ -29,6 +29,18 @@ import {
 	ProbeE4,
 	ProbeE5,
 } from "./probes-30.tsx";
+import {
+	ProbeD0,
+	ProbeD1,
+	ProbeD2,
+	ProbeD3,
+	ProbeD3Twice,
+	ProbeD4,
+	ProbeD5,
+	ProbeD6,
+	ProbeD6Sync,
+	ProbeD7,
+} from "./probes-37.tsx";
 
 export const PROBES: Record<string, Component> = {
 	H0: ProbeH0,
@@ -50,6 +62,17 @@ export const PROBES: Record<string, Component> = {
 	E3D: ProbeE3Unread,
 	E4: ProbeE4,
 	E5: ProbeE5,
+	// #37 — cross-environment dedup for the server-running boundary
+	D0: ProbeD0,
+	D1: ProbeD1,
+	D2: ProbeD2,
+	D3: ProbeD3,
+	D3B: ProbeD3Twice,
+	D4: ProbeD4,
+	D5: ProbeD5,
+	D6: ProbeD6,
+	D6S: ProbeD6Sync,
+	D7: ProbeD7,
 };
 
 export function pickProbe(url: string): Component | undefined {

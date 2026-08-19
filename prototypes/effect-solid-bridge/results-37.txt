@@ -1,0 +1,317 @@
+
+=== D0 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D0] body: owner.id=1
+    +0ms [D0] COMPUTE (owner.id=10)
+    +0ms [D0] FIRED run #1 (clicks=0) owner.id=1
+  --- hydration payload on the wire ---
+    (no _$HY.r writes in the document)
+  --- stream: headers 294ms  marker 294ms  done 294ms (1942B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D0] body: owner.id=1
+    [D0] COMPUTE (owner.id=10)
+    [D0] FIRED run #1 (clicks=0) owner.id=1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D0] body: owner.id=1
+    [D0] COMPUTE (owner.id=10)
+    [D0] FIRED run #1 (clicks=0) owner.id=1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D0] COMPUTE (owner.id=10)
+    [D0] FIRED run #2 (clicks=1) owner.id=(none)
+    [D0] COMPUTE (owner.id=10)
+    [D0] FIRED run #3 (clicks=2) owner.id=(none)
+
+=== D1 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D1] body: owner.id=1
+    +1ms [D1] createUniqueId #1 = 10
+    +1ms [D1] createUniqueId #2 = 11
+    +1ms [D1] COMPUTE  owner.id=12
+    +1ms [D1] EFFECT   owner.id=1 (clicks=0)
+    +1ms [D1] createUniqueId #3 (after the effect) = 13
+  --- hydration payload on the wire ---
+    (no _$HY.r writes in the document)
+  --- stream: headers 11ms  marker 11ms  done 11ms (1942B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D1] body: owner.id=1
+    [D1] createUniqueId #1 = 10
+    [D1] createUniqueId #2 = 11
+    [D1] COMPUTE  owner.id=12
+    [D1] EFFECT   owner.id=1 (clicks=0)
+    [D1] createUniqueId #3 (after the effect) = 13
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== D2 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D2] key=10 serverAlreadyFired=false value=undefined
+    +0ms [D2] FIRED run #1 (clicks=0) suppressedEarlier=false
+    +1ms [D2] marker write: written
+  --- hydration payload on the wire ---
+    "10" = 1
+  --- stream: headers 4ms  marker 4ms  done 4ms (2003B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D2] key=10 serverAlreadyFired=true value=1
+    [D2] SUPPRESSED run #1 (clicks=0) — server already fired
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D2] key=10 serverAlreadyFired=true value=1
+    [D2] SUPPRESSED run #1 (clicks=0) — server already fired
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D2] FIRED run #2 (clicks=1) suppressedEarlier=true
+    [D2] FIRED run #3 (clicks=2) suppressedEarlier=true
+
+=== D3 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D3] key=solidifront:page-view serverAlreadyFired=false value=undefined
+    +0ms [D3] FIRED run #1 (clicks=0)
+    +1ms [D3] marker write: written
+  --- hydration payload on the wire ---
+    "solidifront:page-view" = "fired"
+  --- stream: headers 3ms  marker 4ms  done 4ms (2028B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D3] key=solidifront:page-view serverAlreadyFired=true value=fired
+    [D3] SUPPRESSED run #1 (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D3] key=solidifront:page-view serverAlreadyFired=true value=fired
+    [D3] SUPPRESSED run #1 (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D3] FIRED run #2 (clicks=1)
+    [D3] FIRED run #3 (clicks=2)
+
+=== D3B ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D3B] literal A (key=solidifront:page-view) FIRED run #1
+    +0ms [D3B] literal A write: written
+    +0ms [D3B] literal B (key=solidifront:page-view) FIRED run #1
+    +0ms [D3B] literal B write: written
+    +0ms [D3B] unique A (key=12) FIRED run #1
+    +0ms [D3B] unique A write: written
+    +0ms [D3B] unique B (key=14) FIRED run #1
+    +0ms [D3B] unique B write: written
+  --- hydration payload on the wire ---
+    "solidifront:page-view" = 1
+    "solidifront:page-view" = 1
+    "12" = 1
+    "14" = 1
+  --- stream: headers 4ms  marker 4ms  done 4ms (2026B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D3B] literal A (key=solidifront:page-view) SUPPRESSED run #1
+    [D3B] literal B (key=solidifront:page-view) SUPPRESSED run #1
+    [D3B] unique A (key=12) SUPPRESSED run #1
+    [D3B] unique B (key=14) SUPPRESSED run #1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+
+=== D4 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D4] eager key=10 serverAlreadyFired=false
+    +0ms [D4] eager FIRED run #1
+    +0ms [D4] eager marker write: written
+    +1ms [D4] eager literal write: written
+  --- hydration payload on the wire ---
+    "10" = 1
+    "solidifront:d4-literal" = 1
+  --- stream: headers 4ms  marker 4ms  done 4ms (2054B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D4] eager key=10 serverAlreadyFired=true
+    [D4] eager SUPPRESSED run #1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- D4: mounting the late boundary (no server counterpart) ---
+    ---------- hydrateStart ----------
+    [D4] eager key=10 serverAlreadyFired=true
+    [D4] eager SUPPRESSED run #1
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D4] late boundary key=cl-0 serverAlreadyFired=false
+    [D4] late boundary FIRED run #1
+    [D4] late literal-keyed serverAlreadyFired=true
+    [D4] late literal-keyed SUPPRESSED run #1 — FALSE POSITIVE
+  [dom] #late = "late"
+
+=== D5 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D5] isServerEnv=true
+    +0ms [D5] COMPUTE #1
+    +0ms [D5] FIRED run #1 (clicks=0)
+  --- hydration payload on the wire ---
+    (no _$HY.r writes in the document)
+  --- stream: headers 4ms  marker 4ms  done 4ms (1942B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D5] isServerEnv=false
+    [D5] COMPUTE #1
+    [D5] effect phase suppressed permanently (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D5] isServerEnv=false
+    [D5] COMPUTE #1
+    [D5] effect phase suppressed permanently (clicks=0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D5] COMPUTE #2
+    [D5] effect phase suppressed permanently (clicks=1)
+    [D5] COMPUTE #3
+    [D5] effect phase suppressed permanently (clicks=2)
+
+=== D6S ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D6S] COMPUTE #1 (owner.id=10)
+    +0ms [D6S] EFFECT run #1 value=0 computes-so-far=1 computeRan=true
+  --- hydration payload on the wire ---
+    (no _$HY.r writes in the document)
+  --- stream: headers 2ms  marker 2ms  done 2ms (1943B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D6S] COMPUTE #1 (owner.id=10)
+    [D6S] EFFECT run #1 value=0 computes-so-far=1 computeRan=true
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D6S] COMPUTE #1 (owner.id=10)
+    [D6S] EFFECT run #1 value=0 computes-so-far=1 computeRan=true
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D6S] COMPUTE #2 (owner.id=10)
+    [D6S] EFFECT run #2 value=1 computes-so-far=2 computeRan=true
+    [D6S] COMPUTE #3 (owner.id=10)
+    [D6S] EFFECT run #3 value=2 computes-so-far=3 computeRan=true
+
+=== D6 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D6] COMPUTE #1 (owner.id=10)
+    +1ms [D6] EFFECT run #1 value=[object Promise] computes-so-far=1 computeRan=true
+  --- hydration payload on the wire ---
+    "10" = $R[0]=($R[1]=($R[2]=()=>{let e={p:0,s:0,f:0}
+    $R[0] = ($R[1]=($R[2]=()=>{let e={p:0,s:0,f:0}
+    $R[3] = (e,r)=>{e.s(r),e.p.s=1,e.p.v=r})($R[1],0)
+  --- stream: headers 4ms  marker 4ms  done 4ms (2149B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D6] COMPUTE #1 (owner.id=10)
+    [D6] EFFECT run #1 value=0 computes-so-far=1 computeRan=true
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D6] COMPUTE #1 (owner.id=10)
+    [D6] EFFECT run #1 value=0 computes-so-far=1 computeRan=true
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D6] COMPUTE #2 (owner.id=10)
+    [D6] COMPUTE #3 (owner.id=10)
+
+=== D7 ===
+  --- SSR (raw fetch, no browser) ---
+    +0ms [D7] key=10 serverAlreadyFired=false
+    +151ms [D7] FIRED run #1 (v=late:0)
+    +151ms [D7] late marker write: written
+  --- hydration payload on the wire ---
+    "11" = $R[0]=($R[1]=($R[2]=()=>{let e={p:0,s:0,f:0}
+    "10" = 1
+    $R[0] = ($R[1]=($R[2]=()=>{let e={p:0,s:0,f:0}
+    $R[3] = (e,r)=>{e.s(r),e.p.s=1,e.p.v=r})($R[1],"late")
+  --- stream: headers 154ms  marker 154ms  done 154ms (2169B) ---
+  --- CLIENT (hydration) — dev build: true ---
+    ---------- hydrateStart ----------
+    [D7] key=10 serverAlreadyFired=true
+    [D7] SUPPRESSED run #1 (v=late:0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+  --- Solid diagnostics: none ---
+  --- unclaimed-node warnings: none ---
+  --- browser console / page errors ---
+    debug: [vite] connecting...
+    debug: [vite] connected.
+  --- after two clicks (does the boundary still fire?) ---
+    ---------- hydrateStart ----------
+    [D7] key=10 serverAlreadyFired=true
+    [D7] SUPPRESSED run #1 (v=late:0)
+    ---------- hydrateReturned ----------
+    ---------- firstMicrotask ----------
+    ---------- macrotask ----------
+    [D7] FIRED run #2 (v=late:1)
+    [D7] FIRED run #3 (v=late:2)
