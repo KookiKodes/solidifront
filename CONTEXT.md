@@ -49,12 +49,16 @@ What codegen produces from a document — the document after in-context injectio
 _Avoid_: typed document, document node, artifact
 
 **Pinned API version**:
-The Shopify API version a storefront is built against. It fixes both the URL an operation is sent to and the schema its types are generated from — the two can never drift apart.
-_Avoid_: apiVersion, API level, target version
+The Shopify API version a storefront is built against. It fixes both the URL an operation is sent to and the schema its types are generated from — the two can never drift apart. There is exactly one, and it governs the Storefront and Customer Account APIs together.
+_Avoid_: apiVersion, API level, target version, CAAPI version
 
 **Fall-forward**:
-Shopify serving an operation against a version other than the one requested, because the requested one is past end-of-support. Observable on the response, never inferred.
+Shopify serving a request against a version other than the one requested, because the requested one is past end-of-support. Observable on a data response, which echoes the version served; **silent** when a schema is fetched, which echoes nothing — so on that path it is ruled out in advance from the version registry rather than detected after the fact.
 _Avoid_: version fallback, downgrade, version drift
+
+**Retired version**:
+A pinned API version Shopify no longer serves. It is recognised by its **absence** from the supported set, never by a flag, and it fails the build — distinct from a **pre-release version**, which is present in the supported set, marked unsupported, and only warns.
+_Avoid_: unsupported version, deprecated version, expired version
 
 **In-context injection**:
 Adding the `@inContext` directive and its variables to a document at build time, so every operation carries the locale, buyer identity and consent of the request that runs it. Which arguments exist is a property of the pinned API version, never a fixed list.
