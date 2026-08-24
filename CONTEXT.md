@@ -61,12 +61,28 @@ Adding the `@inContext` directive and its variables to a document at build time,
 _Avoid_: localization middleware, context decoration
 
 **Locale**:
-A country and language pair that determines pricing, currency, and translation for an operation.
+A country and language pair that determines pricing, currency, and translation for an operation. It is the only localization concept solidifront models: a locale has no URL of its own, and no market it reports belonging to.
 _Avoid_: region, i18n, culture
 
 **Market**:
-A Shopify Markets configuration a locale belongs to. A market has many locales; a locale belongs to one market.
+The Shopify-admin configuration that decides which locales a storefront offers. It explains where a locale set comes from, and is deliberately absent from every solidifront type and signature — the Storefront API no longer exposes it, so nothing could observe it anyway.
 _Avoid_: storefront, region
+
+**Locale table**:
+The record of every locale a shop offers, generated from the shop's own localization data. It is the source of the locale type consumers see, so a locale that does not exist in the shop cannot be named in their code.
+_Avoid_: countries map, locale list, i18n config
+
+**Locale prefix**:
+The leading URL segment naming the locale a page is being viewed in. The default locale has none, so its pages keep unprefixed URLs.
+_Avoid_: path prefix, locale segment, market path
+
+**Locale carrier**:
+The cookie reporting which locale's page a request came from. It exists because a server-function request has no URL to read a locale out of, and it records a resolution that already happened — never a visitor's preference.
+_Avoid_: locale cookie, preference cookie, i18n cookie
+
+**Locale suggestion**:
+The locale a visitor's `Accept-Language` header matches. It is offered to them and never acted on, which is what separates it from the resolved locale — that one comes from the URL.
+_Avoid_: detected locale, preferred locale, browser locale
 
 **Buyer identity**:
 Who is shopping, and from where. A property of the request, established once and read by every operation — not something a cart owns. The cart and `@inContext` see different projections of the same value.

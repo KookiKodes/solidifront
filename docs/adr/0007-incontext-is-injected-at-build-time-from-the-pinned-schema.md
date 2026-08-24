@@ -39,10 +39,12 @@ The same reasoning covers a developer-declared `$country`. The current code _reu
 A locale switcher or market preview needs one operation to run against a different market than the request's, and `RequestContext` is per-request so it cannot vary per operation.
 
 ```ts
-client.query(PRODUCT, { variables, context: { country: "CA" } });
+client.query(PRODUCT, { variables, context: { locale: "fr-CA" } });
 ```
 
-Shallow-merged over `RequestContext`, and deliberately not merged into `variables`: context and variables are different things, one belonging to the request and one to the document, and collapsing them is what produced the `$country` trap above. It also narrows the seam [#21](https://github.com/KookiKodes/solidifront/issues/21) already established rather than opening a second one.
+> **Amended by [#16](https://github.com/KookiKodes/solidifront/issues/16).** This example originally read `context: { country: "CA" }` — a _partial_ override, shallow-merged field by field. The locale override is now taken **whole**, because merging a lone `country` over an existing `language` can compose a pair the shop does not offer, and [ADR-0009](./0009-the-locale-table-is-generated-at-build-time.md)'s literal union makes an invalid pair unrepresentable instead of a runtime check. The override also reaches exactly one operation and never propagates — see [ADR-0010](./0010-the-url-is-the-locales-source-of-truth.md).
+
+Merged over `RequestContext`, and deliberately not merged into `variables`: context and variables are different things, one belonging to the request and one to the document, and collapsing them is what produced the `$country` trap above. It also narrows the seam [#21](https://github.com/KookiKodes/solidifront/issues/21) already established rather than opening a second one.
 
 ## Why solidifront's own operations are pinned to a floor
 
