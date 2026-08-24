@@ -1,0 +1,37 @@
+# Customer authentication is a requirement, not an argument
+
+A Customer Account API operation declares an authenticated customer in its requirement channel. It does not accept an access token as a parameter, and no solidifront API returns one. Decided in [#17](https://github.com/KookiKodes/solidifront/issues/17).
+
+## Why not pass the token
+
+Hydrogen threads the access token per call: `createCustomerAccountClient` never touches the session, and the raw token goes into `Authorization` at each call site. Its read API is a trichotomy — `isLoggedIn`, `getAccessToken`, `getOrRefreshAccessToken` — split across two structural interfaces, a read-only manager and a writable one, with four `@ts-expect-error` cases in its own type tests holding the line.
+
+All of that is structural typing straining to encode "this operation needs a signed-in customer, and this one may mutate the session." Effect encodes exactly that in the requirement channel. Taking the token as an argument would convert a fact the type system can check into one every call site has to remember, and turn calling an operation without a session from a compile error into a runtime one.
+
+[#13](https://github.com/KookiKodes/solidifront/issues/13) already made request scope ambient — plain values provided with `Effect.provideService` at the call site — so the seam exists and the customer session travels the same way locale and cart id do.
+
+## Why no accessor either
+
+The read API is one three-valued reader and nothing else. There is deliberately no way to obtain the raw access token.
+
+The usual argument for an accessor is the consumer who wants to call an operation solidifront did not ship. [#14](https://github.com/KookiKodes/solidifront/issues/14) removes that case: a consumer's own document becomes a generated operation, so it runs through solidifront's client and picks the token up from context like any other. There is no remaining legitimate caller, and an accessor's only effect would be to make the credential available to code that could send it anywhere.
+
+The same reasoning applies to the `id_token`. Hydrogen validates its `nonce`, `iss`, `aud`, and `exp` but **never verifies its signature** — no JWKS fetch, no `alg` check, and its test helper mints `{alg:"none"}` tokens. That is defensible, because the token arrives over a direct TLS back-channel from the token endpoint with no browser hop, and verification would put a network dependency and a cache on the login path. But "defensible given the channel" is only true while the channel is the only source. Solidifront therefore does not verify the signature *and* accepts an `id_token` nowhere in its API, so the assumption is enforced by the absence of an entry point rather than by a comment. Unlike Hydrogen, `sub` is surfaced — a customer id is the obvious thing a consumer needs, and making them re-parse a token to get it is worse than exposing the one claim.
+
+## Why the browser guard is a module boundary
+
+Hydrogen's factories throw on `typeof document !== "undefined"`. Solidifront uses [#21](https://github.com/KookiKodes/solidifront/issues/21)'s `import "server-only"` mechanism instead: Solid's `boundaryModules` turns a client import into a **resolve-time** error naming the importing file, which beats a runtime throw on timing and on message quality, and costs nothing. [#13](https://github.com/KookiKodes/solidifront/issues/13)'s "no `isServer` branch anywhere" already commits us to this shape.
+
+## Consequences
+
+**A customer session is two cookies, not one.** The stored tokens and an in-flight login attempt are separate concepts with different lifetimes, so they get separate cookies. Hydrogen puts both under one key, which is why its `clearTokens` must preserve `pendingLogin` and its `clearPendingLogin` must preserve `tokens`. Splitting them deletes that dance and lets the login attempt carry `Max-Age=600`, so the browser enforces the ten-minute TTL that Hydrogen checks by hand against a stored `createdAt`.
+
+Both are `__Host-` prefixed with `HttpOnly; Secure; SameSite=Lax; Path=/`. `SameSite=Lax` is required rather than chosen — the login attempt has to survive the top-level redirect back from Shopify. Cookie options follow [#15](https://github.com/KookiKodes/solidifront/issues/15)'s fully-configurable precedent with one omission: `domain` is absent, because setting it silently invalidates the `__Host-` prefix.
+
+**Storage is a layer with a working default.** Solidifront ships a `CustomerSessionStore` service with an encrypted-cookie implementation, overridable by layer for KV, Redis, or a database. Hydrogen ships only the five-method interface; its AES-GCM cookie adapter lives in an example, is not published, and its own comment recommends something else for production — which is why every Hydrogen storefront writes its own crypto. Whether four tokens fit the 4096-byte cookie ceiling is measured in [#41](https://github.com/KookiKodes/solidifront/issues/41).
+
+**Reading a session personalizes a response only when a session exists.** Hydrogen marks the response personalized on *every* session read — forcing `cache-control: private, no-store` and deleting CDN cache headers — so merely calling `isLoggedIn()` makes a page uncacheable even when it returns false. Since solidifront populates buyer identity from the session in middleware on every request, copying that would mean nothing in a storefront is ever CDN-cacheable. Personalizing only when a session is actually present keeps the anonymous path cacheable and is safe on the only axis that matters: a response can leak customer data only if there was a session to leak.
+
+**The Customer Account client is its own service on the shared transport.** Endpoint shape, auth, and caching all differ from the storefront client, and [#14](https://github.com/KookiKodes/solidifront/issues/14)'s type-level API brand already makes the two impossible to confuse at a call site. Three of Hydrogen's choices carry over unchanged: `Authorization` takes the token raw with no `Bearer ` prefix, `no-store` is unconditional because a Customer Account response is personalized by definition, and there are no retries by default because the surface is mutation-heavy and a retried mutation is worse than a failed one. One transport is shared, so [#11](https://github.com/KookiKodes/solidifront/issues/11)'s verified `FetchHttpClient.Fetch` seam covers both suites.
+
+**Local development needs HTTPS, and solidifront says so at startup.** The OAuth side has no localhost exemption — unlike the GraphQL client, which upgrades `http:` to `https:` for loopback addresses — and Hydrogen's own error is *"Use a public HTTPS tunnel for local Customer Account login."* Provisioning certificates or a tunnel is a product of its own and out of scope, but the failure is a throw deep inside a redirect that reads as a Shopify misconfiguration. Solidifront raises it at dev-server start when the origin is `http:`, naming the fix and the dashboard `redirect_uri`, in the spirit of [#21](https://github.com/KookiKodes/solidifront/issues/21)'s near-miss warning.

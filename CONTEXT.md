@@ -88,6 +88,18 @@ _Avoid_: detected locale, preferred locale, browser locale
 Who is shopping, and from where. A property of the request, established once and read by every operation — not something a cart owns. The cart and `@inContext` see different projections of the same value.
 _Avoid_: user, session, account
 
+**Customer session**:
+What a storefront stores to keep a customer signed in, and the lifecycle of that state. It is how a storefront knows the buyer identity, never the identity itself — a session is storage, a buyer identity is a property of the request.
+_Avoid_: auth session, user session, login, credentials
+
+**Login attempt**:
+What a storefront remembers between sending a visitor to Shopify to sign in and receiving them back. It expires on its own and is discarded whether the sign-in succeeds or fails, which is what separates it from a customer session.
+_Avoid_: pending login, oauth state, handshake, flow
+
+**Storefront customer access token**:
+The credential that lets Storefront API operations run as a signed-in customer. It is minted from a customer session and is not the credential that authorizes Customer Account API operations — the two are different tokens for the same person, and only this one reaches `@inContext`.
+_Avoid_: customer token, buyer token, SFAPI token
+
 **Consent**:
 The visitor's privacy choice, which gates where analytics events are allowed to go. It gates destinations, not the recording of events.
 _Avoid_: opt-in, GDPR flag, tracking permission
