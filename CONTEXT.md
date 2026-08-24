@@ -69,7 +69,7 @@ A Shopify Markets configuration a locale belongs to. A market has many locales; 
 _Avoid_: storefront, region
 
 **Buyer identity**:
-The customer context attached to a cart and to `@inContext` — who is shopping, and from where.
+Who is shopping, and from where. A property of the request, established once and read by every operation — not something a cart owns. The cart and `@inContext` see different projections of the same value.
 _Avoid_: user, session, account
 
 **Consent**:
@@ -77,8 +77,16 @@ The visitor's privacy choice, which gates where analytics events are allowed to 
 _Avoid_: opt-in, GDPR flag, tracking permission
 
 **Cart**:
-The Shopify-owned collection of lines a buyer intends to purchase. Checkout is off-domain — it happens on Shopify, not in a solidifront storefront.
+The Shopify-owned collection of lines a buyer intends to purchase. Checkout is off-domain — it happens on Shopify, not in a solidifront storefront. The boundary is a scope rule, not just a description: an API that advances checkout is outside the cart.
 _Avoid_: basket, order, bag
+
+**Cart operations**:
+The service whose members are the cart mutations, each named for the mutation it sends. Consumers replace a member by layer, and a replacement receives the one it replaces.
+_Avoid_: cart handler, cart methods, cart client
+
+**Optimistic line**:
+A cart line that exists only in the browser, before Shopify has confirmed it. Identified by what was added rather than by a server id, so the same merchandise added twice is one line.
+_Avoid_: pending line, local line, temp line
 
 **Storefront passthrough**:
 The same-origin endpoint that relays to the Storefront API. It exists solely so Shopify's browser scripts get an origin-exempt, cookie-bearing Storefront API; solidifront's own data path never uses it.
