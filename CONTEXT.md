@@ -104,9 +104,9 @@ _Avoid_: auth session, user session, login, credentials
 What a storefront remembers between sending a visitor to Shopify to sign in and receiving them back. It expires on its own and is discarded whether the sign-in succeeds or fails, which is what separates it from a customer session.
 _Avoid_: pending login, oauth state, handshake, flow
 
-**Storefront customer access token**:
-The credential that lets Storefront API operations run as a signed-in customer. It is minted from a customer session and is not the credential that authorizes Customer Account API operations — the two are different tokens for the same person, and only this one reaches `@inContext`.
-_Avoid_: customer token, buyer token, SFAPI token
+**Customer access token**:
+The one credential a signed-in customer has. A customer session obtains it from the Customer Account API's OAuth flow; it authorizes Customer Account operations and, unchanged and unexchanged, identifies the buyer to the Storefront API. The definite article is the whole point of the term — an earlier design had a second, storefront-only token minted from this one, and it does not exist ([ADR-0015](docs/adr/0015-the-customer-account-access-token-is-the-buyer-identity-credential.md)).
+_Avoid_: storefront customer access token, customer token, buyer token, SFAPI token
 
 **Consent**:
 The visitor's privacy choice, which gates where analytics events are allowed to go. It gates destinations, not the recording of events.
