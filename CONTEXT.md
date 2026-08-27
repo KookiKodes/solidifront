@@ -61,7 +61,7 @@ A pinned API version Shopify no longer serves. It is recognised by its **absence
 _Avoid_: unsupported version, deprecated version, expired version
 
 **Schema tier**:
-The privilege level of the Customer Account schema an introspection key returns. Solidifront can only obtain the standard tier, which is also the surface Shopify documents — so a field Shopify does not document cannot be named in a consumer's code, and no configuration moves the boundary. Customer Account only; the Storefront API has no tier.
+The privilege level a given Customer Account schema describes. Solidifront can only obtain the standard tier, which is also the surface Shopify documents — its own reference pages render exactly that tier — so a field Shopify does not document cannot be named in a consumer's code, and no configuration moves the boundary. Customer Account only; the Storefront API has no tier.
 _Avoid_: scope, privilege, access level, plan
 
 **In-context injection**:

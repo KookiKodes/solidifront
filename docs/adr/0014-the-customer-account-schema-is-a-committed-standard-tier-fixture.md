@@ -1,6 +1,6 @@
 # The Customer Account schema is a committed standard-tier fixture
 
-Solidifront commits one Customer Account API introspection fixture **per supported API version**, generated at the **standard privilege tier**, and serves it as the consumer's schema. CAAPI codegen is **unconditional**. Decided in [#43](https://github.com/KookiKodes/solidifront/issues/43), superseding [ADR-0013](./0013-the-customer-account-schema-comes-from-the-consumers-own-app.md).
+Solidifront commits one Customer Account API introspection fixture **per supported API version**, at the **standard privilege tier**, and serves it as the consumer's schema. The fixture is extracted from **Shopify's published `@shopify/dev-mcp` tarball** — keyless, first-party, immutable per release. CAAPI codegen is **unconditional**. Decided in [#43](https://github.com/KookiKodes/solidifront/issues/43), with the source settled in [#44](https://github.com/KookiKodes/solidifront/issues/44); supersedes [ADR-0013](./0013-the-customer-account-schema-comes-from-the-consumers-own-app.md).
 
 The consumer supplies no credential and registers nothing for typegen. Their `customerAccountApiClientId` remains what [ADR-0012](./0012-customer-authentication-is-a-requirement-not-an-argument.md) makes it — the OAuth `client_id` for sign-in — and has no role in schema sourcing.
 
@@ -21,9 +21,15 @@ The service is an _app-developer_ tool — the same key also introspects the **A
 
 The schema varies by an opaque **privilege tier**, not by declared scopes: every public app returns one byte-identical **372**-type payload regardless of its `access_scopes`, while Hydrogen's first-party key returns **493**, a strict superset ([#42](https://github.com/KookiKodes/solidifront/issues/42)). There is no route from solidifront to the 493.
 
-That ceiling **coincides with the API Shopify documents.** Shopify's own first-party validator, at `2026-07`, rejects a marker from every cluster of the 121-type delta — `paymentInstruments` and `availableWalletPaymentConfigs` (wallets), `uiExtensionMetafields` (extension surface), `taxInvoices` and `lineItemContainers` (order presentation depth) — while accepting the shared controls: `storeCreditAccounts`, `subscriptionContracts`, `addresses`, `orders.lineItems`, core profile. All five rejected fields were confirmed present in a live 493 introspection, so this is a tier boundary and not a naming error.
+That ceiling **coincides with the API Shopify documents**, and [#44](https://github.com/KookiKodes/solidifront/issues/44) both corrected the grounds for saying so and strengthened them.
 
-So a developer working from Shopify's documentation cannot reach a gated field. #42's framing — "a permanent type-coverage ceiling on a destination pillar that Hydrogen does not have" — is **corrected**: Hydrogen ships types for fields Shopify does not document, which is a different thing from solidifront falling short. See **Schema tier** in `CONTEXT.md`.
+#43 argued it from Shopify's first-party validator, which at `2026-07` rejects a marker from every cluster of the 121-type delta — `paymentInstruments` and `availableWalletPaymentConfigs` (wallets), `uiExtensionMetafields` (extension surface), `taxInvoices` and `lineItemContainers` (order presentation depth) — while accepting the shared controls: `storeCreditAccounts`, `subscriptionContracts`, `addresses`, `orders.lineItems`, core profile. All five were confirmed present in a live 493 introspection, so it is a tier boundary and not a naming error.
+
+**That argument was circular, and is retired.** The validator is `shopify-dev-mcp`, and #44 established it answers out of the very 372-type standard-tier file this ADR now commits. Validator and schema were one artifact consulted twice, not two witnesses agreeing.
+
+The conclusion stands on independent evidence instead: **Shopify's rendered reference documentation is itself standard tier.** `shopify.dev/docs/api/customer/<version>/full-index.md` contains zero of the five marker types at `2025-10`, `2026-01`, `2026-07` and `unstable` — a different artifact from a different pipeline than the schema file. So "a developer working from Shopify's documentation cannot reach a gated field" is now a property of the documentation, not an inference from a tool that reads the same bytes.
+
+#42's framing — "a permanent type-coverage ceiling on a destination pillar that Hydrogen does not have" — is therefore **corrected**: Hydrogen ships types for fields Shopify does not document, which is a different thing from solidifront falling short. See **Schema tier** in `CONTEXT.md`.
 
 ## Why not Hydrogen's committed schema file
 
@@ -33,17 +39,33 @@ Rejected on three counts at once. It describes fields Shopify's published schema
 
 Filtering 485 down to the standard tier is circular — it requires knowing which 372 are standard, which requires the standard-tier introspection.
 
-## Why the key is borrowed rather than owned
+## Where the fixture comes from: no key at all
 
-A maintainer generates the fixture with a **public app API key**, borrowed rather than registered. App API keys are public by design; #42 verified two from Shopify's own example apps return the standard tier, and that the payload is byte-identical across every public app tested — so the fixture is reproducible from _any_ valid key and pinning a specific one buys nothing the tier does not already guarantee.
+Shopify publishes the standard-tier schema, as a versioned artifact inside a first-party npm tarball rather than at an HTTP schema route:
 
-Registering a solidifront-owned app was rejected. The key is needed once per newly-arrived version, at a moment [ADR-0005](./0005-the-api-version-type-is-open-and-narrowed-by-codegen.md) already gates on human judgment — too thin a need to justify solidifront acquiring a Shopify app identity and maintaining a dashboard app in perpetuity whose only function is minting a query parameter.
+```
+https://registry.npmjs.org/@shopify/dev-mcp/-/dev-mcp-<version>.tgz
+  → package/dist/data/customer_<api-version>.json.gz
+```
 
-Requiring the _consumer_ to supply an app key is rejected as strictly dominated: same bytes, extra credential. ADR-0013's "zero config cost" argument inverts.
+Six API versions ship gzipped in the package — `2025-10, 2026-01, 2026-04, 2026-07, 2026-10, unstable` — as introspection JSON. Extraction is one command with no Node, no `npm install`, no auth and no MCP client, pulling a ~95 KB member out of a 13 MB stream:
 
-**Hydrogen's hardcoded key is forbidden**, and the ground is now correctness rather than hygiene: it returns 493, a tier describing fields solidifront's consumers have no verified route to.
+```bash
+curl -sS "$(npm view @shopify/dev-mcp dist.tarball)" \
+  | tar xz --wildcards "package/dist/data/customer_2026-07.json.gz"
+```
 
-**This decision is provisional.** Shopify's published schema is a better source by definition — documented, keyless, no rot, no tier ambiguity — if it is obtainable as a fetchable artifact. Three URL shapes returned `404`/`301` and both `*-direct-proxy` shapes `404`; the question is not exhausted and is open as a research ticket. If it resolves, it replaces the borrowed key outright and the app-side dependency disappears.
+`2026-07` is **372 types**, matching #42's live standard-tier introspection exactly, and none of the five first-party markers appear at **any** of the six versions. `buildClientSchema` accepts the files, so either the introspection JSON or generated SDL can be committed. The `isProtected` / `protectedSubject` annotations on 38 fields are protected-customer-data PII flags, not tiering — `accessRestricted` is `false` throughout.
+
+Do not run the MCP server in CI to get this. `dist/index.js` is stdio-MCP only and its `./tools` export needs a ~16 MB dependency tree; schema validation never touches the network, which is exactly why the bare data file suffices.
+
+**This retires the borrowed app API key** ADR-0014 originally specified, and with it the app-side dependency. #42 found three borrowed keys already dead, and the introspection endpoint cannot distinguish "deleted app" from "never existed" — an unfixable diagnostic. An npm tarball is immutable and permanently resolvable, so a pinned version cannot rot into an ambiguous `404`. It also dissolves the dilemma that made the key uncomfortable: borrowing a third party's identifier, versus registering a solidifront app for a once-per-version chore. Neither is needed.
+
+**Hydrogen's schema remains forbidden** on unchanged grounds, now measured twice: `packages/hydrogen-react/customer-account.schema.json`, published on npm as well as committed, is **484 types on `main`** against #43's 485 on `preview` — it moves — with all five first-party markers present. Shopify's own runbook regenerates it only at quarterly majors.
+
+**Requiring the consumer to supply an app key** stays rejected, now trivially: the source needs no key from anyone.
+
+**The remaining exposure is release cadence, and it does not bind.** The fixture now depends on Shopify continuing to bundle schemas at this path. `shopify.dev/api-versions.json` reports `customer.available` as exactly the six versions dev-mcp ships, and dev-mcp carries `unstable` and the RC _ahead_ of stable — so a version's schema is in the package months before that version becomes supported.
 
 ## Why codegen is unconditional
 
@@ -59,17 +81,29 @@ Fixtures cover the **supported** set. A pre-release pin fails CAAPI codegen with
 
 Pre-release schemas move under measurement — `2026-10` was 478 types for ADR-0013's probes and 486 later — so a committed pre-release fixture would mean a routine solidifront release silently changes a consumer's generated CAAPI types with no diff in their repo. That is precisely the hazard ADR-0005's no-default rule exists to prevent, and it is better for the cost to land on a preview user's build as a loud error than on solidifront's release discipline as a silent type change.
 
+Two notes from [#44](https://github.com/KookiKodes/solidifront/issues/44). Those 478/486 figures were measured at the **first-party** tier; the standard tier has not been watched over time at a fixed pre-release version, so the "it moves" premise is sound but its evidence is tier-mismatched. And the exclusion is now a **policy choice rather than a sourcing limit** — dev-mcp bundles `2026-10` and `unstable` too, so pre-release fixtures became available exactly when the key was retired. Independent support for keeping them out: standard-tier `2026-10` is **366** types against `2026-07`'s **372**. The release candidate is _smaller_ than current stable, so types are being withdrawn, and a pre-release fixture would compile operations the newer version has removed.
+
 Falling back to the newest supported fixture on a pre-release pin is the clearest reject: generating types from `2026-07`'s schema while operations are sent to `2026-10` reinstates exactly the Hydrogen desync trap ADR-0005 cites from `docs/research/shopify-domain.md:254`.
 
 ## Consequences
 
 **Welding now has a price, and this is where it shows.** The CAAPI version is welded to the single Storefront pin, so pinning a pre-release to preview Storefront also drags CAAPI to a version with no fixture. The Storefront schema is fetched live and tolerates any version Shopify serves; the CAAPI schema is committed and does not. The asymmetry is new and is the direct cost of this ADR.
 
-**The endpoint is still the pillar's single point of failure.** ADR-0013's "no fallback" claim was re-probed and holds: `shopify.dev/customer-graphql-direct-proxy` and `.../customer-account-graphql-direct-proxy` both `404`, and `@shopify/api-codegen-preset@3.0.0`'s `api-configs.js` gives Admin and Storefront a `*-direct-proxy` while giving Customer only the app-key service. ADR-0013's "undocumented" claim is **softened**: it is a README-documented option in that published first-party package, better attested than "known only from Hydrogen's source."
+**The pillar is no longer a single point of failure — ADR-0013's "no fallback" is refuted.** It was true when written. [#44](https://github.com/KookiKodes/solidifront/issues/44) exhausted the search rather than merely failing to find more, recovering shopify.dev's complete 332-route client manifest and confirming the `*-direct-proxy` naming space closed by a `400`-versus-`404` contrast (Storefront and Admin answer `400` because they exist; every Customer spelling `404`s). What that search turned up is **three** routes to a standard-tier schema, two of them keyless:
 
-**The nightly cross-checks the fixture against Shopify's published schema.** This is the only tier-drift detector available, and it guards the failure ADR-0013 says nothing can currently detect. Its transport is unverified — the published schema reached us through Shopify's MCP validator, and `CLAUDE.md` notes interactively-authenticated MCP servers may be absent in headless runs — and is part of the same research ticket as the source question above. No committed fixture regeneration is needed for this check, so it needs no key.
+1. the `@shopify/dev-mcp` tarball — keyless, complete introspection JSON, immutable per release (the decision above)
+2. a borrowed public app key against the introspection service — complete; the retired incumbent, still available
+3. shopify.dev's per-version docs corpus — keyless, standard tier, reconstructable but incomplete as published
+
+It keeps [#29](https://github.com/KookiKodes/solidifront/issues/29)'s pinned-and-nightly-diffed treatment, on different ground: the new source is a developer tool whose `dist/data/` layout is not a stability contract.
+
+ADR-0013's "undocumented" claim is **softened**: the app-key service is a README-documented option in a published first-party package, and that README states `apiKey` is _"Required and only valid for the customer API preset"_ — the closest thing to Shopify saying on the record that there is no keyless Customer route. Shopify has never said so in words; treat that as not established.
+
+**The nightly cross-check now has a genuinely independent second observer.** Diffing the committed fixture against the tarball it was minted from would be a _freshness_ check, not the tier-drift detector this ADR claimed — same artifact, no common-cause separation. Route 3 supplies the separation: `shopify.dev/docs/api/customer/<version>/full-index.md` and its per-type documents are keyless, per-version, standard tier, and do not rot (`:version`-parameterised, with `2026-01` and `unstable` keeping their own paths). Whoever specs it must handle one asymmetry: `full-index` is **not** an exhaustive type inventory — edge types are folded into 31 "connections" entries, so `OrderEdge.md` returns `200` while `OrderEdge` is unlisted, and `2026-07` indexes 345 entries against 364 named introspection types. It compares two _representations_, not two copies. No key, and no fixture regeneration.
 
 **ADR-0013's rejected fallback is now the decision, and the difference is mechanism.** That ADR rejected "serving solidifront's committed fixture as the consumer's schema" as _"precisely the vendored-schema staleness this ADR exists to end."_ The objection was sound against a Hydrogen file vendored by URL with no automation. It does not transfer to a fixture minted per-version from the live service and diffed nightly against Shopify's published schema.
+
+**Unverified:** byte-identity between the tarball schema and a live borrowed-key introspection. [#44](https://github.com/KookiKodes/solidifront/issues/44) established same tier, same type count at `2026-07` (372, matching #42), and all five markers absent at all six versions; the byte comparison was attempted and blocked by the sandbox before the request went out. The nightly diff against route 3 is the standing mechanism that would surface a divergence, so this is a confirmation worth having rather than a gate.
 
 **Unverified:** whether the runtime honours the consumer's `customer-account-api:full` grant or the standard tier. CAAPI authenticates _before_ it validates — a bogus token returns an identical `401 Invalid token. Decode Error.` for a valid field, a nonexistent field and a syntax error alike — so this cannot be probed without a real customer login. It is parked as an L5 nightly assertion behind the map's **Nightly (L5) infrastructure** prerequisites. Its stakes are much reduced: the fields in question are undocumented, so rejecting them at compile time is defensible rather than the worst available failure.
 
