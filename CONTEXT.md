@@ -60,6 +60,10 @@ _Avoid_: version fallback, downgrade, version drift
 A pinned API version Shopify no longer serves. It is recognised by its **absence** from the supported set, never by a flag, and it fails the build — distinct from a **pre-release version**, which is present in the supported set, marked unsupported, and only warns.
 _Avoid_: unsupported version, deprecated version, expired version
 
+**Schema tier**:
+The privilege level of the Customer Account schema an introspection key returns. Solidifront can only obtain the standard tier, which is also the surface Shopify documents — so a field Shopify does not document cannot be named in a consumer's code, and no configuration moves the boundary. Customer Account only; the Storefront API has no tier.
+_Avoid_: scope, privilege, access level, plan
+
 **In-context injection**:
 Adding the `@inContext` directive and its variables to a document at build time, so every operation carries the locale, buyer identity and consent of the request that runs it. Which arguments exist is a property of the pinned API version, never a fixed list.
 _Avoid_: localization middleware, context decoration
