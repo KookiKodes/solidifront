@@ -61,8 +61,12 @@ A pinned API version Shopify no longer serves. It is recognised by its **absence
 _Avoid_: unsupported version, deprecated version, expired version
 
 **Schema tier**:
-The privilege level a given Customer Account schema describes. Solidifront can only obtain the standard tier, which is also the surface Shopify documents — its own reference pages render exactly that tier — so a field Shopify does not document cannot be named in a consumer's code, and no configuration moves the boundary. Customer Account only; the Storefront API has no tier.
+The privilege level a given Customer Account schema describes. Solidifront can only obtain the standard tier, which is also the surface Shopify documents — its own reference pages render exactly that tier — so a field Shopify does not document cannot be named in a consumer's code, and no configuration moves the boundary. Customer Account only; the Storefront API has no tier, and its documented boundary is **privately documented** instead — which a consumer _can_ cross, because their own store serves it.
 _Avoid_: scope, privilege, access level, plan
+
+**Privately documented**:
+A field a Shopify API serves but publishes no reference page for, marked by Shopify's own `isPrivatelyDocumented` flag. Solidifront ships no operation that touches one, and warns rather than blocks when a consumer's document selects one — the boundary is a scope rule for the library, not a limit on the consumer's store ([ADR-0016](docs/adr/0016-solidifront-ships-only-what-shopify-documents.md)).
+_Avoid_: undocumented, private field, internal, hidden
 
 **In-context injection**:
 Adding the `@inContext` directive and its variables to a document at build time, so every operation carries the locale, buyer identity and consent of the request that runs it. Which arguments exist is a property of the pinned API version, never a fixed list.

@@ -63,6 +63,22 @@ Codegen parses the document anyway, so the kind is free to carry — and the cli
 
 The two genuinely diverge: a mutation must not be blindly retried, and caching options apply to only one of them. That belongs in the signature rather than in a runtime branch. The operation also carries its **API**, so a Customer Account document passed to the storefront client fails at compile time — where Hydrogen preview manages only a runtime throw.
 
+## Why response-code enums decode open
+
+An enum that names a **failure** decodes open; every other enum stays a closed literal union. `CartUserError.code` and `CartWarning.code` are branded strings whose known values are a type-level hint — `Documented | (string & {})` — so an unrecognised code decodes rather than rejecting. Amended in [#49](https://github.com/KookiKodes/solidifront/issues/49).
+
+The measurement, against the direct proxy across two **stable** versions: exactly **2 of 62** enums changed value sets between `2025-10` and `2026-07` — `CartErrorCode` 55 → 58 and `CartWarningCode` 17 → 18. Both grew, neither shrank, and the other 60 were identical. The three new `CartErrorCode` values are all publicly documented, so enum growth is not a private-surface phenomenon and this carve-out is not a consequence of [ADR-0016](./0016-solidifront-ships-only-what-shopify-documents.md).
+
+A closed union fails here for a reason specific to this ADR's decode model. Decode is identity-typed pure validation, so a rejection **discards the whole payload** — and a cart mutation's payload is the cart. [ADR-0008](./0008-cart-operations-are-one-service-overridden-by-layer.md) makes user errors a _success_ value precisely so a bad discount code cannot blow away the cart UI; a closed union would reintroduce that failure at the decode boundary, triggered by nothing worse than Shopify adding an error code. Open decode turns the same event into an error string we have no nice message for.
+
+The line is drawn where the evidence draws it rather than uniformly: `CountryCode` or `WeightUnit` arriving as an unrecognised string is a genuine signal that something is wrong, and 60 of 62 enums demonstrably do not move. **An enum that names a failure is an open set; an enum that names a domain value is closed.**
+
+The hint comes from the consumer's own live schema, unfiltered — all 58 `CartErrorCode` values at `2026-07`, the 15 privately-documented ones included. Filtering to the documented 43 would require the docs corpus and would hide values their store genuinely serves.
+
+There is **no dev-mode warning** on an unrecognised code. Under open decode an unknown code is the designed path, not an anomaly, and a warning that fires on routine enum growth is noise. ADR-0008's dev-warning precedent is for silently swallowed state — a write error nobody read — and a code that reaches the error bucket is not swallowed.
+
+**Unverified: whether values are added _within_ a stable version's life.** This repo's own committed `unstable` fixture (`storefront-unstable.schema.json`) carries `CartErrorCode: 56` / `CartWarningCode: 17` against a live `unstable` of 60 / 18 — the same version label, four values apart — but `unstable` is a moving target by definition, so it is suggestive rather than decisive. [#12](https://github.com/KookiKodes/solidifront/issues/12) / [#46](https://github.com/KookiKodes/solidifront/issues/46)'s nightly schema diff observes it either way.
+
 ## Consequences
 
 **Codegen is the only thing that can mint an operation.** The client's parameter type is a branded object, not a string, so a hand-rolled document is a compile error and the build-time gate has no bypass.

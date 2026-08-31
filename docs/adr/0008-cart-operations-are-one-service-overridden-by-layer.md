@@ -13,9 +13,9 @@ const WithLogging = CartOperations.override((base) => ({
 
 ## Why one service rather than one tag per operation
 
-A single service whose members are the 20 operations is the direct generalization of Hydrogen classic's `*Default(options)(args)` currying — an operation as a value parameterized by a context record. Overriding a member is then a record spread, which is Effect's idiomatic decorator shape and makes "call through to the default" a one-liner.
+A single service whose members are the 18 operations is the direct generalization of Hydrogen classic's `*Default(options)(args)` currying — an operation as a value parameterized by a context record. Overriding a member is then a record spread, which is Effect's idiomatic decorator shape and makes "call through to the default" a one-liner.
 
-One tag per operation would allow surgical override without the spread, at the cost of 20 tags in `Context` and 20 layer merges. Nothing in the library depends on a single cart operation in isolation, so the granularity buys nothing and the cost is paid on every consumer's layer graph.
+One tag per operation would allow surgical override without the spread, at the cost of 18 tags in `Context` and 18 layer merges. Nothing in the library depends on a single cart operation in isolation, so the granularity buys nothing and the cost is paid on every consumer's layer graph.
 
 ## Why this beats both reference implementations
 
@@ -45,7 +45,7 @@ This answers the ticket's framing question — "how does an override call throug
 
 `CONTEXT.md` defines an **operation** as "a single GraphQL query or mutation." A member _is_ an operation, so it carries the operation's name: `cartLinesAdd`, not classic's `addLines`.
 
-Classic's rename invents a second vocabulary for the same thing, which at 20 operations is 20 arbitrary mappings to memorize, and it makes the override story opaque — the thing you override should be named after the thing it sends.
+Classic's rename invents a second vocabulary for the same thing, which at 18 operations is 18 arbitrary mappings to memorize, and it makes the override story opaque — the thing you override should be named after the thing it sends.
 
 The rule has a consequence worth stating: an operation that does not exist in the Storefront API cannot be a member. Preview synthesizes `discount-apply` / `discount-remove` on top of `cartDiscountCodesUpdate` (which replaces all codes) by reading first, and documents the race that follows — "SFAPI has no atomic discount modify endpoint, so concurrent requests can overwrite each other's discount codes." Those ship instead as conveniences on `createCart()`, where the client already holds the current code list and the read-then-write disappears entirely.
 
@@ -69,6 +69,10 @@ Preview gives each key an `AbortController` so a later write cancels an earlier 
 
 Writes to the same target queue behind a keyed mutex instead. The optimistic overlay already shows the final value instantly, so serialization costs nothing visible while removing a class of wrong-final-quantity bugs the reference implementation has. Cancellation is kept for the stale-_read_ case, matching the wrapper in [#20](https://github.com/KookiKodes/solidifront/issues/20).
 
-## Scope: checkout is not in it
+## Scope: eighteen of twenty-four
 
-The pinned schema exposes 24 cart mutations. Four of them — `cartPrepareForCompletion`, `cartSubmitForCompletion`, `cartPaymentUpdate`, `cartBillingAddressUpdate` — are the Cart Checkout Completion API, a separately gated Shopify product. `CONTEXT.md` defines a **cart** as ending where checkout begins, so shipping them would silently redefine the library's boundary. Twenty ship; those four are out of scope for v1.
+The pinned schema exposes 24 cart mutations. **Eighteen ship**, and the six that do not are ruled out by two different rules.
+
+**Checkout is not in it.** `cartPrepareForCompletion`, `cartSubmitForCompletion`, `cartPaymentUpdate` and `cartBillingAddressUpdate` are the Cart Checkout Completion API, a separately gated Shopify product. `CONTEXT.md` defines a **cart** as ending where checkout begins, so shipping them would silently redefine the library's boundary.
+
+**Undocumented is not in it either.** `cartClone` and `cartRemovePersonalData` are `isPrivatelyDocumented: true` — served by the API, but with no reference page, no `full-index` entry, and no presence in Shopify's published schema tarball at any supported version. This ADR originally counted twenty, having read the set off an introspection that does not surface the flag; [#48](https://github.com/KookiKodes/solidifront/issues/48) surfaced it and [ADR-0016](./0016-solidifront-ships-only-what-shopify-documents.md) settles the rule, which is Storefront-wide rather than cart-specific. The capability is not lost: `cartBuyerIdentityUpdate`, `cartDeliveryAddressesRemove`, `cartAttributesUpdate` and `cartNoteUpdate` cover the cart's personal data between them, and `cartCreate` covers a clone. Amended in [#49](https://github.com/KookiKodes/solidifront/issues/49).
