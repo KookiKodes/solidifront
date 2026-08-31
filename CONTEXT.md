@@ -22,6 +22,10 @@ _Avoid_: widget, block
 The server-only surface — middleware, request context, and `"use server"` wiring.
 _Avoid_: adapter, start, runtime
 
+**Build-time surface**:
+Code that runs in the consumer's build, never in their **Runtime**. It creates no `Context` tag they can observe, which is why it takes `effect` as a direct dependency rather than a peer.
+_Avoid_: plugin layer, codegen layer, compile-time, tooling
+
 **App layer**:
 The merged Effect layer for one environment. It holds everything that lives for the whole process; request-scoped values are never part of it.
 _Avoid_: runtime, container, root layer
@@ -29,6 +33,16 @@ _Avoid_: runtime, container, root layer
 **Runtime**:
 An Effect `ManagedRuntime` built from an app layer, one per environment, for the life of the process. The word is reserved for this and nothing else — not the server integration surface, and not Solid's server-function machinery.
 _Avoid_: container, executor, effect runtime
+
+### Dependency policy
+
+**Break licence**:
+An upstream's documented reservation of the right to make breaking changes inside a range semver would otherwise treat as safe. `effect/unstable/*` carries one; `solid-js` carries none, which is the whole reason their declared ranges differ in shape.
+_Avoid_: instability, experimental flag, unstable contract, churn
+
+**Supported peer range**:
+The version range solidifront declares for a peer dependency. It is public API — widening it is free, and narrowing it, **including raising its floor**, is a breaking change. Distinct from a **Pinned API version**, which is Shopify's and on its own clock.
+_Avoid_: pin, pinned version, retired version, supported versions, compatibility range
 
 ### Commerce domain
 
