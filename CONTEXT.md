@@ -113,8 +113,28 @@ The one credential a signed-in customer has. A customer session obtains it from 
 _Avoid_: storefront customer access token, customer token, buyer token, SFAPI token
 
 **Consent**:
-The visitor's privacy choice, which gates where analytics events are allowed to go. It gates destinations, not the recording of events.
+The visitor's privacy choice, which gates where analytics events are allowed to go. It gates destinations, not the recording of events. A visitor who has not chosen has **no** consent — a state distinct from having declined, and the distinction is load-bearing: solidifront's own gate treats it as refusal, while Shopify is left to apply the regional default it alone can compute ([ADR-0018](docs/adr/0018-visitor-consent-is-absent-not-denied.md)).
 _Avoid_: opt-in, GDPR flag, tracking permission
+
+**Purpose**:
+One of the four things a visitor consents to: analytics, marketing, preferences, sale of data. Each reads as what is _allowed_ — so consenting to sale of data permits it, exactly as consenting to analytics permits tracking. Shopify's docs describe sale of data as inverted, which describes how a banner asks rather than what a storefront stores.
+_Avoid_: category, scope, signal, permission
+
+**Analytics event**:
+Something the shopper did, recorded for the merchant. The names Shopify recognises are fixed and cannot be added to; a storefront may name events of its own, which reach its own destinations and no Shopify one.
+_Avoid_: tracking event, pixel event, hit
+
+**Destination**:
+Somewhere analytics events are sent, and the only way to receive one. A destination declares the purposes it needs, so consent gates it without any destination having to check. Distinct from a **subscriber**.
+_Avoid_: sink, consumer, handler, integration
+
+**Subscriber**:
+Something listening to Shopify's own analytics object in the browser. Shopify's scripts are subscribers; a storefront's code never is, because a subscriber sees every event regardless of consent. The object exists to satisfy Shopify's contract and is not part of solidifront's API.
+_Avoid_: listener, observer, bus consumer
+
+**Standard event**:
+A DOM event Shopify's own pixels listen for, dispatched on the page. It is a second, separate channel from analytics events, reaching a different audience by a different route — and solidifront gates it on consent even though Shopify does not.
+_Avoid_: custom event, DOM analytics, pixel bridge
 
 **Cart**:
 The Shopify-owned collection of lines a buyer intends to purchase. Checkout is off-domain — it happens on Shopify, not in a solidifront storefront. The boundary is a scope rule, not just a description: an API that advances checkout is outside the cart.
