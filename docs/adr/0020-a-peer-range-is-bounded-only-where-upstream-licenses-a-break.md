@@ -71,3 +71,18 @@ Stated as a rule rather than a per-package exception, so the next package is cla
 **Part of the map's release-and-versioning fog is settled.** v1.0.0's timing is now pinned to two upstream stables. Whether v1 ships lockstep or independently versioned is still open, and still waits on topology.
 
 **Graduation may itself cost a major.** #23's open question 3 is unresolved and unresolvable from primary sources: the contract implies a graduating module's import path moves out of `unstable/`, and whether the old path survives as a deprecated alias is unspecified with zero precedent. A _successful_ stabilisation may cost solidifront a major on the same terms as a break. This is the largest unquantified risk the bound does not cover.
+
+## Amended by #19 — a third upstream on the release gate
+
+v1.0.0 waits on **three** upstream stables, not two: `effect@4.0.0`, `solid-js@2.0.0`, and **`@effect/opentelemetry@4.0.0`**. Decided in [#19](https://github.com/KookiKodes/solidifront/issues/19).
+
+The substrate this ADR sent OTEL to is a separate package on a separate release, and its peer is `effect: "^4.0.0-rc.112"` — an **exact-rc caret**. Verified against the published `@effect/opentelemetry@4.0.0-rc.112`. Two consequences the gate list did not anticipate:
+
+- **It moves in lockstep.** Because semver excludes prereleases from a caret's upper reach, that range admits only the rc line it names. Every `effect` rc bump forces a matching `@effect/opentelemetry` bump; the two cannot drift apart even by a patch.
+- **A mismatch resolves silently rather than failing.** pnpm resolves the _intersection_ of that range and solidifront's own declared `effect` range — the exact failure mode the byte-identical assertion above exists to catch, now reachable from a package solidifront does not publish.
+
+So the enforcement extends: **CI asserts `@solidifront/otel`'s `peerDependencies["@effect/opentelemetry"]` against the resolved `effect` range too**, and the canary installs it alongside `effect`.
+
+Rejected: treating this as covered by the `effect@4.0.0` gate. `@effect/opentelemetry` reaching `4.0.0` is not implied by `effect` reaching `4.0.0` — they are separate releases — and the lockstep caret means the mismatch produces a quietly narrowed install rather than an error. Also rejected: shipping `@solidifront/otel` on its own clock as `1.0.0-rc.*` past the others, which fragments the version story for one package and hands a consumer a stable install whose telemetry package is a prerelease.
+
+This is the third upstream to land on the gate and the second to arrive as a consequence of a decision made elsewhere, so the rule generalises: **a floor is public API wherever a peer sits, including in a package added later.** ADR-0001's new peer-set boundary makes such packages more likely, not less.

@@ -154,6 +154,10 @@ _Avoid_: custom event, DOM analytics, pixel bridge
 The Shopify-owned collection of lines a buyer intends to purchase. Checkout is off-domain — it happens on Shopify, not in a solidifront storefront. The boundary is a scope rule, not just a description: an API that advances checkout is outside the cart.
 _Avoid_: basket, order, bag
 
+**Cart key**:
+The capability embedded in a cart id's query component. It is not part of the identifier — holding a cart id and its key together is sufficient to read and modify that cart — so anywhere a cart id is recorded rather than used, the query component is stripped first ([ADR-0022](docs/adr/0022-the-span-vocabulary.md)).
+_Avoid_: cart token, cart secret, id key
+
 **Cart operations**:
 The service whose members are the cart mutations, each named for the mutation it sends. Consumers replace a member by layer, and a replacement receives the one it replaces.
 _Avoid_: cart handler, cart methods, cart client
@@ -173,3 +177,13 @@ _Avoid_: analytics cookies, tracking cookies
 **Minted tracking tokens**:
 Tracking token values solidifront generates itself when the visitor has no Shopify cookie yet, as opposed to _captured_ ones, which come back from a real Storefront API response. Minted values are a floor, never an upgrade.
 _Avoid_: fallback tokens, generated tokens, fake tokens
+
+### Observability
+
+**Span**:
+A record of one thing solidifront did, for the operator, delivered to their collector and never consent-gated — the counterpart of an **Analytics event**, which records what the shopper did. There are exactly two, an operation and the Storefront API call beneath it, and deliberately none covering the request ([ADR-0021](docs/adr/0021-solidifront-ships-no-request-root-span.md)). A span may record that an analytics event was published; an analytics event never carries trace context ([ADR-0019](docs/adr/0019-analytics-and-otel-never-share-a-pipeline.md)).
+_Avoid_: log span, trace, instrumentation, telemetry event
+
+**Request id**:
+Two different facts, and the word is never used unqualified. The **Shopify request id** is Shopify's own handle for one API call, read from a response's `extensions` — the only correlation Shopify offers, because a trace never continues into Shopify. Solidifront's own is minted per request and stamped on every span, so the operations of one request can be joined after ADR-0021 removed their shared parent. Different questions, different namespaces, never interchangeable.
+_Avoid_: correlation id, trace id, req id
